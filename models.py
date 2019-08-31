@@ -7,7 +7,7 @@ import random
 
 class Constants(BaseConstants):
     name_in_url = 'consumer_producer'
-    players_per_group = 8
+    players_per_group = 4
     num_rounds = 6
     endowment = c(50)
     probability_of_same_group = .5
@@ -19,7 +19,7 @@ class Subsession(BaseSubsession):
 
             # create random pairings
             self.session.vars['pairs'] = []
-            for r in Constants.num_rounds:
+            for r in range(Constants.num_rounds):
                 pairs = {}
 
                 # a way to pair people given certain probabilities of
@@ -29,31 +29,31 @@ class Subsession(BaseSubsession):
                 g1 = [i for i in range(Constants.players_per_group)]
                 random.shuffle(g1)
                 g1_sample_homogeneous = random.sample(g1,
-                    Constants.players_per_group
-                    * Constants.probability_of_same_group)
+                    int(Constants.players_per_group
+                    * Constants.probability_of_same_group))
                 g1_sample_heterogeneous = [x for x in g1
                     if x not in g1_sample_homogeneous]
                 g2 = [i for i in range(Constants.players_per_group)]
                 random.shuffle(g2)
                 g2_sample_homogeneous = random.sample(g2,
-                    Constants.players_per_group
-                    * Constants.probability_of_same_group)
+                    int(Constants.players_per_group
+                    * Constants.probability_of_same_group))
                 g2_sample_heterogeneous = [x for x in g2
                     if x not in g2_sample_homogeneous]
                 for i in range(0, len(g1_sample_homogeneous), 2):
-                    pairs[(1, g1_sample_homogeneous[i])] = (1,
+                    pairs[(0, g1_sample_homogeneous[i])] = (0,
                         g1_sample_homogeneous[i + 1])
-                    pairs[(1, g1_sample_homogeneous[i + 1])] = (1,
+                    pairs[(0, g1_sample_homogeneous[i + 1])] = (0,
                         g1_sample_homogeneous[i])
                 for i in range(0, len(g2_sample_homogeneous), 2):
-                    pairs[(2, g2_sample_homogeneous[i])] = (2,
+                    pairs[(1, g2_sample_homogeneous[i])] = (1,
                         g2_sample_homogeneous[i + 1])
-                    pairs[(2, g2_sample_homogeneous[i + 1])] = (2,
+                    pairs[(1, g2_sample_homogeneous[i + 1])] = (1,
                         g2_sample_homogeneous[i])
                 for i in range(len(g1_sample_heterogeneous)):
-                    pairs[(1, g1_sample_heterogeneous[i])] = (2,
+                    pairs[(0, g1_sample_heterogeneous[i])] = (1,
                         g2_sample_heterogeneous[i])
-                    pairs[(2, g2_sample_heterogeneous[i])] = (1,
+                    pairs[(1, g2_sample_heterogeneous[i])] = (0,
                         g1_sample_heterogeneous[i])
                 self.session.vars['pairs'].append(pairs)
                     
@@ -63,9 +63,9 @@ class Subsession(BaseSubsession):
                 group_color = 'Red' if g_index == 0 else 'Blue'
                 # define random roles for players (producer/consumer),
                 # ensuring half are producers and half are consumers
-                roles = [None for n in range(Constants.players_per_group / 2)]
+                roles = [None for n in range(int(Constants.players_per_group / 2))]
                 roles += [group_color for n in range(
-                    Constants.players_per_group / 2)]
+                    int(Constants.players_per_group / 2))]
                 random.shuffle(roles)
                 # set each player's group color, and starting token (which
                 # defines role
@@ -80,12 +80,16 @@ class Group(BaseGroup):
 
 class Player(BasePlayer):
     role_pre = models.StringField() # 'Producer', 'Consumer'
+    other_role_pre = models.StringField()
     token_color = models.StringField() # 'Red', 'Blue', None
     group_color = models.StringField() # 'Red', 'Blue'
-    other_role_pre = models.StringField()
-    other_token_color = models.StringField()
     other_group_color = models.StringField()
-    trade_attempted = models.BooleanField()
+    trade_attempted = models.BooleanField(
+        choices=[
+            [False, 'No'],
+            [True, 'Yes'],
+        ]
+    )
     trade_succeeded = models.BooleanField()
     round_payoff = models.CurrencyField()
 

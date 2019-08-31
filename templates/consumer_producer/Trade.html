@@ -1,0 +1,80 @@
+{% extends "global/Page.html" %}
+{% load otree %}
+
+{% block scripts %}
+    <script type="text/javascript">
+      window.onload = function () 
+      {
+        document.getElementById("id_role_pre_").value = "{{ role_pre }}";
+        document.getElementById("other_role_pre_").value = "{{ other_role_pre }}";
+        document.getElementById("group_color_").value = "{{ group_color }}";
+        document.getElementById("other_group_color_").value = "{{ other_group_color }}";
+        document.getElementById("trade_attempted_").value = "{{ False }}";
+      }
+    </script>
+{% endblock %}
+
+{% block title %}
+    Trading Page
+{% endblock %}
+
+{% block content %}
+
+    {{ form.errors }}
+    <input type="hidden" name="role_pre" id="id_role_pre_"/>
+    <input type="hidden" name="other_role_pre" id="other_role_pre_"/>
+    <input type="hidden" name="group_color" id="group_color_"/>
+    <input type="hidden" name="other_group_color" id="other_group_color_"/>
+
+    <p>
+        These are some instructions.
+        <br>
+        Your group color is {{ group_color }}.
+        <br>
+        {% if token_color != None %}
+        You have a {{ token_color }} token.
+        <br>
+        Your role is Consumer.
+        <br>
+        {% else %}
+        You do not have a token.
+        <br>
+        Your role is Producer.
+        <br>
+        {% endif %}
+        
+        Your trading partner's group color is {{ other_group_color }}.
+        <br>
+        {% if other_token_color != None %}
+        Your trading partner has a {{ other_token_color }} token.
+        <br>
+        Their role is Consumer.
+        <br>
+        {% else %}
+        Your trading partner does not have a token.
+        <br>
+        Their role is Producer.
+        <br>
+        {% endif %}
+    </p>
+    
+    {% if role_pre == other_role_pre %}
+    <p>
+        You cannot trade with your trading partner, since you are both
+        {{ role_pre }}s.
+    </p>
+    <input type="hidden" name="trade_attempted" id="trade_attempted_"/>
+    {% else %}
+    <p>
+        Would you like to offer to trade your
+        {% if token_color != None %}
+        token for your partner's trading good?
+        {% else %}
+        trading good for your partner's token?
+        {% endif %}
+    </p>
+    {% formfield player.trade_attempted %}
+    {% endif %}
+    {% next_button %}
+
+{% endblock %}

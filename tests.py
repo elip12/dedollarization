@@ -7,6 +7,16 @@ from .models import Constants
 class PlayerBot(Bot):
 
     def play_round(self):
-        yield (pages.Contribute, {'contribution': c(1)})
-        yield (pages.Results)
+        yield (pages.Trade, {
+            'trade_attempted': False,
+            'role_pre': 'Producer',
+            'group_color': 'Red',
+            'other_role_pre': 'Consumer',
+            'other_group_color': 'Blue',
+        })
+        yield (pages.Results, {
+            'trade_succeeded': False,
+            'token_color': None,
+            'round_payoff': 0,
+        })
 
