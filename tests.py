@@ -1,6 +1,6 @@
 from otree.api import Currency as c, currency_range
 from . import pages
-from ._builtin import Bot
+from ._builtin import Botd
 from .models import Constants
 
 

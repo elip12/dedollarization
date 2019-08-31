@@ -7,7 +7,7 @@ from otree.api import (
 class Constants(BaseConstants):
     name_in_url = 'consumer_producer'
     players_per_group = 8
-    num_rounds = 6
+    num_rounds = 8
     endowment = c(50)
     probability_of_same_group = .5
 
@@ -19,9 +19,9 @@ class Subsession(BaseSubsession):
             # there will always only be 2 groups
             for g_index, g in enumerate(self.get_groups()):
                 group_color = 'Red' if g_index == 0 else 'Blue'
-                roles = [None for n in range(Constants.players_per_group / 2)]
+                roles = [None for n in range(Constants.players_per_group // 2)]
                 roles += [group_color for n in range(
-                    Constants.players_per_group / 2)]
+                    Constants.players_per_group // 2)]
                 roles.shuffle()
                 for p_index, p in enumerate(g.get_players()):
                     p.participant.vars['group_color'] = group_color
