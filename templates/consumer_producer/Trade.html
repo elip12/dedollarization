@@ -31,7 +31,7 @@
         <br>
         Your group color is {{ group_color }}.
         <br>
-        {% if token_color != None %}
+        {% if token_color != 'None' %}
         You have a {{ token_color }} token.
         <br>
         Your role is Consumer.
@@ -45,7 +45,7 @@
         
         Your trading partner's group color is {{ other_group_color }}.
         <br>
-        {% if other_token_color != None %}
+        {% if other_token_color != 'None' %}
         Your trading partner has a {{ other_token_color }} token.
         <br>
         Their role is Consumer.
@@ -61,13 +61,13 @@
     {% if role_pre == other_role_pre %}
     <p>
         You cannot trade with your trading partner, since you are both
-        {{ role_pre }}s.
+        {{ role_pre }}s. {{ other_role_pre }}
     </p>
     <input type="hidden" name="trade_attempted" id="trade_attempted_"/>
     {% else %}
     <p>
         Would you like to offer to trade your
-        {% if token_color != None %}
+        {% if token_color != 'None' %}
         token for your partner's trading good?
         {% else %}
         trading good for your partner's token?

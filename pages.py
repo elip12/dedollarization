@@ -22,8 +22,8 @@ class Trade(Page):
         other_player = self.subsession.get_groups()[other_group].get_player_by_id(other_id + 1)
         other_token = other_player.participant.vars['token']
         other_group_color = other_player.participant.vars['group_color']
-        role_pre = 'Consumer' if self.player.participant.vars['token'] else 'Producer'
-        other_role_pre = 'Consumer' if other_token else 'Producer'
+        role_pre = 'Consumer' if self.player.participant.vars['token'] != 'None' else 'Producer'
+        other_role_pre = 'Consumer' if other_token != 'None' else 'Producer'
         return {
             'role_pre': role_pre,
             'other_role_pre': other_role_pre,
@@ -64,26 +64,30 @@ class Results(Page):
 
         # switching tokens
         initial_token_color = self.player.participant.vars['token']
+        print('old', self.player.id_in_group, self.player.participant.vars['token'])
+        print('old', self.player.id_in_group,other_player.participant.vars['token'])
         if self.player.trade_attempted and other_player.trade_attempted:
-            self.player.participant.vars['token'],
-            other_player.participant.vars['token'] = \
-            other_player.participant.vars['token'],
-            self.player.participant.vars['token']
+            
+            self.player.participant.vars['token'] = other_token
+            other_player.participant.vars['token'] = initial_token_color
+            
             trade_succeeded = True
-            if initial_token_color:
+            if initial_token_color != 'None':
                 round_payoff = c(20)
+            print('new', self.player.id_in_group,self.player.participant.vars['token'])
+            print('new', self.player.id_in_group,other_player.participant.vars['token'])
         else:
             trade_succeeded = False
         new_token_color = self.player.participant.vars['token']
-        if initial_token_color:
+        if initial_token_color != 'None':
             role_pre = 'Consumer'
         else:
             role_pre = 'Producer'
-        if other_token:
+        if other_token != 'None':
             other_role_pre = 'Consumer'
         else:
             other_role_pre = 'Producer'
-        token_color = initial_token_color if initial_token_color \
+        token_color = initial_token_color if initial_token_color != 'None' \
             else new_token_color
         self.player.set_payoffs(round_payoff)
         return {

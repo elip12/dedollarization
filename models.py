@@ -63,7 +63,7 @@ class Subsession(BaseSubsession):
                 group_color = 'Red' if g_index == 0 else 'Blue'
                 # define random roles for players (producer/consumer),
                 # ensuring half are producers and half are consumers
-                roles = [None for n in range(int(Constants.players_per_group / 2))]
+                roles = ['None' for n in range(int(Constants.players_per_group / 2))]
                 roles += [group_color for n in range(
                     int(Constants.players_per_group / 2))]
                 random.shuffle(roles)
@@ -72,7 +72,7 @@ class Subsession(BaseSubsession):
                 for p_index, p in enumerate(g.get_players()):
                     p.participant.vars['group_color'] = group_color
                     p.participant.vars['token'] = roles[p_index]
-                    #p.participant.payoff = c(0)
+                    print(p.participant.vars['token'])
         else:
             self.group_like_round(1)
             
@@ -96,4 +96,4 @@ class Player(BasePlayer):
 
     def set_payoffs(self, round_payoff):
         self.payoff += round_payoff
-        # possible more here?
+

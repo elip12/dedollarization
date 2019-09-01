@@ -7,7 +7,7 @@
       {
         document.getElementById("token_color_").value = "{{ token_color }}";
         document.getElementById("trade_succeeded_").value = "{{ trade_succeeded }}";
-        document.getElementById("round_payoff_").value = "{{ round_payoff }}";
+        document.getElementById("round_payoff_").value = "{{ round_payoff|c }}";
       }
     </script>
 {% endblock %}
@@ -17,7 +17,7 @@
 {% endblock %}
 
 {% block content %}
-    
+    {{ form.errors }} 
     <input type="hidden" name="token_color" id="token_color_">
     <input type="hidden" name="trade_succeeded" id="trade_succeeded_">
     <input type="hidden" name="round_payoff" id="round_payoff_"> 
@@ -25,7 +25,7 @@
     <p>
         This round, you were a {{ role_pre }}.
         <br>
-        {% if initial_token_color %}
+        {% if initial_token_color != 'None' %}
         You had a {{ initial_token_color }} token.
         <br>
         {% endif %}
@@ -39,14 +39,14 @@
         {% endif %}
         {% if trade_succeeded %}
         You successfully traded. You now have a
-        {% if new_token_color %}
+        {% if new_token_color != 'None' %}
         {{ new_token_color }} token.
         {% else %}
         trade good.
         {% endif %}
         <br>
         {% endif %}
-        You earned {{ round_payoff }} points this round.
+        You earned {{ round_payoff|c }} points this round.
         <br>
         Your total payoff so far is {{ player.participant.payoff|c }}.
     </p>
