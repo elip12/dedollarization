@@ -48,7 +48,7 @@
         {% endif %}
         You earned {{ round_payoff }} points this round.
         <br>
-        Your total payoff so far is {{ player.participant.payoff }}.
+        Your total payoff so far is {{ player.participant.payoff|c }}.
     </p>
 
     {% next_button %}

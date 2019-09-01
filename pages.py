@@ -85,6 +85,7 @@ class Results(Page):
             other_role_pre = 'Producer'
         token_color = initial_token_color if initial_token_color \
             else new_token_color
+        self.player.set_payoffs(round_payoff)
         return {
             'token_color': token_color,
             'role_pre': role_pre,

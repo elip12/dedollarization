@@ -72,6 +72,7 @@ class Subsession(BaseSubsession):
                 for p_index, p in enumerate(g.get_players()):
                     p.participant.vars['group_color'] = group_color
                     p.participant.vars['token'] = roles[p_index]
+                    #p.participant.payoff = c(0)
         else:
             self.group_like_round(1)
             
@@ -93,6 +94,6 @@ class Player(BasePlayer):
     trade_succeeded = models.BooleanField()
     round_payoff = models.CurrencyField()
 
-    def set_payoffs(self):
-        self.participant.payoff += self.round_payoff
+    def set_payoffs(self, round_payoff):
+        self.payoff += round_payoff
         # possible more here?
