@@ -91,7 +91,6 @@ class Player(BasePlayer):
         ]
     )
     trade_succeeded = models.BooleanField()
-    round_payoff = models.CurrencyField()
 
     def set_payoffs(self, round_payoff):
         self.payoff += round_payoff

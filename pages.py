@@ -54,7 +54,6 @@ class Results(Page):
     form_fields = [
         'token_color',
         'trade_succeeded',
-        'round_payoff',
     ]
     
     def vars_for_template(self):
@@ -69,8 +68,6 @@ class Results(Page):
 
         # switching tokens
         initial_token_color = self.player.participant.vars['token']
-        print('old', self.player.id_in_group, self.player.participant.vars['token'])
-        print('old', self.player.id_in_group,other_player.participant.vars['token'])
         if self.player.trade_attempted and other_player.trade_attempted:
             
             self.player.participant.vars['token'] = other_token
@@ -79,8 +76,6 @@ class Results(Page):
             trade_succeeded = True
             if initial_token_color != 'None':
                 round_payoff = c(20)
-            print('new', self.player.id_in_group,self.player.participant.vars['token'])
-            print('new', self.player.id_in_group,other_player.participant.vars['token'])
         else:
             trade_succeeded = False
         new_token_color = self.player.participant.vars['token']

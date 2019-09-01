@@ -7,7 +7,6 @@
       {
         document.getElementById("token_color_").value = "{{ token_color }}";
         document.getElementById("trade_succeeded_").value = "{{ trade_succeeded }}";
-        document.getElementById("round_payoff_").value = "{{ round_payoff|c }}";
       }
     </script>
 {% endblock %}
@@ -20,7 +19,6 @@
     {{ form.errors }} 
     <input type="hidden" name="token_color" id="token_color_">
     <input type="hidden" name="trade_succeeded" id="trade_succeeded_">
-    <input type="hidden" name="round_payoff" id="round_payoff_"> 
 
     <p>
         This round, you were a {{ role_pre }}.
