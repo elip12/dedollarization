@@ -19,15 +19,7 @@ SESSION_CONFIGS = [
  1. Navigate to `localhost:8000` in your browser.
  1. Play the experiment.
 
- Please tell me about any bugs that come up, I know there are a few.
- This is a prototype; not all features of the game have been implemented.
+Change the number of players: change `players_per_group` in models.py,
+and for the demo change `num_demo_participants` in settings.py.
 
- For ease of testing, I am using 2 groups of 4 instead of 2 groups of 8.
- To change this, change num_demo_participants in settings.py,
- and players_per_group in models.py.
-
- Features not yet implemented:
-    - storing tokens costs money
-    - payoffs
-    - ...
-
+Change the probabilities and the penalties for storing tokens in models.py
