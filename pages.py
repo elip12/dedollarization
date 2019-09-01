@@ -2,6 +2,10 @@ from otree.api import Currency as c, currency_range
 from ._builtin import Page, WaitPage
 from .models import Constants
 
+# Description of the game: How to play and returns expected
+class Introduction(Page):
+    pass
+
 class Trade(Page):
     timeout_seconds = 30
     form_model = 'player'
@@ -39,6 +43,7 @@ class Trade(Page):
             self.player.trade_attempted = False
 
 class ResultsWaitPage(WaitPage):
+    body_text = 'Waiting for other participants to decide.'
     wait_for_all_groups = True
     def after_all_players_arrive(self):
         pass
@@ -104,7 +109,9 @@ class Results(Page):
 
 
 page_sequence = [
+    Introduction,
     Trade,
     ResultsWaitPage,
     Results
 ]
+
