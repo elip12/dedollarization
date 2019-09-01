@@ -11,6 +11,8 @@ class Constants(BaseConstants):
     num_rounds = 8
     endowment = c(50)
     probability_of_same_group = .5
+    token_store_cost_homogeneous = 1
+    token_store_cost_heterogeneous = 2
 
 class Subsession(BaseSubsession):
     def creating_session(self):
@@ -92,6 +94,10 @@ class Player(BasePlayer):
     )
     trade_succeeded = models.BooleanField()
 
-    def set_payoffs(self, round_payoff):
-        self.payoff += round_payoff
-
+    def set_payoffs(self, round_payoff, token_color, penalize):
+        self.payoff = round_payoff
+        if penalize:
+            if self.participant.vars['group_color'] == token_color:
+                self.payoff -= c(Constants.token_store_cost_homogeneous)
+            elif token_color != 'None':
+                self.payoff -= c(Constants.token_store_cost_heterogeneous)

@@ -4,7 +4,8 @@ from .models import Constants
 
 # Description of the game: How to play and returns expected
 class Introduction(Page):
-    pass
+    def is_displayed(self):
+        return self.round_number == 1
 
 class Trade(Page):
     timeout_seconds = 30
@@ -89,7 +90,7 @@ class Results(Page):
             other_role_pre = 'Producer'
         token_color = initial_token_color if initial_token_color != 'None' \
             else new_token_color
-        self.player.set_payoffs(round_payoff)
+        self.player.set_payoffs(round_payoff, new_token_color, !trade_succeeded)
         return {
             'token_color': token_color,
             'role_pre': role_pre,
