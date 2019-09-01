@@ -1,5 +1,0 @@
-TODO:
-- implement all the templates
-- implement the random grouping of size 2
-- implement some sort of config thing (later)
-
