@@ -94,10 +94,9 @@ class Player(BasePlayer):
     )
     trade_succeeded = models.BooleanField()
 
-    def set_payoffs(self, round_payoff, token_color, penalize):
+    def set_payoffs(self, round_payoff, token_color):
         self.payoff = round_payoff
-        if penalize:
-            if self.participant.vars['group_color'] == token_color:
-                self.payoff -= c(Constants.token_store_cost_homogeneous)
-            elif token_color != 'None':
-                self.payoff -= c(Constants.token_store_cost_heterogeneous)
+        if self.participant.vars['group_color'] == token_color:
+            self.payoff -= c(Constants.token_store_cost_homogeneous)
+        elif token_color != 'None':
+            self.payoff -= c(Constants.token_store_cost_heterogeneous)
