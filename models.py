@@ -72,7 +72,6 @@ class Subsession(BaseSubsession):
                 for p_index, p in enumerate(g.get_players()):
                     p.participant.vars['group_color'] = group_color
                     p.participant.vars['token'] = roles[p_index]
-                    print(p.participant.vars['token'])
         else:
             self.group_like_round(1)
             

@@ -7,6 +7,7 @@ from .models import Constants
 class PlayerBot(Bot):
 
     def play_round(self):
+        yield (pages.Introduction)
         yield (pages.Trade, {
             'trade_attempted': False,
             'role_pre': 'Producer',
