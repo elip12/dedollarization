@@ -90,7 +90,12 @@ class Results(Page):
             other_role_pre = 'Producer'
         token_color = initial_token_color if initial_token_color != 'None' \
             else new_token_color
-        self.player.set_payoffs(round_payoff, new_token_color)
+        # penalties
+        if self.participant.vars['group_color'] == new_token_color:
+            round_payoff -= c(self.session.config['token_store_cost_homogeneous'])
+        elif token_color != 'None':
+            round_payoff -= c(self.session.config['token_store_cost_heterogeneous'])
+        self.player.set_payoffs(round_payoff)
         return {
             'token_color': token_color,
             'role_pre': role_pre,
