@@ -6,8 +6,9 @@ import random
 
 
 class Constants(BaseConstants):
-    name_in_url = 'consumer_producer'
+    name_in_url = 'producer_consumer'
     players_per_group = 8
+    num_rounds = 50
     endowment = c(50)
 
 class Subsession(BaseSubsession):
@@ -91,6 +92,6 @@ class Player(BasePlayer):
     )
     trade_succeeded = models.BooleanField()
 
-    def set_payoffs(self, round_payoff, token_color):
+    def set_payoffs(self, round_payoff):
         self.payoff = round_payoff
 
