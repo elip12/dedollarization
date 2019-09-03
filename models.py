@@ -10,9 +10,21 @@ class Constants(BaseConstants):
     players_per_group = 4
     num_rounds = 8
     endowment = c(50)
-    probability_of_same_group = .5
-    token_store_cost_homogeneous = 1
-    token_store_cost_heterogeneous = 2
+    
+    treatment = 1
+    
+    if treatment == 1:
+        probability_of_same_group = .5
+        token_store_cost_homogeneous = 0
+        token_store_cost_heterogeneous = 0
+    elif treatment == 2:
+        probability_of_same_group = .75
+        token_store_cost_homogeneous = 0
+        token_store_cost_heterogeneous = 0
+    elif treatment == 3:
+        probability_of_same_group = .75
+        token_store_cost_homogeneous = 1
+        token_store_cost_heterogeneous = 2
 
 class Subsession(BaseSubsession):
     def creating_session(self):
