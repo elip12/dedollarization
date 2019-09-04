@@ -5,72 +5,60 @@
     <script type="text/javascript">
       window.onload = function () 
       {
-        document.getElementById("id_role_pre_").value = "{{ role_pre }}";
-        document.getElementById("other_role_pre_").value = "{{ other_role_pre }}";
-        document.getElementById("group_color_").value = "{{ group_color }}";
-        document.getElementById("other_group_color_").value = "{{ other_group_color }}";
         document.getElementById("trade_attempted_").value = "{{ False }}";
       }
     </script>
 {% endblock %}
 
 {% block title %}
-    Trading Page
+    Intercambio: Ronda {{ subsession.round_number }}
 {% endblock %}
 
 {% block content %}
-
-    {{ form.errors }}
-    <input type="hidden" name="role_pre" id="id_role_pre_"/>
-    <input type="hidden" name="other_role_pre" id="other_role_pre_"/>
-    <input type="hidden" name="group_color" id="group_color_"/>
-    <input type="hidden" name="other_group_color" id="other_group_color_"/>
-
     <p>
-        These are some instructions.
+        En esta ronda, deberás considerar la siguiente información:
         <br>
-        Your group color is {{ group_color }}.
+        Perteneces al grupo {{ group_color }}.
         <br>
         {% if token_color != 'None' %}
-        You have a {{ token_color }} token.
+        Tienes una ficha de color {{ token_color }}.
         <br>
-        Your role is Consumer.
+        Eres un Comprador.
         <br>
         {% else %}
-        You do not have a token.
+        Tienes un bien de consumo.
         <br>
-        Your role is Producer.
+        Eres un Vendedor.
         <br>
         {% endif %}
-        
-        Your trading partner's group color is {{ other_group_color }}.
+
+        Tu contraparte pertenece al grupo {{ other_group_color }}.
         <br>
         {% if other_token_color != 'None' %}
-        Your trading partner has a {{ other_token_color }} token.
+        Tu contraparte tiene una ficha de color {{ other_token_color }}.
         <br>
-        Their role is Consumer.
+        Tu contraparte es un Comprador.
         <br>
         {% else %}
-        Your trading partner does not have a token.
+        Tu contraparte tiene un bien de consumo.
         <br>
-        Their role is Producer.
+        Tu contraparte es un Vendedor.
         <br>
         {% endif %}
     </p>
-    
     {% if role_pre == other_role_pre %}
     <p>
-        You cannot trade with your trading partner, since you are both
-        {{ role_pre }}s.
+        No puedes intercambiar con tu contraparte, pues ambos son
+        {{ role_pre }}es.
     </p>
     <input type="hidden" name="trade_attempted" id="trade_attempted_"/>
     {% else %}
     <p>
-        Would you like to offer to trade your
+        ¿Te gustaría intercambiar
         {% if token_color != 'None' %}
-        token for your partner's trading good?
+        tu ficha por el bien de consumo de tu contraparte?
         {% else %}
-        trading good for your partner's token?
+        tu bien de consumo por el token de tu contraparte?
         {% endif %}
     </p>
     {% formfield player.trade_attempted %}

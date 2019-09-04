@@ -12,41 +12,41 @@
 {% endblock %}
 
 {% block title %}
-    Results
+    Resultados: Ronda {{ subsession.round_number }}
 {% endblock %}
 
 {% block content %}
-    {{ form.errors }} 
+    {{ form.errors }}
     <input type="hidden" name="token_color" id="token_color_">
     <input type="hidden" name="trade_succeeded" id="trade_succeeded_">
 
     <p>
-        This round, you were a {{ role_pre }}.
+        En esta ronda, fuiste un {{ role_pre }}.
         <br>
         {% if initial_token_color != 'None' %}
-        You had a {{ initial_token_color }} token.
+        Tuviste una ficha de color {{ initial_token_color }}.
         <br>
         {% endif %}
-        You were randomly paired with a {{ other_role_pre }}.
+        Fuiste aleatoriamente emparejado con un {{ other_role_pre }}.
         <br>
         {% if player.trade_attempted %}
-        You attempted to trade.
+        Intentaste intercambiar.
         <br>
         {% else %}
-        You did or could not attempt to trade.
+        No pudiste o no intentaste intercambiar.
         {% endif %}
         {% if trade_succeeded %}
-        You successfully traded. You now have a
+        Realizaste un intercambio. Ahora tienes
         {% if new_token_color != 'None' %}
-        {{ new_token_color }} token.
+        una ficha de color {{ new_token_color }}.
         {% else %}
-        trade good.
+        un bien de consumo.
         {% endif %}
         <br>
         {% endif %}
-        You earned {{ round_payoff|c }} points this round.
+        Obtuviste {{ round_payoff|c }} puntos en esta ronda.
         <br>
-        Your total payoff so far is {{ player.participant.payoff|c }}.
+        Tu pago acumulado hasta el momento es de {{ player.participant.payoff|c }}.
     </p>
 
     {% next_button %}
