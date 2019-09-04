@@ -61,7 +61,8 @@ class Results(Page):
         round_payoff = c(0)
         # switching tokens
         initial_token_color = self.player.participant.vars['token']
-        if self.player.trade_attempted and other_player.trade_attempted:    
+        if self.player.trade_attempted and other_player.trade_attempted \
+            and not other_player.trade_succeeded: # to avoid switching back again    
             self.player.participant.vars['token'] = other_token
             other_player.participant.vars['token'] = initial_token_color
             trade_succeeded = True
