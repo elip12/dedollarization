@@ -7,8 +7,8 @@ import random
 
 class Constants(BaseConstants):
     name_in_url = 'producer_consumer'
-    players_per_group = 8
-    num_rounds = 50
+    players_per_group = 4
+    num_rounds = 2
     endowment = c(50)
 
 class Subsession(BaseSubsession):

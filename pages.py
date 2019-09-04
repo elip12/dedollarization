@@ -11,10 +11,6 @@ class Trade(Page):
     timeout_seconds = 30
     form_model = 'player'
     form_fields = [
-        'role_pre',
-        'other_role_pre',
-        'group_color',
-        'other_group_color',
         'trade_attempted',
     ]
 
@@ -29,6 +25,10 @@ class Trade(Page):
         other_group_color = other_player.participant.vars['group_color']
         role_pre = 'Consumer' if self.player.participant.vars['token'] != 'None' else 'Producer'
         other_role_pre = 'Consumer' if other_token != 'None' else 'Producer'
+        self.player.role_pre = role_pre
+        self.player.other_role_pre = other_role_pre
+        self.player.group_color = self.player.participant.vars['group_color']
+        self.player.other_group_color = other_group_color
         return {
             'role_pre': role_pre,
             'other_role_pre': other_role_pre,
@@ -37,7 +37,6 @@ class Trade(Page):
             'other_token_color': other_token,
             'other_group_color': other_group_color,
         }
-
 
     def before_next_page(self):
         if self.timeout_happened:
@@ -51,11 +50,6 @@ class ResultsWaitPage(WaitPage):
 
 class Results(Page):
     timeout_seconds = 30
-    form_model = 'player'
-    form_fields = [
-        'token_color',
-        'trade_succeeded',
-    ]
     
     def vars_for_template(self):
         group_id = 0 if self.player.participant.vars['group_color'] == 'Red' else 1 
@@ -64,16 +58,12 @@ class Results(Page):
         other_player = self.subsession.get_groups()[other_group].get_player_by_id(other_id + 1)
         other_token = other_player.participant.vars['token']
         other_group_color = other_player.participant.vars['group_color']
-        
         round_payoff = c(0)
-
         # switching tokens
         initial_token_color = self.player.participant.vars['token']
-        if self.player.trade_attempted and other_player.trade_attempted:
-            
+        if self.player.trade_attempted and other_player.trade_attempted:    
             self.player.participant.vars['token'] = other_token
             other_player.participant.vars['token'] = initial_token_color
-            
             trade_succeeded = True
             if initial_token_color != 'None':
                 round_payoff = c(20)
@@ -96,6 +86,8 @@ class Results(Page):
         elif token_color != 'None':
             round_payoff -= c(self.session.config['token_store_cost_heterogeneous'])
         self.player.set_payoffs(round_payoff)
+        self.player.token_color = token_color
+        self.player.trade_succeeded = trade_succeeded
         return {
             'token_color': token_color,
             'role_pre': role_pre,

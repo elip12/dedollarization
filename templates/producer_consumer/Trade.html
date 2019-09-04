@@ -5,10 +5,6 @@
     <script type="text/javascript">
       window.onload = function () 
       {
-        document.getElementById("id_role_pre_").value = "{{ role_pre }}";
-        document.getElementById("other_role_pre_").value = "{{ other_role_pre }}";
-        document.getElementById("group_color_").value = "{{ group_color }}";
-        document.getElementById("other_group_color_").value = "{{ other_group_color }}";
         document.getElementById("trade_attempted_").value = "{{ False }}";
       }
     </script>
@@ -19,13 +15,6 @@
 {% endblock %}
 
 {% block content %}
-
-    {{ form.errors }}
-    <input type="hidden" name="role_pre" id="id_role_pre_"/>
-    <input type="hidden" name="other_role_pre" id="other_role_pre_"/>
-    <input type="hidden" name="group_color" id="group_color_"/>
-    <input type="hidden" name="other_group_color" id="other_group_color_"/>
-
     <p>
         These are some instructions.
         <br>
@@ -57,7 +46,6 @@
         <br>
         {% endif %}
     </p>
-    
     {% if role_pre == other_role_pre %}
     <p>
         You cannot trade with your trading partner, since you are both
