@@ -1,35 +1,21 @@
 {% extends "global/Page.html" %}
 {% load otree %}
 
-{% block scripts %}
-    <script type="text/javascript">
-      window.onload = function () 
-      {
-        document.getElementById("token_color_").value = "{{ token_color }}";
-        document.getElementById("trade_succeeded_").value = "{{ trade_succeeded }}";
-      }
-    </script>
-{% endblock %}
-
 {% block title %}
     Results: Round {{ subsession.round_number }}
 {% endblock %}
 
 {% block content %}
-    {{ form.errors }} 
-    <input type="hidden" name="token_color" id="token_color_">
-    <input type="hidden" name="trade_succeeded" id="trade_succeeded_">
-
     <p>
         This round, you were a {{ role_pre }}.
         <br>
-        {% if initial_token_color != 'None' %}
-        You had a {{ initial_token_color }} token.
+        {% if token_color != Constants.trade_good %}
+        You had a {{ token_color }} token.
         <br>
         {% endif %}
         You were randomly paired with a {{ other_role_pre }}.
         <br>
-        {% if player.trade_attempted %}
+        {% if trade_attempted %}
         You attempted to trade.
         <br>
         {% else %}
@@ -37,7 +23,7 @@
         {% endif %}
         {% if trade_succeeded %}
         You successfully traded. You now have a
-        {% if new_token_color != 'None' %}
+        {% if new_token_color != Constants.trade_good %}
         {{ new_token_color }} token.
         {% else %}
         trade good.

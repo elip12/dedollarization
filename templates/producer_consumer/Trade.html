@@ -20,7 +20,7 @@
         <br>
         Your group color is {{ group_color }}.
         <br>
-        {% if token_color != 'None' %}
+        {% if token_color != Constants.trade_good %}
         You have a {{ token_color }} token.
         <br>
         Your role is Consumer.
@@ -34,7 +34,7 @@
         
         Your trading partner's group color is {{ other_group_color }}.
         <br>
-        {% if other_token_color != 'None' %}
+        {% if other_token_color != Constants.trade_good %}
         Your trading partner has a {{ other_token_color }} token.
         <br>
         Their role is Consumer.
@@ -55,7 +55,7 @@
     {% else %}
     <p>
         Would you like to offer to trade your
-        {% if token_color != 'None' %}
+        {% if token_color != Constants.trade_good %}
         token for your partner's trading good?
         {% else %}
         trading good for your partner's token?

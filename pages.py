@@ -15,15 +15,15 @@ class Trade(Page):
     def vars_for_template(self):
         # self.session.vars['pairs'] is a list of rounds.
         # each round is a dict of (group,id):(group,id) pairs.
-        group_id = 0 if self.participant.vars['group_color'] == 'Red' else 1 
+        group_id = 0 if self.participant.vars['group_color'] == Constants.red else 1 
         other_group, other_id = self.session.vars['pairs'][self.round_number - 1][
             (group_id, self.player.id_in_group - 1)]
         other_player = self.subsession.get_groups()[other_group].get_player_by_id(other_id + 1)
         
         self.player.token_color = self.player.participant.vars['token']
         self.player.other_token_color = other_player.participant.vars['token']
-        self.player.role_pre = 'Consumer' if self.player.participant.vars['token'] != 'None' else 'Producer'
-        self.player.other_role_pre = 'Consumer' if other_token != 'None' else 'Producer'
+        self.player.role_pre = 'Consumer' if self.player.participant.vars['token'] != Constants.trade_good else 'Producer'
+        self.player.other_role_pre = 'Consumer' if self.player.other_token_color != Constants.trade_good else 'Producer'
         self.player.group_color = self.player.participant.vars['group_color']
         self.player.other_group_color = other_player.participant.vars['group_color']
         
@@ -51,62 +51,56 @@ class Results(Page):
     
     def vars_for_template(self):
         # identify trading partner
-        group_id = 0 if self.player.participant.vars['group_color'] == 'Red' else 1 
+        group_id = 0 if self.player.participant.vars['group_color'] == Constants.red else 1 
+        print(group_id, self.player.id_in_group)
         other_group, other_id = self.session.vars['pairs'][self.round_number - 1][
             (group_id, self.player.id_in_group - 1)]
-        # only 1 person per trading pair does the trading logic
-        if group_id < other_group or (group_id == other_group \
+        # get other player object
+        other_player = self.subsession.get_groups()[other_group].get_player_by_id(other_id + 1)
+        # define initial round payoffs
+        round_payoff = c(0)
+        other_round_payoff = c(0)
+        # logic for switching objects on trade
+        # if both players attempted a trade, it must be true
+        # that one is a producer and one is a consumer.
+        # Only 1 player performs the switch
+        if self.player.trade_attempted and other_player.trade_attempted: 
+            # set players' trade_succeeded field
+            self.player.trade_succeeded = True
+            # give the consumer a payoff
+            if self.player.role_pre == 'Consumer':
+                round_payoff = Constants.reward
+            # only 1 player actually switches the goods
+            if group_id < other_group or (group_id == other_group \
             and self.player.id_in_group < other_id):
-            # get other player object
-            other_player = self.subsession.get_groups()[other_group].get_player_by_id(other_id + 1)
-            # define initial round payoffs
-            round_payoff = c(0)
-            other_round_payoff = c(0)
-            # logic for switching objects on trade
-            # if both players attempted a trade, it must be true
-            # that one is a producer and one is a consumer
-            if self.player.trade_attempted and other_player.trade_attempted:
                 # switch tokens
                 self.player.participant.vars['token'] = self.player.other_token_color
                 other_player.participant.vars['token'] = self.player.token_color
-                # set players' trade_succeeded field
-                self.player.trade_succeeded = True
-                other_player.trade_succeeded = True
-                # give the consumer a payoff
-                if self.player.role_pre == 'Consumer':
-                    round_payoff = Constants.reward
-                else:
-                    other_round_payoff = Constants.reward
-            else:
-                self.player.trade_succeeded = False
-                other_player.trade_succeeded = False
-            # penalties for self
-            if self.player.participant.vars['token'] == self.participant.vars['group_color']:
-                round_payoff -= c(self.session.config['token_store_cost_homogeneous'])
-            elif self.player.participant.vars['token'] != 'None':
-                round_payoff -= c(self.session.config['token_store_cost_heterogeneous'])
-            # set penalties for other
-            if other_player.participant.vars['token'] == self.participant.vars['group_color']:
-                other_round_payoff -= c(self.session.config['token_store_cost_homogeneous'])
-            elif other_player.participant.vars['token'] != 'None':
-                other_round_payoff -= c(self.session.vars['token_store_cost_heterogeneous'])
-            # set payoffs
-            self.player.set_payoffs(round_payoff)
-            other_player.set_payoffs(other_round_payoff)
+        else:
+            self.player.trade_succeeded = False
+        # penalties for self
+        if self.player.participant.vars['token'] == self.participant.vars['group_color']:
+            round_payoff -= c(self.session.config['token_store_cost_homogeneous'])
+        elif self.player.participant.vars['token'] != Constants.trade_good:
+            round_payoff -= c(self.session.config['token_store_cost_heterogeneous'])
+        # set payoffs
+        self.player.set_payoffs(round_payoff)
 
-            # TODO: change return dict to use new var names, make red, blue, none into constants. red, blue, trade_good or something, identify why thing was subtracting 2 0sometimes.
+        # TODO: change return dict to use new var names, make red, blue, none into constants. red, blue, trade_good or something, identify why thing was subtracting 2 0sometimes.
+        if self.player.trade_succeeded and self.player.role_pre == 'Consumer':
+            new_token_color = self.player.other_token_color
+        else:
+            new_token_color = Constants.trade_good
         return {
-            'token_color': token_color,
-            'role_pre': role_pre,
-            'other_role_pre': other_role_pre,
+            'token_color': self.player.token_color,
+            'role_pre': self.player.role_pre,
+            'other_role_pre': self.player.other_role_pre,
             'trade_attempted': self.player.trade_attempted,
-            'initial_token_color': initial_token_color,
-            'group_color': self.player.participant.vars['group_color'],
-            'trade_succeeded': trade_succeeded,
+            'group_color': self.player.group_color,
+            'trade_succeeded': self.player.trade_succeeded,
             'new_token_color': new_token_color,
-            'round_payoff': round_payoff,
+            'round_payoff': self.player.payoff,
         }
-
 
 page_sequence = [
     Introduction,

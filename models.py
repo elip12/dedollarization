@@ -11,6 +11,9 @@ class Constants(BaseConstants):
     num_rounds = 2
     endowment = c(50)
     reward = c(20)
+    red = 'Red'
+    blue = 'Blue'
+    trade_good = 'Trade Good'
 
 class Subsession(BaseSubsession):
     def creating_session(self):
@@ -60,10 +63,10 @@ class Subsession(BaseSubsession):
             # there will always only be 2 groups
             for g_index, g in enumerate(self.get_groups()):
                 # set group color for player
-                group_color = 'Red' if g_index == 0 else 'Blue'
+                group_color = Constants.red if g_index == 0 else Constants.blue
                 # define random roles for players (producer/consumer),
                 # ensuring half are producers and half are consumers
-                roles = ['None' for n in range(int(Constants.players_per_group / 2))]
+                roles = [Constants.trade_good for n in range(int(Constants.players_per_group / 2))]
                 roles += [group_color for n in range(
                     int(Constants.players_per_group / 2))]
                 random.shuffle(roles)
@@ -82,9 +85,9 @@ class Group(BaseGroup):
 class Player(BasePlayer):
     role_pre = models.StringField() # 'Producer', 'Consumer'
     other_role_pre = models.StringField()
-    token_color = models.StringField() # 'Red', 'Blue', None
+    token_color = models.StringField() # Constants.red, Constants.blue, None
     other_token_color = models.StringField()
-    group_color = models.StringField() # 'Red', 'Blue'
+    group_color = models.StringField() # Constants.red, Constants.blue
     other_group_color = models.StringField()
     trade_attempted = models.BooleanField(
         choices=[
