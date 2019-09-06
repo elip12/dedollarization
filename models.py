@@ -8,8 +8,9 @@ import random
 class Constants(BaseConstants):
     name_in_url = 'producer_consumer'
     players_per_group = 8
-    num_rounds = 50
+    num_rounds = 2
     endowment = c(50)
+    reward = c(20)
 
 class Subsession(BaseSubsession):
     def creating_session(self):
@@ -82,6 +83,7 @@ class Player(BasePlayer):
     role_pre = models.StringField() # 'Producer', 'Consumer'
     other_role_pre = models.StringField()
     token_color = models.StringField() # 'Red', 'Blue', None
+    other_token_color = models.StringField()
     group_color = models.StringField() # 'Red', 'Blue'
     other_group_color = models.StringField()
     trade_attempted = models.BooleanField(
