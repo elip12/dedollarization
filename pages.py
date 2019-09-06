@@ -84,7 +84,7 @@ class Results(Page):
         # penalties
         if self.participant.vars['group_color'] == new_token_color:
             round_payoff -= c(self.session.config['token_store_cost_homogeneous'])
-        elif token_color != 'None':
+        elif new_token_color != 'None':
             round_payoff -= c(self.session.config['token_store_cost_heterogeneous'])
         self.player.set_payoffs(round_payoff)
         self.player.token_color = token_color
