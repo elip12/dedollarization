@@ -33,10 +33,10 @@ class PlayerBot(Bot):
         other_player = self.subsession.get_groups()[other_group].get_player_by_id(other_id + 1)
        
         # get states before submitting any forms
-        group_color = self.participant.vars['group_color']
+        group_color = self.player.participant.vars['group_color']
         token_color = self.player.participant.vars['token']
         other_token_color = other_player.participant.vars['token']
-        role_pre = 'Consumer' if self.player.participant.vars['token'] != Constants.trade_good else 'Producer'
+        role_pre = 'Consumer' if token_color != Constants.trade_good else 'Producer'
         other_role_pre = 'Consumer' if other_token_color != Constants.trade_good else 'Producer'
         payoff = self.player.payoff
         money = self.player.participant.payoff
@@ -44,9 +44,17 @@ class PlayerBot(Bot):
         # logic for whether you trade or not. 
         if role_pre == other_role_pre:
             trade_attempted = False
+            # assert(f'You cannot trade' in self.html)
         else:
             assert(token_color != other_token_color)
+            # assert(f'Would you like to offer to trade' in self.html)
             trade_attempted = True if random.random() < 0.8 else False
+
+        # check the html
+        # assert(f'Your role is {role_pre}' in self.html)
+        # assert(f'Their role is {other_role_pre}' in self.html)
+
+
         # play the trading page
         yield (pages.Trade, { 'trade_attempted': trade_attempted })
         # at this point, all fields for the round have been recorded
@@ -57,6 +65,11 @@ class PlayerBot(Bot):
         # Assertion tests
         if trade_attempted and other_trade_attempted:
             assert(self.player.trade_succeeded)
+            assert(trade_attempted == self.player.trade_attempted)
+            assert(role_pre == self.player.role_pre)
+            assert(other_role_pre == self.player.other_role_pre)
+            assert(self.player.role_pre != self.player.other_role_pre)
+            assert(self.player.token_color != self.player.other_token_color)
         if trade_attempted and not other_trade_attempted:
             assert(not self.player.trade_succeeded)
         if not trade_attempted and other_trade_attempted:
@@ -87,7 +100,7 @@ class PlayerBot(Bot):
         if self.player.participant.vars['token'] == Constants.trade_good:
             assert(self.player.payoff >= 0)
         assert(self.player.participant.payoff == money + self.player.payoff)
-        
+    
         # submit the results page
         yield (pages.Results)
 

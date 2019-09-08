@@ -98,10 +98,17 @@ class Results(Page):
             'round_payoff': self.player.payoff,
         }
 
+class PostResultsWaitPage(WaitPage):
+    body_text = 'Waiting for other participants to finish viewing results.'
+    wait_for_all_groups = True
+    def after_all_players_arrive(self):
+        pass
+
 page_sequence = [
     Introduction,
     Trade,
     ResultsWaitPage,
-    Results
+    Results,
+    PostResultsWaitPage,
 ]
 
