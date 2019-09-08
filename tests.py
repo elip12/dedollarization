@@ -45,11 +45,10 @@ class PlayerBot(Bot):
         if role_pre == other_role_pre:
             trade_attempted = False
         else:
+            assert(token_color != other_token_color)
             trade_attempted = True if random.random() < 0.8 else False
         # play the trading page
         yield (pages.Trade, { 'trade_attempted': trade_attempted })
-        # submit the results page
-        yield (pages.Results)
         # at this point, all fields for the round have been recorded
         # we need to refersh the other_player object
         other_player = self.subsession.get_groups()[other_group].get_player_by_id(other_id + 1)
@@ -89,4 +88,6 @@ class PlayerBot(Bot):
             assert(self.player.payoff >= 0)
         assert(self.player.participant.payoff == money + self.player.payoff)
         
+        # submit the results page
+        yield (pages.Results)
 
