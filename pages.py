@@ -25,8 +25,7 @@ class Trade(Page):
         self.player.role_pre = 'Consumer' if self.player.participant.vars['token'] != Constants.trade_good else 'Producer'
         self.player.other_role_pre = 'Consumer' if self.player.other_token_color != Constants.trade_good else 'Producer'
         self.player.group_color = self.player.participant.vars['group_color']
-        self.player.other_group_color = other_player.participant.vars['group_color']
-        
+        self.player.other_group_color = other_player.participant.vars['group_color']        
         return {
             'role_pre': self.player.role_pre,
             'other_role_pre': self.player.other_role_pre,
@@ -52,7 +51,6 @@ class Results(Page):
     def vars_for_template(self):
         # identify trading partner
         group_id = 0 if self.player.participant.vars['group_color'] == Constants.red else 1 
-        print(group_id, self.player.id_in_group)
         other_group, other_id = self.session.vars['pairs'][self.round_number - 1][
             (group_id, self.player.id_in_group - 1)]
         # get other player object
@@ -65,17 +63,17 @@ class Results(Page):
         # that one is a producer and one is a consumer.
         # Only 1 player performs the switch
         if self.player.trade_attempted and other_player.trade_attempted: 
-            # set players' trade_succeeded field
-            self.player.trade_succeeded = True
-            # give the consumer a payoff
-            if self.player.role_pre == 'Consumer':
-                round_payoff = Constants.reward
             # only 1 player actually switches the goods
-            if group_id < other_group or (group_id == other_group \
-            and self.player.id_in_group < other_id):
+            if not self.player.trade_succeeded:
                 # switch tokens
                 self.player.participant.vars['token'] = self.player.other_token_color
                 other_player.participant.vars['token'] = self.player.token_color
+                # set players' trade_succeeded field
+                self.player.trade_succeeded = True
+                other_player.trade_succeeded = True
+            # give the consumer a payoff
+            if self.player.role_pre == 'Consumer':
+                round_payoff = Constants.reward
         else:
             self.player.trade_succeeded = False
         # penalties for self
