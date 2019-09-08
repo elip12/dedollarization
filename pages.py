@@ -85,12 +85,10 @@ class Results(Page):
             round_payoff -= c(self.session.config['token_store_cost_heterogeneous'])
         # set payoffs
         self.player.set_payoffs(round_payoff)
-
-        # TODO: change return dict to use new var names, make red, blue, none into constants. red, blue, trade_good or something, identify why thing was subtracting 2 0sometimes.
-        if self.player.trade_succeeded and self.player.role_pre == 'Consumer':
+        if self.player.trade_succeeded:
             new_token_color = self.player.other_token_color
         else:
-            new_token_color = Constants.trade_good
+            new_token_color = self.player.token_color
         return {
             'token_color': self.player.token_color,
             'role_pre': self.player.role_pre,
