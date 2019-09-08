@@ -8,7 +8,7 @@ import random
 class Constants(BaseConstants):
     name_in_url = 'producer_consumer'
     players_per_group = 8
-    num_rounds = 6
+    num_rounds = 50
     endowment = c(50)
     reward = c(20)
     red = 'Red'
