@@ -9,7 +9,7 @@ really matter.
 ```
 SESSION_CONFIGS = [
     dict(
-        name='consumer_producer',
+        name='producer_consumer',
         num_demo_participants=16,
         app_sequence=['producer_consumer'],
         probability_of_same_group=0.5,
