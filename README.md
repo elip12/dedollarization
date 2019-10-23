@@ -32,3 +32,40 @@ To run the tests: `otree test producer_consumer`. Do this from outer otree direc
 (the one with settings.py, not the one you cloned).
 The tests should not fail. Warnings are fine.
 
+# TODO - Eli and Skyler
+
+### backend: branch `backend-updates`
+- everyone will be only 1 color, the other color will be automated
+    - change models.py, method creating_session
+- automated agent rule:
+	- only accept other color currency
+    - for now, always trade if possible
+- new treatments:
+	- taxes on trading foreign currency:
+        - possibility of both or only 1 player paying tax
+        - at what time during the trade is this tax invoked?
+        - can players be taxed for both accepting and storing foreign currency
+        in the same round?
+
+### frontend: branch `frontend-updates`
+- depict state in more graphical manner
+	- graphical representation of object and tokens
+    - if you have a token, you will see a red or blue coin thing on your screen.
+    - if you have an object, you will see a loaf of bread or something on your screen.
+    - if your trading partner has a coin, you will see their coin thing somewhere else.
+    - same with if they have an object.
+    - changes will be made directly in the templates, using django's if-else
+    syntax, and the images or vectors will be static image files.
+- history table (each row is 1 period)
+	- can use `player.in_round(#)` to get info from previous rounds
+    - shows all pertinent information about your previous trades
+	- wants graph of history as well as table
+        - high charts
+    treatments:
+    1. only stuff about your previous trades
+	2. also how many foreign currencies were accepted in that period for the entire group
+        - easiest way is probably to make a method that cycles through all players
+        in group in all prevoius rounds, so as not to introduce a new data structure
+        that stores specifically foreign currency info
+
+
