@@ -26,6 +26,8 @@ class Trade(Page):
         self.player.other_role_pre = 'Consumer' if self.player.other_token_color != Constants.trade_good else 'Producer'
         self.player.group_color = self.player.participant.vars['group_color']
         self.player.other_group_color = other_player.participant.vars['group_color']        
+        if False: #treatment = 'bots': # or whatever
+            other_player.trade() 
         return {
             'role_pre': self.player.role_pre,
             'other_role_pre': self.player.other_role_pre,
@@ -47,7 +49,7 @@ class ResultsWaitPage(WaitPage):
 
 class Results(Page):
     timeout_seconds = 30
-    
+
     def vars_for_template(self):
         # identify trading partner
         group_id = 0 if self.player.participant.vars['group_color'] == Constants.red else 1 
@@ -87,6 +89,9 @@ class Results(Page):
             new_token_color = self.player.other_token_color
         else:
             new_token_color = self.player.token_color
+        # tell bot to compute its own trade
+        if False: #treatment = 'bots': # or whatever
+            other_player.compute_results()
         return {
             'token_color': self.player.token_color,
             'role_pre': self.player.role_pre,
@@ -97,6 +102,7 @@ class Results(Page):
             'new_token_color': new_token_color,
             'round_payoff': self.player.payoff,
         }
+    
 
 class PostResultsWaitPage(WaitPage):
     body_text = 'Waiting for other participants to finish viewing results.'

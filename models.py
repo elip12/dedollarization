@@ -59,7 +59,18 @@ class Subsession(BaseSubsession):
                     pairs[(1, g2_sample_heterogeneous[i])] = (0,
                         g1_sample_heterogeneous[i])
                 self.session.vars['pairs'].append(pairs)
-                    
+
+            # if there is only 1 group, then we can do another loop after this
+            # one and do the exact same shit, except instantiating bots
+            # instead of getting players with p.
+
+            # if there can be more than 1 group, we can easily just repeat the
+            # loop some number of times for the number of bot groups. And,
+            # we will also need to change the loop above to
+            # do not just 0 and 1 for g index but other numbers, and also change
+            # the method for getting your group index since looking at your
+            # color will not suffice anymore.
+
             # there will always only be 2 groups
             for g_index, g in enumerate(self.get_groups()):
                 # set group color for player
