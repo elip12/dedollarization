@@ -1,3 +1,13 @@
+<style>
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+th, td {
+  padding: 15px;
+}
+</style>
+
 {% extends "global/Page.html" %}
 {% load otree %}
 
@@ -12,6 +22,19 @@
         {% if token_color != Constants.trade_good %}
         You had a {{ token_color }} token.
         <br>
+        
+        {% if token_color == Constants.red %}
+        <img src="{% static "producerConsumerImages/redCoin.png"%}"/>
+        <br>
+        {% endif %}
+        {% if token_color == Constants.blue %}
+        <img src="{% static "producerConsumerImages/blueCoin.png"%}"/>
+        <br> 
+        {% endif %}
+        {% else %}
+        <br>
+        <img src="{% static "producerConsumerImages/object.png"%}"/>
+        <br>
         {% endif %}
         You were randomly paired with a {{ other_role_pre }}.
         <br>
@@ -25,16 +48,49 @@
         You successfully traded. You now have a
         {% if new_token_color != Constants.trade_good %}
         {{ new_token_color }} token.
+        <br>
+        {% if new_token_color == Constants.red %}
+        <img src="{% static "producerConsumerImages/redCoin.png"%}"/>
+        <br>
+        {% endif %}
+        {% if new_token_color == Constants.blue %}
+        <img src="{% static "producerConsumerImages/blueCoin.png"%}"/>
+        <br> 
+        {% endif %}
         {% else %}
         trade good.
+        <br>
+        <img src="{% static "producerConsumerImages/object.png"%}"/>
+        <br>
         {% endif %}
         <br>
         {% endif %}
         You earned {{ round_payoff|c }} points this round.
         <br>
         Your total payoff so far is {{ player.participant.payoff|c }}.
+        
     </p>
 
+    <table>
+        <tr>
+            <th>Round</th>
+            <th>Your Item</th>
+            <th>Partner's Item</th>
+            <th>Traded</th>
+            <th>Payoff</th>
+
+            {% for p in player.in_all_rounds %}
+            <tr>
+                <th>{{ p.round_number }}</th>
+                <th>{{ p.token_color }}</th>
+                <th>{{ p.other_token_color }}</th>
+                <th>{{ p.trade_succeeded }}</th>
+                <th>{{ p.payoff }}</th>
+            </tr>
+            {% endfor %}          
+    </table>
+
+    <br>
     {% next_button %}
 
 {% endblock %}

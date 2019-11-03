@@ -8,7 +8,7 @@ class Introduction(Page):
         return self.round_number == 1
 
 class Trade(Page):
-    timeout_seconds = 30
+    timeout_seconds = 500 #originally 30
     form_model = 'player'
     form_fields = ['trade_attempted']
 
@@ -17,7 +17,7 @@ class Trade(Page):
         # each round is a dict of (group,id):(group,id) pairs.
         group_id = 0 if self.participant.vars['group_color'] == Constants.red else 1 
         other_group, other_id = self.session.vars['pairs'][self.round_number - 1][
-            (group_id, self.player.id_in_group - 1)]
+            (group_id, self.player.id_in_group - 1)] #key error here
         other_player = self.subsession.get_groups()[other_group].get_player_by_id(other_id + 1)
         
         self.player.token_color = self.player.participant.vars['token']
@@ -46,15 +46,17 @@ class ResultsWaitPage(WaitPage):
         pass
 
 class Results(Page):
-    timeout_seconds = 30
+    timeout_seconds = 500 #originally 30
     
     def vars_for_template(self):
+        
         # identify trading partner
         group_id = 0 if self.player.participant.vars['group_color'] == Constants.red else 1 
         other_group, other_id = self.session.vars['pairs'][self.round_number - 1][
             (group_id, self.player.id_in_group - 1)]
         # get other player object
         other_player = self.subsession.get_groups()[other_group].get_player_by_id(other_id + 1)
+        
         # define initial round payoffs
         round_payoff = c(0)
         other_round_payoff = c(0)
@@ -87,8 +89,11 @@ class Results(Page):
             new_token_color = self.player.other_token_color
         else:
             new_token_color = self.player.token_color
+        
+            
         return {
             'token_color': self.player.token_color,
+            'other_token_color': self.player.other_token_color,
             'role_pre': self.player.role_pre,
             'other_role_pre': self.player.other_role_pre,
             'trade_attempted': self.player.trade_attempted,
@@ -96,6 +101,7 @@ class Results(Page):
             'trade_succeeded': self.player.trade_succeeded,
             'new_token_color': new_token_color,
             'round_payoff': self.player.payoff,
+            'round_number': self.round_number          
         }
 
 class PostResultsWaitPage(WaitPage):
