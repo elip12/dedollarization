@@ -8,7 +8,7 @@ class Introduction(Page):
         return self.round_number == 1
 
 class Trade(Page):
-    timeout_seconds = 500 #originally 30
+    timeout_seconds = 30 
     form_model = 'player'
     form_fields = ['trade_attempted']
 
@@ -25,7 +25,9 @@ class Trade(Page):
         self.player.role_pre = 'Consumer' if self.player.participant.vars['token'] != Constants.trade_good else 'Producer'
         self.player.other_role_pre = 'Consumer' if self.player.other_token_color != Constants.trade_good else 'Producer'
         self.player.group_color = self.player.participant.vars['group_color']
-        self.player.other_group_color = other_player.participant.vars['group_color']        
+        self.player.other_group_color = other_player.participant.vars['group_color'] 
+        
+        
         return {
             'role_pre': self.player.role_pre,
             'other_role_pre': self.player.other_role_pre,
@@ -38,6 +40,7 @@ class Trade(Page):
     def before_next_page(self):
         if self.timeout_happened:
             self.player.trade_attempted = False
+             
 
 class ResultsWaitPage(WaitPage):
     body_text = 'Waiting for other participants to decide.'
@@ -46,10 +49,10 @@ class ResultsWaitPage(WaitPage):
         pass
 
 class Results(Page):
-    timeout_seconds = 500 #originally 30
-    
+    timeout_seconds = 30
+
     def vars_for_template(self):
-        
+                
         # identify trading partner
         group_id = 0 if self.player.participant.vars['group_color'] == Constants.red else 1 
         other_group, other_id = self.session.vars['pairs'][self.round_number - 1][
@@ -78,11 +81,13 @@ class Results(Page):
                 round_payoff = Constants.reward
         else:
             self.player.trade_succeeded = False
+            
         # penalties for self
         if self.player.participant.vars['token'] == self.participant.vars['group_color']:
             round_payoff -= c(self.session.config['token_store_cost_homogeneous'])
         elif self.player.participant.vars['token'] != Constants.trade_good:
             round_payoff -= c(self.session.config['token_store_cost_heterogeneous'])
+            
         # set payoffs
         self.player.set_payoffs(round_payoff)
         if self.player.trade_succeeded:
@@ -90,7 +95,19 @@ class Results(Page):
         else:
             new_token_color = self.player.token_color
         
-            
+        #TODO 
+        #count foreign currency transactions
+        #can't calculate transactions until we know which trades have succeeded
+        #this should probably happen (only once per round) before results page
+        #we don't know which trades have succeeded until Results page
+        #maybe change structure? could put trade logic in separate function
+        #transaction count could also be property of subsession (in models?)
+        if self.player.role_pre == 'Producer' and \
+        self.player.other_role_pre == 'Consumer' and \
+        self.player.group_color != self.player.other_token_color and \
+        self.player.trade_succeeded == True:
+            self.player.subsession.fc_transactions += 1 
+        
         return {
             'token_color': self.player.token_color,
             'other_token_color': self.player.other_token_color,
@@ -101,7 +118,8 @@ class Results(Page):
             'trade_succeeded': self.player.trade_succeeded,
             'new_token_color': new_token_color,
             'round_payoff': self.player.payoff,
-            'round_number': self.round_number          
+            'round_number': self.round_number,  
+            'fc_transactions': self.subsession.fc_transactions
         }
 
 class PostResultsWaitPage(WaitPage):
@@ -117,4 +135,5 @@ page_sequence = [
     Results,
     PostResultsWaitPage,
 ]
+
 

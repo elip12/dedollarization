@@ -16,6 +16,10 @@ class Constants(BaseConstants):
     trade_good = 'Trade Good'
 
 class Subsession(BaseSubsession):
+    
+    #tried making transaction count belong to Subsession
+    fc_transactions = models.IntegerField()
+    
     def creating_session(self):
         if self.round_number == 1:
             self.group_randomly()
@@ -43,12 +47,13 @@ class Subsession(BaseSubsession):
                     * self.session.config['probability_of_same_group']))
                 g2_sample_heterogeneous = [x for x in g2
                     if x not in g2_sample_homogeneous]
-                for i in range(0, len(g1_sample_homogeneous), 2):
+                # may be some errors in these loops 
+                for i in range(0, len(g1_sample_homogeneous)-1, 2):
                     pairs[(0, g1_sample_homogeneous[i])] = (0,
-                        g1_sample_homogeneous[i + 1])
-                    pairs[(0, g1_sample_homogeneous[i + 1])] = (0,
+                        g1_sample_homogeneous[i + 1]) #i+1 out of range error when players_per_group < 4
+                    pairs[(0, g1_sample_homogeneous[i + 1])] = (0, 
                         g1_sample_homogeneous[i])
-                for i in range(0, len(g2_sample_homogeneous), 2):
+                for i in range(0, len(g2_sample_homogeneous)-1, 2):
                     pairs[(1, g2_sample_homogeneous[i])] = (1,
                         g2_sample_homogeneous[i + 1])
                     pairs[(1, g2_sample_homogeneous[i + 1])] = (1,
@@ -76,11 +81,17 @@ class Subsession(BaseSubsession):
                     p.participant.vars['group_color'] = group_color
                     p.participant.vars['token'] = roles[p_index]
                     p.participant.payoff += Constants.endowment
+            
         else:
             self.group_like_round(1)
             
+        # set number of transactions back to 0 each round
+        self.fc_transactions = 0
+
+            
 class Group(BaseGroup):
     pass
+    
 
 class Player(BasePlayer):
     role_pre = models.StringField() # 'Producer', 'Consumer'
@@ -96,7 +107,6 @@ class Player(BasePlayer):
         ]
     )
     trade_succeeded = models.BooleanField()
-
+                
     def set_payoffs(self, round_payoff):
         self.payoff = round_payoff
-
