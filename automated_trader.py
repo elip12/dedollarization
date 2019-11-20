@@ -26,6 +26,7 @@ class Round():
         self.group_color = None
         self.trade_attempted = None
         self.trade_succeeded = None
+        self.payoff = None
 
     def over(self):
         if all(vars(self).values()):
@@ -38,65 +39,104 @@ class AutomatedTrader():
         self.__round_data = [Round()]
         self.session = session
         self.id_in_group = id_in_group
-        self.payoff = c(0)
 
-    def trade(self, other_player):
-        group_id = 0 if self.participant.vars['group_color'] == Constants.red else 1
-
-        #FIX THIS
-        # cannot use group_id for indices
-        # group id for players is eithr 0 or 1
-        # group id for traders is either 3 or 4
+    def trade(self, subsession):
+        # self.session.vars['pairs'] is a list of rounds.
+        # each round is a dict of (group,id):(group,id) pairs.
+        group_id = self.participant.vars['group']
+        player_groups = subsession.get_groups()
+        bot_groups = self.session.vars['automated_traders']
+        # gets a another pair
+        # the other pair is the pair that is paired with the current player
         other_group, other_id = self.session.vars['pairs'][self.round_number - 1][
             (group_id, self.id_in_group - 1)]
-       
-        # get states before submitting any forms
-        self.group_color = self.participant.vars['group_color']
+        if other_group < len(player_groups):
+            other_player = player_groups[other_group].get_player_by_id(other_id + 1)
+        else:
+            other_player = bot_groups[(other_group, other_id)]
+
+        # whatever color token they were assigned in models.py
         self.token_color = self.participant.vars['token']
         self.other_token_color = other_player.participant.vars['token']
-        self.role_pre = 'Consumer' if self.token_color != Constants.trade_good else 'Producer'
+
+        # defining roles as in models.py
+        # ensuring opposites, such that half are producers and half are consumers
+        self.role_pre = 'Consumer' if self.participant.vars['token'] != Constants.trade_good else 'Producer'
         self.other_role_pre = 'Consumer' if self.other_token_color != Constants.trade_good else 'Producer'
+
+        # defining group color as in models.py
+        self.group_color = self.participant.vars['group_color']
+        self.other_group_color = other_player.participant.vars['group_color']
 
         # logic for whether you trade or not. 
         if self.role_pre == self.other_role_pre:
             self.trade_attempted = False
         else:
-            self.trade_attempted = True if random.random() < 0.8 else False
+            self.trade_attempted = True
 
-    def compute_results(self):
+    def compute_results(self, subsession):
+        group_id = self.participant.vars['group'] 
+        player_groups = subsession.get_groups()
+        bot_groups = self.session.vars['automated_traders']
+        
         # identify trading partner
-        group_id = 0 if self.player.participant.vars['group_color'] == Constants.red else 1 
+        # similar to above in Trade()
         other_group, other_id = self.session.vars['pairs'][self.round_number - 1][
-            (group_id, self.player.id_in_group - 1)]
+            (group_id, self.id_in_group - 1)]
+        
         # get other player object
-        other_player = self.subsession.get_groups()[other_group].get_player_by_id(other_id + 1)
+        if other_group < len(player_groups):
+            other_player = player_groups[other_group].get_player_by_id(other_id + 1)
+        else:
+            other_player = bot_groups[(other_group, other_id)]
+
         # define initial round payoffs
         round_payoff = c(0)
+
         # logic for switching objects on trade
         # if both players attempted a trade, it must be true
         # that one is a producer and one is a consumer.
         # Only 1 player performs the switch
         if self.trade_attempted and other_player.trade_attempted: 
+            # only 1 player actually switches the goods
+            if not self.trade_succeeded:
+                # switch tokens
+                self.participant.vars['token'] = self.other_token_color
+                other_player.participant.vars['token'] = self.token_color
+                # set players' trade_succeeded field
+                self.trade_succeeded = True
+                other_player.trade_succeeded = True
             # give the consumer a payoff
             if self.role_pre == 'Consumer':
                 round_payoff = Constants.reward
         else:
             self.trade_succeeded = False
+
         # penalties for self
+        # if your token matches your group color
         if self.participant.vars['token'] == self.participant.vars['group_color']:
             round_payoff -= c(self.session.config['token_store_cost_homogeneous'])
+
+        # if your token matches the opposite group color
         elif self.participant.vars['token'] != Constants.trade_good:
             round_payoff -= c(self.session.config['token_store_cost_heterogeneous'])
+
         # set payoffs
         self.set_payoffs(round_payoff)
     
     def set_payoffs(self, round_payoff):
         self.payoff = round_payoff
 
-#    @payoff.setter
-#    def payoff(self, v):
-#        self.payoff = v
-#        self.participant.payoff += v
+    @property
+    def payoff(self):
+        r = self.__round_data[-1]
+        return r.payoff
+
+    @payoff.setter
+    def payoff(self, v):
+        self.__check_round_over()
+        self.__round_data[-1].payoff = v
+        self.participant.payoff += v
     
     def __check_round_over(self):
         r = self.__round_data[-1]

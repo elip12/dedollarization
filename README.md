@@ -35,20 +35,26 @@ The tests should not fail. Warnings are fine.
 # TODO - Eli and Skyler
 
 ### backend: branch `backend-updates`
-- everyone will be only 1 color, the other color will be automated
-    - change models.py, method creating_session
+- *DONE* everyone will be only 1 color, the other color will be automated
+    - *DONE* change models.py, method creating_session
 - automated agent rule:
-	- only accept other color currency
-    - for now, always trade if possible
+	- only accept own color currency
+    - *DONE* for now, always trade if possible
 - new treatments:
 	- taxes on trading foreign currency:
         - possibility of both or only 1 player paying tax
         - at what time during the trade is this tax invoked?
+            tax invoked at time of trade. seller (initially has good) has tax invoked, iff they receive foreign currency
         - can players be taxed for both accepting and storing foreign currency
         in the same round?
+        - add options for all possibilities of who is taxed
+        - tax has 2 things: amount, and percent-paid-by-consumer, percent-paid-by-producer
+- export all data from automated traders
+
 
 ### frontend: branch `frontend-updates`
-- depict state in more graphical manner
+- depict state in more graphical manner:q
+
 	- graphical representation of object and tokens
     - if you have a token, you will see a red or blue coin thing on your screen.
     - if you have an object, you will see a loaf of bread or something on your screen.
@@ -68,4 +74,7 @@ The tests should not fail. Warnings are fine.
         in group in all prevoius rounds, so as not to introduce a new data structure
         that stores specifically foreign currency info
 
-
+    table
+        acceptance rate for domestic-domestic trades ofr foreign
+        acceptance rate for domestic-foreign trades of foreign
+        demo on monday, release by wednesday

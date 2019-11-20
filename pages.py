@@ -15,13 +15,29 @@ class Trade(Page):
     def vars_for_template(self):
         # self.session.vars['pairs'] is a list of rounds.
         # each round is a dict of (group,id):(group,id) pairs.
-        group_id = 0 if self.participant.vars['group_color'] == Constants.red else 1
+        group_id = self.player.participant.vars['group']
+        player_groups = self.subsession.get_groups()
+        bot_groups = self.session.vars['automated_traders']
+
+        # special case: one special player gets to tell all the bots paired
+        # with other bots, to trade
+        if group_id == 0 and self.player.id_in_group == 1: 
+            for t1, t2 in self.session.vars['pairs'][self.round_number - 1].items():
+                t1_group, t1_id = t1
+                t2_group, _ = t2
+                # if both members of the pair are bots
+                if t1_group >= len(player_groups) and t2_group >= len(player_groups):
+                    a1 = bot_groups[(t1_group, t1_id)]
+                    a1.trade(self.subsession)
 
         # gets a another pair
         # the other pair is the pair that is paired with the current player
         other_group, other_id = self.session.vars['pairs'][self.round_number - 1][
             (group_id, self.player.id_in_group - 1)]
-        other_player = self.subsession.get_groups()[other_group].get_player_by_id(other_id + 1)
+        if other_group < len(player_groups):
+            other_player = player_groups[other_group].get_player_by_id(other_id + 1)
+        else:
+            other_player = bot_groups[(other_group, other_id)]
 
         # whatever color token they were assigned in models.py
         self.player.token_color = self.player.participant.vars['token']
@@ -36,8 +52,9 @@ class Trade(Page):
         self.player.group_color = self.player.participant.vars['group_color']
         self.player.other_group_color = other_player.participant.vars['group_color']
 
-        if False: #treatment = 'bots': # or whatever
-            other_player.trade() 
+        if self.session.config['automated_traders'] == True \
+                and other_group >= len(player_groups):
+            other_player.trade(self.subsession)
         return {
             'role_pre': self.player.role_pre,
             'other_role_pre': self.player.other_role_pre,
@@ -61,13 +78,31 @@ class Results(Page):
     timeout_seconds = 30
 
     def vars_for_template(self):
+        group_id = self.player.participant.vars['group'] 
+        player_groups = self.subsession.get_groups()
+        bot_groups = self.session.vars['automated_traders']
+        
+        # special case: one special player gets to tell all the bots paired
+        # with other bots, to compute results
+        if group_id == 0 and self.player.id_in_group == 1: 
+            for t1, t2 in self.session.vars['pairs'][self.round_number - 1].items():
+                t1_group, t1_id = t1
+                t2_group, _ = t2
+                # if both members of the pair are bots
+                if t1_group >= len(player_groups) and t2_group >= len(player_groups):
+                    a1 = bot_groups[(t1_group, t1_id)]
+                    a1.compute_results(self.subsession)
+        
         # identify trading partner
         # similar to above in Trade()
-        group_id = 0 if self.player.participant.vars['group_color'] == Constants.red else 1 
         other_group, other_id = self.session.vars['pairs'][self.round_number - 1][
             (group_id, self.player.id_in_group - 1)]
+        
         # get other player object
-        other_player = self.subsession.get_groups()[other_group].get_player_by_id(other_id + 1)
+        if other_group < len(player_groups):
+            other_player = player_groups[other_group].get_player_by_id(other_id + 1)
+        else:
+            other_player = bot_groups[(other_group, other_id)]
 
         # define initial round payoffs
         round_payoff = c(0)
@@ -108,8 +143,9 @@ class Results(Page):
         else:
             new_token_color = self.player.token_color
         # tell bot to compute its own trade
-        if False: #treatment = 'bots': # or whatever
-            other_player.compute_results()
+        if self.session.config['automated_traders'] == True \
+                and other_group >= len(player_groups):
+            other_player.compute_results(self.subsession)
         return {
             'token_color': self.player.token_color,
             'role_pre': self.player.role_pre,
