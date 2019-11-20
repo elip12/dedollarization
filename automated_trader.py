@@ -1,10 +1,21 @@
 from otree.api import Currency as c, currency_range
-from .model import Constants
+# from .models import Constants
+import random
 
 class Participant():
     def __init__(self):
         self.vars = {}
         self.payoff = c(0)
+
+class Constants():
+    players_per_group = 4
+    auto_traders_per_group = 4
+    num_rounds = 1
+    endowment = c(50)
+    reward = c(20)
+    red = 'Red'
+    blue = 'Blue'
+    trade_good = 'Trade Good'
 
 class Round():
     def __init__(self):
@@ -30,7 +41,12 @@ class AutomatedTrader():
         self.payoff = c(0)
 
     def trade(self, other_player):
-        group_id = 0 if self.participant.vars['group_color'] == Constants.red else 1 
+        group_id = 0 if self.participant.vars['group_color'] == Constants.red else 1
+
+        #FIX THIS
+        # cannot use group_id for indices
+        # group id for players is eithr 0 or 1
+        # group id for traders is either 3 or 4
         other_group, other_id = self.session.vars['pairs'][self.round_number - 1][
             (group_id, self.id_in_group - 1)]
        
@@ -38,8 +54,8 @@ class AutomatedTrader():
         self.group_color = self.participant.vars['group_color']
         self.token_color = self.participant.vars['token']
         self.other_token_color = other_player.participant.vars['token']
-        self.role_pre = 'Consumer' if token_color != Constants.trade_good else 'Producer'
-        self.other_role_pre = 'Consumer' if other_token_color != Constants.trade_good else 'Producer'
+        self.role_pre = 'Consumer' if self.token_color != Constants.trade_good else 'Producer'
+        self.other_role_pre = 'Consumer' if self.other_token_color != Constants.trade_good else 'Producer'
 
         # logic for whether you trade or not. 
         if self.role_pre == self.other_role_pre:
@@ -77,10 +93,10 @@ class AutomatedTrader():
     def set_payoffs(self, round_payoff):
         self.payoff = round_payoff
 
-    @payoff.setter
-    def payoff(self, v):
-        self.payoff = v
-        self.participant.payoff += v
+#    @payoff.setter
+#    def payoff(self, v):
+#        self.payoff = v
+#        self.participant.payoff += v
     
     def __check_round_over(self):
         r = self.__round_data[-1]
