@@ -8,7 +8,7 @@ class Introduction(Page):
         return self.round_number == 1
 
 class Trade(Page):
-    timeout_seconds = 30 
+    timeout_seconds = 1000 #originally 30 
     form_model = 'player'
     form_fields = ['trade_attempted']
 
@@ -27,14 +27,13 @@ class Trade(Page):
         self.player.group_color = self.player.participant.vars['group_color']
         self.player.other_group_color = other_player.participant.vars['group_color'] 
         
-        
         return {
             'role_pre': self.player.role_pre,
             'other_role_pre': self.player.other_role_pre,
             'token_color': self.player.participant.vars['token'],
             'group_color': self.player.participant.vars['group_color'],
             'other_token_color': self.player.other_token_color,
-            'other_group_color': self.player.other_group_color,
+            'other_group_color': self.player.other_group_color
         }
 
     def before_next_page(self):
@@ -49,7 +48,7 @@ class ResultsWaitPage(WaitPage):
         pass
 
 class Results(Page):
-    timeout_seconds = 30
+    timeout_seconds = 1000
 
     def vars_for_template(self):
                 
@@ -95,18 +94,15 @@ class Results(Page):
         else:
             new_token_color = self.player.token_color
         
-        #TODO 
-        #count foreign currency transactions
-        #can't calculate transactions until we know which trades have succeeded
-        #this should probably happen (only once per round) before results page
-        #we don't know which trades have succeeded until Results page
-        #maybe change structure? could put trade logic in separate function
-        #transaction count could also be property of subsession (in models?)
-        if self.player.role_pre == 'Producer' and \
-        self.player.other_role_pre == 'Consumer' and \
-        self.player.group_color != self.player.other_token_color and \
-        self.player.trade_succeeded == True:
-            self.player.subsession.fc_transactions += 1 
+        #count foreign currency transactions this round
+        count = 0
+        for p in self.subsession.get_players():
+            if p.role_pre == 'Producer' and \
+            p.other_role_pre == 'Consumer' and \
+            p.group_color != self.player.other_token_color and \
+            p.trade_succeeded == True:
+                count += 1   
+        self.subsession.fc_transactions = count
         
         return {
             'token_color': self.player.token_color,
@@ -118,8 +114,8 @@ class Results(Page):
             'trade_succeeded': self.player.trade_succeeded,
             'new_token_color': new_token_color,
             'round_payoff': self.player.payoff,
-            'round_number': self.round_number,  
-            'fc_transactions': self.subsession.fc_transactions
+            'round_number': self.round_number, 
+            #'fc_transactions': self.subsession.fc_transactions
         }
 
 class PostResultsWaitPage(WaitPage):

@@ -7,7 +7,7 @@ import random
 
 class Constants(BaseConstants):
     name_in_url = 'producer_consumer'
-    players_per_group = 8
+    players_per_group = 4 #originally 8 
     num_rounds = 50
     endowment = c(50)
     reward = c(20)
@@ -86,7 +86,7 @@ class Subsession(BaseSubsession):
             self.group_like_round(1)
             
         # set number of transactions back to 0 each round
-        self.fc_transactions = 0
+        #self.fc_transactions = 0
 
             
 class Group(BaseGroup):

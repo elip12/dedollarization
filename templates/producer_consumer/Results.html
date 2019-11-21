@@ -77,16 +77,5 @@ th, td {
     </table>
     <br>
 
-    <table>
-            <tr>
-                <th>Foreign Currency Transactions Accepted</th>
-                {% for r in subsession.in_all_rounds %}
-                <tr>
-                    <th>{{ r.fc_transactions }}</th>
-                </tr>
-                {% endfor %}
-    </table>
-
-    <br>
     {% next_button %}
 {% endblock %}
