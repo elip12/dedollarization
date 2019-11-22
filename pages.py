@@ -21,14 +21,17 @@ class Trade(Page):
 
         # special case: one special player gets to tell all the bots paired
         # with other bots, to trade
-        if group_id == 0 and self.player.id_in_group == 1: 
-            for t1, t2 in self.session.vars['pairs'][self.round_number - 1].items():
-                t1_group, t1_id = t1
-                t2_group, _ = t2
-                # if both members of the pair are bots
-                if t1_group >= len(player_groups) and t2_group >= len(player_groups):
-                    a1 = bot_groups[(t1_group, t1_id)]
-                    a1.trade(self.subsession)
+
+        # only if the automated trader treatment is on
+        if self.session.config['automated_traders']:
+            if group_id == 0 and self.player.id_in_group == 1:
+                for t1, t2 in self.session.vars['pairs'][self.round_number - 1].items():
+                    t1_group, t1_id = t1
+                    t2_group, _ = t2
+                    # if both members of the pair are bots
+                    if t1_group >= len(player_groups) and t2_group >= len(player_groups):
+                        a1 = bot_groups[(t1_group, t1_id)]
+                        a1.trade(self.subsession)
 
         # gets a another pair
         # the other pair is the pair that is paired with the current player
@@ -115,15 +118,43 @@ class Results(Page):
         if self.player.trade_attempted and other_player.trade_attempted: 
             # only 1 player actually switches the goods
             if not self.player.trade_succeeded:
+
+                ### TREATMENT: TAX ON FOREIGN (OPPOSITE) CURRENCY
+
+                # TWO PARAMETERS:
+                # % CONSUMER PAYS
+                # % PRODUCER PAYS
+
+                # 4 TREATMENTS
+                #   1. NO ONE IS TAXED
+                #   2. CONSUMER PAYS ALL TAX
+                #   3. PRODUCER PAYS ALL TAX
+                #   4. SOME SPLIT BASED OFF THE TWO PARAMETERS
+
+                if self.player.group_color != self.player.other_token_color \
+                        or other_player.participant.vars['group_color'] != self.player.token_color:
+                    tax_consumer = Constants.reward * self.session.config['consumer_tax']
+                    tax_producer = Constants.reward * self.session.config['producer_tax']
+
+                    # if the player is the consumer, apply consumer tax to them
+                    # and apply producer tax to other player
+                    if self.player.role_pre == 'Consumer':
+                        round_payoff = Constants.reward - tax_consumer
+                        other_player.participant.payoff -= tax_producer
+
+                    # else if the player is the consumer, opposite
+                    else:
+                        round_payoff = Constants.reward - tax_producer
+                        other_player.participant.payoff -= tax_consumer
+
                 # switch tokens
                 self.player.participant.vars['token'] = self.player.other_token_color
                 other_player.participant.vars['token'] = self.player.token_color
+
                 # set players' trade_succeeded field
                 self.player.trade_succeeded = True
                 other_player.trade_succeeded = True
-            # give the consumer a payoff
-            if self.player.role_pre == 'Consumer':
-                round_payoff = Constants.reward
+
         else:
             self.player.trade_succeeded = False
 
@@ -132,7 +163,6 @@ class Results(Page):
         if self.player.participant.vars['token'] == self.participant.vars['group_color']:
             round_payoff -= c(self.session.config['token_store_cost_homogeneous'])
 
-        # if you don't have a token?
         elif self.player.participant.vars['token'] != Constants.trade_good:
             round_payoff -= c(self.session.config['token_store_cost_heterogeneous'])
 

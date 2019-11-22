@@ -8,13 +8,7 @@ class Participant():
         self.payoff = c(0)
 
 class Constants():
-    players_per_group = 4
-    auto_traders_per_group = 4
-    num_rounds = 1
-    endowment = c(50)
     reward = c(20)
-    red = 'Red'
-    blue = 'Blue'
     trade_good = 'Trade Good'
 
 class Round():
@@ -72,7 +66,24 @@ class AutomatedTrader():
         if self.role_pre == self.other_role_pre:
             self.trade_attempted = False
         else:
-            self.trade_attempted = True
+
+            ### TREATMENT: BOTS ONLY ACCEPT THEIR OWN COLOR
+
+            # if "bots only trading the same color (blue)" treatment is on
+            if self.session.config['bots_trade_same_color']:
+
+                # BOT is "self": if the other token is blue, then trade
+                if self.other_token_color == self.group_color:
+                    self.trade_attempted = True
+
+                # if not, then don't
+                else:
+                    self.trade_attempted = False
+
+            # if "bots only trading the same color (blue)" treatment is off
+            # then just always trade
+            else:
+                self.trade_attempted = True
 
     def compute_results(self, subsession):
         group_id = self.participant.vars['group'] 

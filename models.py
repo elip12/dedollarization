@@ -8,7 +8,7 @@ from .automated_trader import AutomatedTrader
 class Constants(BaseConstants):
     name_in_url = 'producer_consumer'
     players_per_group = 4
-    num_rounds = 1
+    num_rounds = 2
     endowment = c(50)
     reward = c(20)
     red = 'Red'
@@ -21,7 +21,13 @@ class Subsession(BaseSubsession):
 
             # puts players into groups of size players_per_group
             self.group_randomly()
-            n_groups = len(self.get_groups()) * 2
+
+            # depends on if traders are on or off
+            if self.session.config['automated_traders']:
+                n_groups = len(self.get_groups()) * 2
+
+            else:
+                n_groups = len(self.get_groups())
 
             # create random pairings
             # for the whole session
@@ -78,7 +84,7 @@ class Subsession(BaseSubsession):
                 # lists and put them in the pairs list as a pair.
                 # It is possible to get left with 2 traders from the same group
                 # at the end. If this happens, scrap it and start over.
-                # Repeat until you get a working heterogenous pairing for each
+                # Repeat until you get a working heterogeneous pairing for each
                 # trader.
                 while any(groups):
                     indices = [i for i, gl in enumerate(groups) if len(gl) > 0] # indices of non-empty groups
@@ -91,7 +97,6 @@ class Subsession(BaseSubsession):
                     p1 = (i1, groups[i1].pop())
                     g.append((p0, p1))
 
-                
                 #g = [(i, p) for i in range(n_groups) for p in groups[i]]
                 # num groups needs to be even (b/c one bot group per player group)
                 # therefore len(g) is even
@@ -103,7 +108,7 @@ class Subsession(BaseSubsession):
                     pairs[gg[1]] = gg[0]
 
                 self.session.vars['pairs'].append(pairs)
-            print(pairs)
+            print("PAIRS: ", pairs)
             # if there is only 1 group, then we can do another loop after this
             # one and do the exact same shit, except instantiating bots
             # instead of getting players with p.
@@ -118,20 +123,26 @@ class Subsession(BaseSubsession):
             # BOTS
             self.session.vars['automated_traders'] = {}
             # automated traders are always in 2nd half of groups
-            for gi in range(n_groups // 2, n_groups):
-                group_color = Constants.blue
-                roles = [Constants.trade_good for n in range(Constants.players_per_group // 2)]
-                roles += [group_color for n in range(Constants.players_per_group // 2)]
-                random.shuffle(roles)
-                
-                # within the pair, find group number and position in group
-                for pi in range(Constants.players_per_group):
-                    trader = AutomatedTrader(self.session, pi + 1)
-                    trader.participant.vars['group_color'] = group_color
-                    trader.participant.vars['group'] = gi
-                    trader.participant.payoff += Constants.endowment
-                    trader.participant.vars['token'] = roles[pi]
-                    self.session.vars['automated_traders'][(gi, pi)] = trader
+
+            ### ONLY CREATE BOTS IF BOT TREATMENT IS TURNED ON
+
+            # only create bots if the bot treatment is on
+            if self.session.config['automated_traders']:
+
+                for gi in range(n_groups // 2, n_groups):
+                    group_color = Constants.blue
+                    roles = [Constants.trade_good for n in range(Constants.players_per_group // 2)]
+                    roles += [group_color for n in range(Constants.players_per_group // 2)]
+                    random.shuffle(roles)
+
+                    # within the pair, find group number and position in group
+                    for pi in range(Constants.players_per_group):
+                        trader = AutomatedTrader(self.session, pi + 1)
+                        trader.participant.vars['group_color'] = group_color
+                        trader.participant.vars['group'] = gi
+                        trader.participant.payoff += Constants.endowment
+                        trader.participant.vars['token'] = roles[pi]
+                        self.session.vars['automated_traders'][(gi, pi)] = trader
 
             # player groups
             for g_index, g in enumerate(self.get_groups()):
