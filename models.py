@@ -67,21 +67,43 @@ class Subsession(BaseSubsession):
                     groups.append(g_sample_heterogeneous)
    
                 # pair traders between groups
-                # flatten into list of pairs.
-                # ex: [[1,2,3], [4,2,1], [3,2,4], [4,1,3]]
-                # => [(0,1), (0,2), (0,3), (1,4), (1,2), (1,1) ...]
-                g = [(i, p) for i in range(n_groups) for p in groups[i]]
+                # randomize trader order within each group
+                for i, _ in enumerate(groups):
+                    random.shuffle(groups[i])
+
+                g = []
+                groups_ = groups.copy()
+                # randomly select 2 different groups. then select 1 random traders
+                # from each group. remove those traders from their respective group
+                # lists and put them in the pairs list as a pair.
+                # It is possible to get left with 2 traders from the same group
+                # at the end. If this happens, scrap it and start over.
+                # Repeat until you get a working heterogenous pairing for each
+                # trader.
+                while any(groups):
+                    indices = [i for i, gl in enumerate(groups) if len(gl) > 0] # indices of non-empty groups
+                    if len(indices) < 2:
+                        g = []
+                        groups = groups_.copy()
+                        continue
+                    i0, i1 = random.sample(indices, 2)
+                    p0 = (i0, groups[i0].pop())
+                    p1 = (i1, groups[i1].pop())
+                    g.append((p0, p1))
+
+                
+                #g = [(i, p) for i in range(n_groups) for p in groups[i]]
                 # num groups needs to be even (b/c one bot group per player group)
                 # therefore len(g) is even
-                random.shuffle(g)
+
                 # ex: (0,4) <=> (1,8)
                 #     (1,8) <=> (0,4)
-                for i in range(0, len(g), 2):
-                    pairs[g[i]] = g[i + 1]
-                    pairs[g[i + 1]] = g[i]
+                for gg in g:
+                    pairs[gg[0]] = gg[1]
+                    pairs[gg[1]] = gg[0]
 
                 self.session.vars['pairs'].append(pairs)
-
+            print(pairs)
             # if there is only 1 group, then we can do another loop after this
             # one and do the exact same shit, except instantiating bots
             # instead of getting players with p.
