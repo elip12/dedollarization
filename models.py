@@ -108,7 +108,7 @@ class Subsession(BaseSubsession):
                     pairs[gg[1]] = gg[0]
 
                 self.session.vars['pairs'].append(pairs)
-            print("PAIRS: ", pairs)
+
             # if there is only 1 group, then we can do another loop after this
             # one and do the exact same shit, except instantiating bots
             # instead of getting players with p.

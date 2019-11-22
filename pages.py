@@ -191,8 +191,11 @@ class Results(Page):
 class PostResultsWaitPage(WaitPage):
     body_text = 'Waiting for other participants to finish viewing results.'
     wait_for_all_groups = True
-    def after_all_players_arrive(self):
-        pass
+    def after_all_players_arrive(self): 
+        bot_groups = self.session.vars['automated_traders']
+        if self.subsession.round_number == Constants.num_rounds:
+            for bot in bot_groups.values():
+                bot.export_data(Constants.players_per_group)
 
 page_sequence = [
     Introduction,

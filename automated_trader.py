@@ -1,7 +1,7 @@
 from otree.api import Currency as c, currency_range
-# from .models import Constants
 import pandas as pd
 import numpy as np
+import datetime
 import random
 
 class Participant():
@@ -22,6 +22,7 @@ class Round():
         self.trade_attempted = None
         self.trade_succeeded = None
         self.payoff = None
+        self.cumulative_payoff = None
 
     def over(self):
         if all(vars(self).values()):
@@ -52,7 +53,8 @@ class AutomatedTrader():
                 'group.id_in_subsession',
                 'subsession.round_number',
                 'session.code',
-                ]
+        ]
+
         df = {}
         n = len(self.__round_data)
         id_in_session = (self.id_in_group + 1) + (players_per_group * self.participant.vars['group'])
@@ -161,7 +163,7 @@ class AutomatedTrader():
                 other_player.trade_succeeded = True
             # give the consumer a payoff
             if self.role_pre == 'Consumer':
-                round_payoff = Constants.reward
+                round_payoff = reward
         else:
             self.trade_succeeded = False
 
@@ -190,11 +192,12 @@ class AutomatedTrader():
         self.__check_round_over()
         self.__round_data[-1].payoff = v
         self.participant.payoff += v
+        self.__round_data[-1].cumulative_payoff = self.participant.payoff
     
     def __check_round_over(self):
         r = self.__round_data[-1]
         if r.over():
-            self.round_data.append(Round())
+            self.__round_data.append(Round())
     
     def in_round(self, n):
         return self.__round_data[n - 1]

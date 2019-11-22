@@ -49,7 +49,7 @@ The tests should not fail. Warnings are fine.
         in the same round?
         - add options for all possibilities of who is taxed
         - tax has 2 things: amount, and percent-paid-by-consumer, percent-paid-by-producer
-- export all data from automated traders
+- *DONE* export all data from automated traders
 
 
 ### frontend: branch `frontend-updates`
