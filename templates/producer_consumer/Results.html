@@ -65,12 +65,12 @@ th, td {
 
             {% for p in player.in_all_rounds %}
             <tr>
-                <th>{{ p.round_number }}</th>
-                <th>{{ p.group_color }}</th>
-                <th>{{ p.token_color }}</th>
-                <th>{{ p.other_token_color }}</th>
-                <th>{{ p.trade_succeeded }}</th>
-                <th>{{ p.payoff }}</th>
+                <td>{{ p.round_number }}</td>
+                <td>{{ p.group_color }}</td>
+                <td>{{ p.token_color }}</td>
+                <td>{{ p.other_token_color }}</td>
+                <td>{{ p.trade_succeeded }}</td>
+                <td>{{ p.payoff }}</td>
             </tr>
             {% endfor %}
                       

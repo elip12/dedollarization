@@ -86,8 +86,8 @@ class Subsession(BaseSubsession):
             self.group_like_round(1)
             
         # set number of transactions back to 0 each round
-        #self.fc_transactions = 0
-
+        self.fc_transactions = 0
+        
             
 class Group(BaseGroup):
     pass

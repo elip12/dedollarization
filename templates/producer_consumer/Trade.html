@@ -3,17 +3,13 @@ table, th, td {
   border: 0px solid black;
   border-collapse: collapse;
 }
-th, td {
-  padding: 15px;
-  width: 50%
-}
-
-table.t2, th.t2, td.t2, tr.t2 {
+table.t2, th.t2, td.t2 {
   border: 1px solid black;
   border-collapse: collapse;
 }
-th.t2, td.t2, tr.t2 {
-  padding: 15px;
+th, td {
+  padding: 15px;  
+  
 }
 </style>
 
@@ -38,7 +34,7 @@ th.t2, td.t2, tr.t2 {
 <p>
 These are some instructions.
 </p>
-<table class="table1">
+<table>
     <tr>
     <td>
     <p>
@@ -120,28 +116,28 @@ These are some instructions.
 <p>Your Previous Trades</p>
 
 <table class = "t2">
-        <tr class = "t2">
-            <th class = "t2">Round</th>
-            <th class = "t2">Your Group</th>
-            <th class = "t2">Your Item</th>
-            <th class = "t2">Partner's Item</th>
-            <th class = "t2">Traded</th>
-            <th class = "t2">Payoff</th>
-            <th class = "t2">Foreign Transactions</th>
-        </tr>
-        {% for p in player.in_previous_rounds %}
-        <tr class = "t2">
-            <th class = "t2">{{ p.round_number }}</th>
-            <th class = "t2">{{ p.group_color }}</th>
-            <th class = "t2">{{ p.token_color }}</th>
-            <th class = "t2">{{ p.other_token_color }}</th>
-            <th class = "t2">{{ p.trade_succeeded }}</th>
-            <th class = "t2">{{ p.payoff }}</th>
-            <th class = "t2">{{ p.subsession.fc_transactions }}</th>
-        </tr>
-        {% endfor %}
+    <tr class = "t2">
+        <th class = "t2">Round</th>
+        <th class = "t2">Your Group</th>
+        <th class = "t2">Your Item</th>
+        <th class = "t2">Partner's Item</th>
+        <th class = "t2">Traded</th>
+        <th class = "t2">Payoff</th>
+        <th class = "t2">Foreign Transactions</th>
+    </tr>
+    {% for p in player.in_previous_rounds %}
+    <tr class = "t2">
+        <td class = "t2">{{ p.round_number }}</td>
+        <td class = "t2">{{ p.group_color }}</td>
+        <td class = "t2">{{ p.token_color }}</td>
+        <td class = "t2">{{ p.other_token_color }}</td>
+        <td class = "t2">{{ p.trade_succeeded }}</td>
+        <td class = "t2">{{ p.payoff }}</td>
+        <td class = "t2">{{ p.subsession.fc_transactions }}</td>
+    </tr>
+    {% endfor %}
                       
-    </table>
+</table>
 {% endif %}
 
 {% endblock %}

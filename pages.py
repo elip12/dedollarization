@@ -59,6 +59,7 @@ class Results(Page):
         # get other player object
         other_player = self.subsession.get_groups()[other_group].get_player_by_id(other_id + 1)
         
+        
         # define initial round payoffs
         round_payoff = c(0)
         other_round_payoff = c(0)
@@ -93,16 +94,19 @@ class Results(Page):
             new_token_color = self.player.other_token_color
         else:
             new_token_color = self.player.token_color
-        
+            
         #count foreign currency transactions this round
         count = 0
         for p in self.subsession.get_players():
             if p.role_pre == 'Producer' and \
             p.other_role_pre == 'Consumer' and \
-            p.group_color != self.player.other_token_color and \
-            p.trade_succeeded == True:
-                count += 1   
+            p.group_color != p.other_token_color and \
+            p.trade_attempted:
+            #p.trade_succeeded == True:
+                count += 1 
+                
         self.subsession.fc_transactions = count
+
         
         return {
             'token_color': self.player.token_color,
