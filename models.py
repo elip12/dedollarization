@@ -8,7 +8,7 @@ from .automated_trader import AutomatedTrader
 class Constants(BaseConstants):
     name_in_url = 'producer_consumer'
     players_per_group = 4
-    num_rounds = 1
+    num_rounds = 2
     endowment = c(50)
     reward = c(20)
     red = 'Red'
@@ -103,7 +103,6 @@ class Subsession(BaseSubsession):
                     pairs[gg[1]] = gg[0]
 
                 self.session.vars['pairs'].append(pairs)
-            print(pairs)
             # if there is only 1 group, then we can do another loop after this
             # one and do the exact same shit, except instantiating bots
             # instead of getting players with p.

@@ -1,20 +1,15 @@
 from otree.api import Currency as c, currency_range
-# from .models import Constants
+import pandas as pd
+import numpy as np
+import datetime
 import random
 
 class Participant():
     def __init__(self):
-        self.vars = {}
+        self.vars = {'group': None}
         self.payoff = c(0)
 
 class Constants():
-    players_per_group = 4
-    auto_traders_per_group = 4
-    num_rounds = 1
-    endowment = c(50)
-    reward = c(20)
-    red = 'Red'
-    blue = 'Blue'
     trade_good = 'Trade Good'
 
 class Round():
@@ -27,6 +22,7 @@ class Round():
         self.trade_attempted = None
         self.trade_succeeded = None
         self.payoff = None
+        self.cumulative_payoff = None
 
     def over(self):
         if all(vars(self).values()):
@@ -39,6 +35,47 @@ class AutomatedTrader():
         self.__round_data = [Round()]
         self.session = session
         self.id_in_group = id_in_group
+
+    def export_data(self, players_per_group):
+        cols = ['participant.id_in_session',
+                'participant.payoff',
+                'participant.is_automated',
+                'player.id_in_group',
+                'player.role_pre',
+                'player.other_role_pre',
+                'player.token_color',
+                'player.other_token_color',
+                'player.group_color',
+                'player.other_group_color',
+                'player.trade_attempted',
+                'player.trade_succeeded',
+                'player.payoff',
+                'group.id_in_subsession',
+                'subsession.round_number',
+                'session.code',
+        ]
+        df = {}
+        n = len(self.__round_data)
+        id_in_session = (self.id_in_group + 1) + (players_per_group * self.participant.vars['group'])
+        df[cols[0]] = np.full(n, id_in_session)      
+        df[cols[1]] = np.array([r.cumulative_payoff for r in self.__round_data])
+        df[cols[2]] = np.full(n, 1)
+        df[cols[3]] = np.full(n, self.id_in_group + 1)
+        df[cols[4]] = np.array([r.role_pre for r in self.__round_data])
+        df[cols[5]] = np.array([r.other_role_pre for r in self.__round_data])
+        df[cols[6]] = np.array([r.token_color for r in self.__round_data])
+        df[cols[7]] = np.array([r.other_token_color for r in self.__round_data])
+        df[cols[8]] = np.array([r.group_color for r in self.__round_data])
+        df[cols[9]] = np.array([r.other_group_color for r in self.__round_data])
+        df[cols[10]] = np.array([r.trade_attempted for r in self.__round_data])
+        df[cols[11]] = np.array([r.trade_succeeded for r in self.__round_data])
+        df[cols[12]] = np.array([r.payoff for r in self.__round_data])
+        df[cols[13]] = np.full(n, self.participant.vars['group'] + 1)
+        df[cols[14]] = np.array([i for i in range(n)])
+        df[cols[15]] = np.full(n, self.session.code)
+        df = pd.DataFrame(df)
+        date = datetime.datetime.now().strftime('%Y-%m-%d')
+        df.to_csv(f'producer_consumer_{date}_session_{self.session.code}_automated_trader_{id_in_session}.csv')
 
     def trade(self, subsession):
         # self.session.vars['pairs'] is a list of rounds.
@@ -74,7 +111,7 @@ class AutomatedTrader():
         else:
             self.trade_attempted = True
 
-    def compute_results(self, subsession):
+    def compute_results(self, subsession, reward):
         group_id = self.participant.vars['group'] 
         player_groups = subsession.get_groups()
         bot_groups = self.session.vars['automated_traders']
@@ -108,7 +145,7 @@ class AutomatedTrader():
                 other_player.trade_succeeded = True
             # give the consumer a payoff
             if self.role_pre == 'Consumer':
-                round_payoff = Constants.reward
+                round_payoff = reward
         else:
             self.trade_succeeded = False
 
@@ -137,11 +174,12 @@ class AutomatedTrader():
         self.__check_round_over()
         self.__round_data[-1].payoff = v
         self.participant.payoff += v
+        self.__round_data[-1].cumulative_payoff = self.participant.payoff
     
     def __check_round_over(self):
         r = self.__round_data[-1]
         if r.over():
-            self.round_data.append(Round())
+            self.__round_data.append(Round())
     
     def in_round(self, n):
         return self.__round_data[n - 1]
