@@ -94,7 +94,7 @@ class Results(Page):
                 # if both members of the pair are bots
                 if t1_group >= len(player_groups) and t2_group >= len(player_groups):
                     a1 = bot_groups[(t1_group, t1_id)]
-                    a1.compute_results(self.subsession)
+                    a1.compute_results(self.subsession, Constants.reward)
         
         # identify trading partner
         # similar to above in Trade()
@@ -175,7 +175,7 @@ class Results(Page):
         # tell bot to compute its own trade
         if self.session.config['automated_traders'] == True \
                 and other_group >= len(player_groups):
-            other_player.compute_results(self.subsession)
+            other_player.compute_results(self.subsession, Constants.reward)
         return {
             'token_color': self.player.token_color,
             'role_pre': self.player.role_pre,
