@@ -19,6 +19,7 @@ class Round():
         self.token_color = None
         self.other_token_color = None
         self.group_color = None
+        self.other_group_color=None
         self.trade_attempted = None
         self.trade_succeeded = None
         self.payoff = None
@@ -86,7 +87,7 @@ class AutomatedTrader():
         bot_groups = self.session.vars['automated_traders']
         # gets a another pair
         # the other pair is the pair that is paired with the current player
-        other_group, other_id = self.session.vars['pairs'][self.round_number - 1][
+        other_group, other_id = self.session.vars['pairs'][subsession.round_number - 1][
             (group_id, self.id_in_group - 1)]
         if other_group < len(player_groups):
             other_player = player_groups[other_group].get_player_by_id(other_id + 1)
@@ -109,7 +110,7 @@ class AutomatedTrader():
         # logic for whether you trade or not. 
         if self.role_pre == self.other_role_pre:
             self.trade_attempted = False
-        elif:
+        else:
 
             ### TREATMENT: BOTS ONLY ACCEPT THEIR OWN COLOR
 
@@ -137,7 +138,7 @@ class AutomatedTrader():
         
         # identify trading partner
         # similar to above in Trade()
-        other_group, other_id = self.session.vars['pairs'][self.round_number - 1][
+        other_group, other_id = self.session.vars['pairs'][subsession.round_number - 1][
             (group_id, self.id_in_group - 1)]
         
         # get other player object
@@ -172,7 +173,7 @@ class AutomatedTrader():
                 if self.token_color != self.other_group_color:
                     tax_consumer += self.session.config['foreign_tax'] \
                         * self.session.config['percent_foreign_tax_consumer']
-                round_payoff += Constants.reward - tax_consumer
+                round_payoff += reward - tax_consumer
 
             # else if the player is the consumer, opposite
             else:
