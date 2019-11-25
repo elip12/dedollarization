@@ -109,7 +109,7 @@ class AutomatedTrader():
         # logic for whether you trade or not. 
         if self.role_pre == self.other_role_pre:
             self.trade_attempted = False
-        else:
+        elif:
 
             ### TREATMENT: BOTS ONLY ACCEPT THEIR OWN COLOR
 
@@ -117,7 +117,8 @@ class AutomatedTrader():
             if self.session.config['bots_trade_same_color']:
 
                 # BOT is "self": if the other token is blue, then trade
-                if self.other_token_color == self.group_color:
+                if self.other_token_color == self.group_color \
+                        or self.role_pre == 'Consumer':
                     self.trade_attempted = True
 
                 # if not, then don't

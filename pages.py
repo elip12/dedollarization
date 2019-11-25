@@ -186,16 +186,22 @@ class PostResultsWaitPage(WaitPage):
     body_text = 'Waiting for other participants to finish viewing results.'
     wait_for_all_groups = True
     def after_all_players_arrive(self): 
+        bot_groups = self.session.vars['automated_traders']
+        
         #count foreign currency transactions this round
         count = 0
         for p in self.subsession.get_players():
             if p.role_pre == 'Producer' and \
             p.group_color != p.other_token_color and \
             p.trade_succeeded:
-                count += 1 
+                count += 1
+        for b in bot_groups.values():
+            if b.role_pre == 'Producer' and \
+            b.group_color != b.other_token_color and \
+            b.trade_succeeded:
+                count += 1
                 
         self.subsession.fc_transactions = count
-        bot_groups = self.session.vars['automated_traders']
         if self.subsession.round_number == Constants.num_rounds:
             for bot in bot_groups.values():
                 bot.export_data(Constants.players_per_group)
