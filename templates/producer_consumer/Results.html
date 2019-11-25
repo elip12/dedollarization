@@ -37,15 +37,15 @@ th, td {
         {{ new_token_color }} token.
         <br>
         {% if new_token_color == Constants.red %}
-        <img src="{% static "producerConsumerImages/redCoin.png"%}"/>
+        <img src="{% static "redCoin.png"%}"/>
         {% endif %}
         {% if new_token_color == Constants.blue %}
-        <img src="{% static "producerConsumerImages/blueCoin.png"%}"/>
+        <img src="{% static "blueCoin.png"%}"/>
         {% endif %}
         {% else %}
         trade good.
         <br>
-        <img src="{% static "producerConsumerImages/object.png"%}"/>
+        <img src="{% static "object.png"%}"/>
         {% endif %}
         <br>
         {% endif %}

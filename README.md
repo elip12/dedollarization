@@ -78,3 +78,5 @@ The tests should not fail. Warnings are fine.
         acceptance rate for domestic-domestic trades ofr foreign
         acceptance rate for domestic-foreign trades of foreign
         demo on monday, release by wednesday
+
+do bots always accept trade goods?
