@@ -162,17 +162,6 @@ class Results(Page):
         else:
             new_token_color = self.player.token_color
             
-        #count foreign currency transactions this round
-        count = 0
-        for p in self.subsession.get_players():
-            if p.role_pre == 'Producer' and \
-            p.other_role_pre == 'Consumer' and \
-            p.group_color != p.other_token_color and \
-            p.trade_attempted:
-            #p.trade_succeeded == True:
-                count += 1 
-                
-        self.subsession.fc_transactions = count
 
         # tell bot to compute its own trade
         if self.session.config['automated_traders'] == True \
@@ -197,6 +186,15 @@ class PostResultsWaitPage(WaitPage):
     body_text = 'Waiting for other participants to finish viewing results.'
     wait_for_all_groups = True
     def after_all_players_arrive(self): 
+        #count foreign currency transactions this round
+        count = 0
+        for p in self.subsession.get_players():
+            if p.role_pre == 'Producer' and \
+            p.group_color != p.other_token_color and \
+            p.trade_succeeded:
+                count += 1 
+                
+        self.subsession.fc_transactions = count
         bot_groups = self.session.vars['automated_traders']
         if self.subsession.round_number == Constants.num_rounds:
             for bot in bot_groups.values():
