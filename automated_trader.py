@@ -161,9 +161,26 @@ class AutomatedTrader():
                 # set players' trade_succeeded field
                 self.trade_succeeded = True
                 other_player.trade_succeeded = True
-            # give the consumer a payoff
+            
+            ### TREATMENT: TAX ON FOREIGN (OPPOSITE) CURRENCY
+
+            # if the player is the consumer, apply consumer tax to them
+            # and apply producer tax to other player
             if self.role_pre == 'Consumer':
-                round_payoff = reward
+                tax_consumer = c(0)
+                if self.token_color != self.other_group_color:
+                    tax_consumer += self.session.config['foreign_tax'] \
+                        * self.session.config['percent_foreign_tax_consumer']
+                round_payoff += Constants.reward - tax_consumer
+
+            # else if the player is the consumer, opposite
+            else:
+                tax_producer = c(0)
+                if self.group_color != self.other_token_color:
+                    tax_producer += self.session.config['foreign_tax'] \
+                        * self.session.config['percent_foreign_tax_producer']
+                round_payoff -= tax_producer
+        
         else:
             self.trade_succeeded = False
 

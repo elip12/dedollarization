@@ -109,7 +109,6 @@ class Results(Page):
 
         # define initial round payoffs
         round_payoff = c(0)
-        other_round_payoff = c(0)
 
         # logic for switching objects on trade
         # if both players attempted a trade, it must be true
@@ -119,34 +118,6 @@ class Results(Page):
             # only 1 player actually switches the goods
             if not self.player.trade_succeeded:
 
-                ### TREATMENT: TAX ON FOREIGN (OPPOSITE) CURRENCY
-
-                # TWO PARAMETERS:
-                # % CONSUMER PAYS
-                # % PRODUCER PAYS
-
-                # 4 TREATMENTS
-                #   1. NO ONE IS TAXED
-                #   2. CONSUMER PAYS ALL TAX
-                #   3. PRODUCER PAYS ALL TAX
-                #   4. SOME SPLIT BASED OFF THE TWO PARAMETERS
-
-                if self.player.group_color != self.player.other_token_color \
-                        or other_player.participant.vars['group_color'] != self.player.token_color:
-                    tax_consumer = Constants.reward * self.session.config['consumer_tax']
-                    tax_producer = Constants.reward * self.session.config['producer_tax']
-
-                    # if the player is the consumer, apply consumer tax to them
-                    # and apply producer tax to other player
-                    if self.player.role_pre == 'Consumer':
-                        round_payoff = Constants.reward - tax_consumer
-                        other_player.participant.payoff -= tax_producer
-
-                    # else if the player is the consumer, opposite
-                    else:
-                        round_payoff = Constants.reward - tax_producer
-                        other_player.participant.payoff -= tax_consumer
-
                 # switch tokens
                 self.player.participant.vars['token'] = self.player.other_token_color
                 other_player.participant.vars['token'] = self.player.token_color
@@ -154,6 +125,25 @@ class Results(Page):
                 # set players' trade_succeeded field
                 self.player.trade_succeeded = True
                 other_player.trade_succeeded = True
+
+            ### TREATMENT: TAX ON FOREIGN (OPPOSITE) CURRENCY
+
+            # if the player is the consumer, apply consumer tax to them
+            # and apply producer tax to other player
+            if self.player.role_pre == 'Consumer':
+                tax_consumer = c(0)
+                if self.player.token_color != self.player.other_group_color:
+                    tax_consumer += self.session.config['foreign_tax'] \
+                        * self.session.config['percent_foreign_tax_consumer']
+                round_payoff += Constants.reward - tax_consumer
+
+            # else if the player is the consumer, opposite
+            else:
+                tax_producer = c(0)
+                if self.player.group_color != self.player.other_token_color:
+                    tax_producer += self.session.config['foreign_tax'] \
+                        * self.session.config['percent_foreign_tax_producer']
+                round_payoff -= tax_producer
 
         else:
             self.player.trade_succeeded = False
