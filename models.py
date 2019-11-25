@@ -16,6 +16,10 @@ class Constants(BaseConstants):
     trade_good = 'Trade Good'
 
 class Subsession(BaseSubsession):
+    
+    #tried making transaction count belong to Subsession
+    fc_transactions = models.IntegerField()
+    
     def creating_session(self):
         if self.round_number == 1:
 
@@ -164,11 +168,17 @@ class Subsession(BaseSubsession):
                     p.participant.vars['group'] = g_index
                     p.participant.vars['token'] = roles[p_index]
                     p.participant.payoff += Constants.endowment
+            
         else:
             self.group_like_round(1)
             
+        # set number of transactions back to 0 each round
+        self.fc_transactions = 0
+        
+            
 class Group(BaseGroup):
     pass
+    
 
 class Player(BasePlayer):
     role_pre = models.StringField() # 'Producer', 'Consumer'
@@ -184,7 +194,6 @@ class Player(BasePlayer):
         ]
     )
     trade_succeeded = models.BooleanField()
-
+                
     def set_payoffs(self, round_payoff):
         self.payoff = round_payoff
-

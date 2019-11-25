@@ -1,3 +1,13 @@
+<style>
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+th, td {
+  padding: 15px;
+}
+</style>
+
 {% extends "global/Page.html" %}
 {% load otree %}
 
@@ -25,16 +35,47 @@
         You successfully traded. You now have a
         {% if new_token_color != Constants.trade_good %}
         {{ new_token_color }} token.
+        <br>
+        {% if new_token_color == Constants.red %}
+        <img src="{% static "redCoin.png"%}"/>
+        {% endif %}
+        {% if new_token_color == Constants.blue %}
+        <img src="{% static "blueCoin.png"%}"/>
+        {% endif %}
         {% else %}
         trade good.
+        <br>
+        <img src="{% static "object.png"%}"/>
         {% endif %}
         <br>
         {% endif %}
         You earned {{ round_payoff|c }} points this round.
         <br>
-        Your total payoff so far is {{ player.participant.payoff|c }}.
+        Your total payoff so far is {{ player.participant.payoff|c }}.   
     </p>
 
-    {% next_button %}
+    <table>
+        <tr>
+            <th>Round</th>
+            <th>Your Group</th>
+            <th>Your Item</th>
+            <th>Partner's Item</th>
+            <th>Traded</th>
+            <th>Payoff</th>
 
+            {% for p in player.in_all_rounds %}
+            <tr>
+                <td>{{ p.round_number }}</td>
+                <td>{{ p.group_color }}</td>
+                <td>{{ p.token_color }}</td>
+                <td>{{ p.other_token_color }}</td>
+                <td>{{ p.trade_succeeded }}</td>
+                <td>{{ p.payoff }}</td>
+            </tr>
+            {% endfor %}
+                      
+    </table>
+    <br>
+
+    {% next_button %}
 {% endblock %}

@@ -64,12 +64,13 @@ class Trade(Page):
             'token_color': self.player.participant.vars['token'],
             'group_color': self.player.participant.vars['group_color'],
             'other_token_color': self.player.other_token_color,
-            'other_group_color': self.player.other_group_color,
+            'other_group_color': self.player.other_group_color
         }
 
     def before_next_page(self):
         if self.timeout_happened:
             self.player.trade_attempted = False
+             
 
 class ResultsWaitPage(WaitPage):
     body_text = 'Waiting for other participants to decide.'
@@ -147,7 +148,6 @@ class Results(Page):
 
         else:
             self.player.trade_succeeded = False
-
         # penalties for self
         # if your token matches your group color
         if self.player.participant.vars['token'] == self.participant.vars['group_color']:
@@ -155,19 +155,21 @@ class Results(Page):
 
         elif self.player.participant.vars['token'] != Constants.trade_good:
             round_payoff -= c(self.session.config['token_store_cost_heterogeneous'])
-
         # set payoffs
         self.player.set_payoffs(round_payoff)
         if self.player.trade_succeeded:
             new_token_color = self.player.other_token_color
         else:
             new_token_color = self.player.token_color
+            
+
         # tell bot to compute its own trade
         if self.session.config['automated_traders'] == True \
                 and other_group >= len(player_groups):
             other_player.compute_results(self.subsession, Constants.reward)
         return {
             'token_color': self.player.token_color,
+            'other_token_color': self.player.other_token_color,
             'role_pre': self.player.role_pre,
             'other_role_pre': self.player.other_role_pre,
             'trade_attempted': self.player.trade_attempted,
@@ -175,6 +177,8 @@ class Results(Page):
             'trade_succeeded': self.player.trade_succeeded,
             'new_token_color': new_token_color,
             'round_payoff': self.player.payoff,
+            'round_number': self.round_number, 
+            #'fc_transactions': self.subsession.fc_transactions
         }
     
 
@@ -182,6 +186,15 @@ class PostResultsWaitPage(WaitPage):
     body_text = 'Waiting for other participants to finish viewing results.'
     wait_for_all_groups = True
     def after_all_players_arrive(self): 
+        #count foreign currency transactions this round
+        count = 0
+        for p in self.subsession.get_players():
+            if p.role_pre == 'Producer' and \
+            p.group_color != p.other_token_color and \
+            p.trade_succeeded:
+                count += 1 
+                
+        self.subsession.fc_transactions = count
         bot_groups = self.session.vars['automated_traders']
         if self.subsession.round_number == Constants.num_rounds:
             for bot in bot_groups.values():
@@ -194,4 +207,5 @@ page_sequence = [
     Results,
     PostResultsWaitPage,
 ]
+
 
