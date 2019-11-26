@@ -1,3 +1,8 @@
+{% extends "global/Page.html" %}
+{% load otree %}
+{% load staticfiles otree %}
+
+{% block styles %}
 <style>
 table, th, td {
   border: 0px solid black;
@@ -12,9 +17,7 @@ th, td {
   
 }
 </style>
-
-{% extends "global/Page.html" %}
-{% load otree %}
+{% endblock %}
 
 {% block scripts %}
     <script type="text/javascript">
@@ -30,7 +33,6 @@ th, td {
 {% endblock %}
 
 {% block content %}
-
 <p>
 These are some instructions.
 </p>

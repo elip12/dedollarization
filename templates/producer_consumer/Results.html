@@ -1,3 +1,8 @@
+{% extends "global/Page.html" %}
+{% load otree %}
+{% load staticfiles otree %}
+
+{% block styles %}
 <style>
 table, th, td {
   border: 1px solid black;
@@ -7,9 +12,7 @@ th, td {
   padding: 15px;
 }
 </style>
-
-{% extends "global/Page.html" %}
-{% load otree %}
+{% endblock %}
 
 {% block title %}
     Results: Round {{ subsession.round_number }}
