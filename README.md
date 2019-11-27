@@ -35,48 +35,38 @@ The tests should not fail. Warnings are fine.
 # TODO - Eli and Skyler
 
 ### backend: branch `backend-updates`
-- *DONE* everyone will be only 1 color, the other color will be automated
-    - *DONE* change models.py, method creating_session
-- automated agent rule:
-	- only accept own color currency
-    - *DONE* for now, always trade if possible
-- new treatments:
-	- taxes on trading foreign currency:
-        - possibility of both or only 1 player paying tax
-        - at what time during the trade is this tax invoked?
-            tax invoked at time of trade. seller (initially has good) has tax invoked, iff they receive foreign currency
-        - can players be taxed for both accepting and storing foreign currency
-        in the same round?
-        - add options for all possibilities of who is taxed
-        - tax has 2 things: amount, and percent-paid-by-consumer, percent-paid-by-producer
-- *DONE* export all data from automated traders
+- change repo name to dedollarization
+- change experiment to not use PEN, use some nonspecific currency that represents
+points. write code at the end of the final round that converts points to PEN (peruvian soles)
+via some conversion function you dont need to care about the specifics of rn.
+- change the definition of a foreign currency transaction. This applies to
+bot behavior, and to the table column (FRONTEND). A foreign transaction is possible when
+    1. both traders are the same color
+    2. trade is possible; one is producer and one is consumer
+    3. consumer posesses a foreign currency; if consumer is red, currency is blue, vice versa
+A foreign transaction "occurs" when the above occurs, AND
+    4. The producer attempted to trade. If the consumer did not attempt to trade, we don't care.
+Update the bot and tax behavior accordingly. only encounters in which the first 1 condiitons are met are taxable
+- change the token store costs to only change when a token is held for a full round. talk to me if this doesnt make sense
 
 
 ### frontend: branch `frontend-updates`
-- depict state in more graphical manner:q
+- smaller token graphics
+- look into otree support for multiple languages
+- change trade dropdown to radio buttons
+- make UI conform to google doc Kristian shared: table on right side, text on left side
+    right now table is below text.
+    make text take up 30% of width and table take up 70% of width
+- make a parameter in the settings file for toggling the visibility of the foreign transactions
+column, and make the column only display if the toggle is on. see session.config
+- ensure table has most recent rounds on top and most distant on bottom
+- remove the "your group" col from the table
+- add a "partner's group" col to the table
+- add trade possible, trade attempted columns to table
+- change "traded" col to "trade succeeded" col
+- change True, False to Yes, No in all relevant table cols
+- change column "Payoff" to "Round Payoff"
+- see the thing in the backend about foreign transactions. change that table col
+to make each col row value a decimal representation of the fraction [foreign transaction "occur"ences / foreign transaction possibilities]
+- add optional "Tax Paid" and "Storage Cost Paid" cols to the table, and add settings.py toggles for them
 
-	- graphical representation of object and tokens
-    - if you have a token, you will see a red or blue coin thing on your screen.
-    - if you have an object, you will see a loaf of bread or something on your screen.
-    - if your trading partner has a coin, you will see their coin thing somewhere else.
-    - same with if they have an object.
-    - changes will be made directly in the templates, using django's if-else
-    syntax, and the images or vectors will be static image files.
-- history table (each row is 1 period)
-	- can use `player.in_round(#)` to get info from previous rounds
-    - shows all pertinent information about your previous trades
-	- wants graph of history as well as table
-        - high charts
-    treatments:
-    1. only stuff about your previous trades
-	2. also how many foreign currencies were accepted in that period for the entire group
-        - easiest way is probably to make a method that cycles through all players
-        in group in all prevoius rounds, so as not to introduce a new data structure
-        that stores specifically foreign currency info
-
-    table
-        acceptance rate for domestic-domestic trades ofr foreign
-        acceptance rate for domestic-foreign trades of foreign
-        demo on monday, release by wednesday
-
-do bots always accept trade goods?
