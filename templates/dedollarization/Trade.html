@@ -142,4 +142,12 @@ These are some instructions.
 </table>
 {% endif %}
 
+    <input type="hidden" name="trading"/>
+    {{ form.trading.errors }}
+
+    <script>
+    let hiddenField = document.querySelector('[name=trading]')
+    hiddenField.value = "";
+    </script>
+
 {% endblock %}

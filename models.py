@@ -5,6 +5,7 @@ from otree.api import (
 import random
 from .automated_trader import AutomatedTrader
 
+
 class Constants(BaseConstants):
     name_in_url = 'producer_consumer'
     players_per_group = 4
@@ -14,6 +15,7 @@ class Constants(BaseConstants):
     red = 'Red'
     blue = 'Blue'
     trade_good = 'Trade Good'
+
 
 class Subsession(BaseSubsession):
     
@@ -181,6 +183,9 @@ class Group(BaseGroup):
     
 
 class Player(BasePlayer):
+    # For detecting bots in this section of the game
+    trading = models.LongStringField(blank=True)
+
     role_pre = models.StringField() # 'Producer', 'Consumer'
     other_role_pre = models.StringField()
     token_color = models.StringField() # Constants.red, Constants.blue, None

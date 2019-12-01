@@ -2,15 +2,22 @@ from otree.api import Currency as c, currency_range
 from ._builtin import Page, WaitPage
 from .models import Constants
 
+
+class NotMobilePlayers(WaitPage):
+    # Only the players who weren't using their phones for this can be grouped with the rest
+    group_by_arrival_time = True
+
+
 # Description of the game: How to play and returns expected
 class Introduction(Page):
     def is_displayed(self):
         return self.round_number == 1
 
+
 class Trade(Page):
     timeout_seconds = 6000
     form_model = 'player'
-    form_fields = ['trade_attempted']
+    form_fields = ['trade_attempted', 'trading']
 
     def vars_for_template(self):
         # self.session.vars['pairs'] is a list of rounds.
@@ -77,6 +84,7 @@ class ResultsWaitPage(WaitPage):
     wait_for_all_groups = True
     def after_all_players_arrive(self):
         pass
+
 
 class Results(Page):
     timeout_seconds = 3000
@@ -207,6 +215,7 @@ class PostResultsWaitPage(WaitPage):
                 bot.export_data(Constants.players_per_group)
 
 page_sequence = [
+    NotMobilePlayers,
     Introduction,
     Trade,
     ResultsWaitPage,
