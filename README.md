@@ -35,7 +35,7 @@ The tests should not fail. Warnings are fine.
 # TODO - Eli and Skyler
 
 ### backend: branch `backend-updates`
-- change repo name to dedollarization
+- *DONE* change repo name to dedollarization
 - change experiment to not use PEN, use some nonspecific currency that represents
 points. write code at the end of the final round that converts points to PEN (peruvian soles)
 via some conversion function you dont need to care about the specifics of rn.
@@ -48,7 +48,8 @@ A foreign transaction "occurs" when the above occurs, AND
     4. The producer attempted to trade. If the consumer did not attempt to trade, we don't care.
 Update the bot and tax behavior accordingly. only encounters in which the first 1 condiitons are met are taxable
 - change the token store costs to only change when a token is held for a full round. talk to me if this doesnt make sense
-
+- *DONE* update tests to work with bots
+- update tests to be comprehensive
 
 ### frontend: branch `frontend-updates`
 - smaller token graphics

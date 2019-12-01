@@ -6,32 +6,61 @@ import random
 
 class PlayerBot(Bot):
 
-    def set_configs(self, prob, homo, hetero):
-        assert(prob >= 0.0 and prob <= 1)
+    def set_configs(self, prob, homo, hetero, bots, bots_color, tax,
+            tax_cons, tax_prod):
+        assert(0 <= prob <= 1)
         assert(homo >= 0)
         assert(hetero >= 0)
+        assert(bots in [True, False])
+        assert(bots_color in [True, False])
+        assert(tax >= 0)
+        assert(0 <= tax_cons <= 1)
+        assert(0 <= tax_prod <= 1)
+        assert(0 <= tax_prod + tax_cons <= 1)
         self.session.config['probability_of_same_group'] = prob
         self.session.config['token_store_cost_homogeneous'] = homo
         self.session.config['token_store_cost_heterogeneous'] = hetero 
-    
+        self.session.config['automated_traders'] = bots
+        self.session.config['bots_trade_same_color'] = bots_color
+        self.session.config['foreign_tax'] = tax
+        self.session.config['percent_foreign_tax_consumer'] = tax_cons
+        self.session.config['percent_foreign_tax_producer'] = tax_prod
+
     def play_round(self):
         case = self.subsession.round_number % 3
         if case == 0:
-            self.set_configs(.5, 0, 0)
+            self.set_configs(.5, 0, 0, True, False, 0, 0.5, 0.5)
         elif case == 1:
-            self.set_configs(.75, 0, 0)
+            self.set_configs(.75, 0, 0, True, False, 0, 0.5, 0.5)
         else:
-            self.set_configs(.75, 1, 2)
+            self.set_configs(.75, 1, 2, True, False, 0, 0.5, 0.5)
 
         if self.subsession.round_number == 1:
             yield (pages.Introduction)
        
+        group_id = self.player.participant.vars['group']
+        player_groups = self.subsession.get_groups()
+        bot_groups = self.session.vars['automated_traders']
+        
+        # only if the automated trader treatment is on
+        if self.session.config['automated_traders']:
+            if group_id == 0 and self.player.id_in_group == 1:
+                for t1, t2 in self.session.vars['pairs'][self.round_number - 1].items():
+                    t1_group, t1_id = t1
+                    t2_group, _ = t2
+                    # if both members of the pair are bots
+                    if t1_group >= len(player_groups) and t2_group >= len(player_groups):
+                        a1 = bot_groups[(t1_group, t1_id)]
+                        a1.trade(self.subsession)
+        
         # get trading partner
-        group_id = 0 if self.participant.vars['group_color'] == Constants.red else 1 
         other_group, other_id = self.session.vars['pairs'][self.round_number - 1][
             (group_id, self.player.id_in_group - 1)]
-        other_player = self.subsession.get_groups()[other_group].get_player_by_id(other_id + 1)
-       
+        if other_group < len(player_groups):
+            other_player = player_groups[other_group].get_player_by_id(other_id + 1)
+        else:
+            other_player = bot_groups[(other_group, other_id)]
+        
         # get states before submitting any forms
         group_color = self.player.participant.vars['group_color']
         token_color = self.player.participant.vars['token']
@@ -57,9 +86,16 @@ class PlayerBot(Bot):
 
         # play the trading page
         yield (pages.Trade, { 'trade_attempted': trade_attempted })
-        # at this point, all fields for the round have been recorded
-        # we need to refersh the other_player object
-        other_player = self.subsession.get_groups()[other_group].get_player_by_id(other_id + 1)
+        group_id = self.player.participant.vars['group']
+        player_groups = self.subsession.get_groups()
+        bot_groups = self.session.vars['automated_traders']
+        # get trading partner
+        other_group, other_id = self.session.vars['pairs'][self.round_number - 1][
+            (group_id, self.player.id_in_group - 1)]
+        if other_group < len(player_groups):
+            other_player = player_groups[other_group].get_player_by_id(other_id + 1)
+        else:
+            other_player = bot_groups[(other_group, other_id)]
         other_trade_attempted = other_player.trade_attempted
         
         # Assertion tests
