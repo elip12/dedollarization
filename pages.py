@@ -178,7 +178,6 @@ class Results(Page):
             'new_token_color': new_token_color,
             'round_payoff': self.player.payoff,
             'round_number': self.round_number, 
-            #'fc_transactions': self.subsession.fc_transactions
         }
     
 

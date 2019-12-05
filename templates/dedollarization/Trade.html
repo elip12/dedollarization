@@ -120,20 +120,43 @@ These are some instructions.
 <table class = "t2">
     <tr class = "t2">
         <th class = "t2">Round</th>
-        <th class = "t2">Your Group</th>
         <th class = "t2">Your Item</th>
         <th class = "t2">Partner's Item</th>
-        <th class = "t2">Traded</th>
-        <th class = "t2">Payoff</th>
+        <th class = "t2">Partner's Group</th>
+        
+        <th class = "t2">Trade Possible</th>
+        <th class = "t2">Trade Attempted</th>
+        <th class = "t2">Trade Succeeded</th>
+        
+        <th class = "t2">Round Payoff</th>
         <th class = "t2">Foreign Transactions</th>
     </tr>
-    {% for p in player.in_previous_rounds %}
+    
+    {% for p in player.in_previous_rounds reversed %}
     <tr class = "t2">
         <td class = "t2">{{ p.round_number }}</td>
-        <td class = "t2">{{ p.group_color }}</td>
         <td class = "t2">{{ p.token_color }}</td>
         <td class = "t2">{{ p.other_token_color }}</td>
-        <td class = "t2">{{ p.trade_succeeded }}</td>
+        <td class = "t2">{{ p.other_group_color}}</td>
+        
+        {% if role_pre == other_role_pre %}
+        <td class = "t2">No</td>
+        {% else %}
+        <td class = "t2">Yes</td>
+        {% endif %}
+        
+        {% if p.trade_attempted == True %}
+        <td class = "t2">Yes</td>
+        {% else %}
+        <td class = "t2">No</td>
+        {% endif %}
+        
+        {% if p.trade_succeeded == True %}
+        <td class = "t2">Yes</td>
+        {% else %}
+        <td class = "t2">No</td>
+        {% endif %}
+        
         <td class = "t2">{{ p.payoff }}</td>
         <td class = "t2">{{ p.subsession.fc_transactions }}</td>
     </tr>

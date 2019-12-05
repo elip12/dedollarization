@@ -57,28 +57,56 @@ th, td {
         Your total payoff so far is {{ player.participant.payoff|c }}.   
     </p>
 
-    <table>
-        <tr>
-            <th>Round</th>
-            <th>Your Group</th>
-            <th>Your Item</th>
-            <th>Partner's Item</th>
-            <th>Traded</th>
-            <th>Payoff</th>
+{% if subsession.round_number > 1 %}
+<p>Your Previous Trades</p>
 
-            {% for p in player.in_all_rounds %}
-            <tr>
-                <td>{{ p.round_number }}</td>
-                <td>{{ p.group_color }}</td>
-                <td>{{ p.token_color }}</td>
-                <td>{{ p.other_token_color }}</td>
-                <td>{{ p.trade_succeeded }}</td>
-                <td>{{ p.payoff }}</td>
-            </tr>
-            {% endfor %}
+<table class = "t2">
+    <tr class = "t2">
+        <th class = "t2">Round</th>
+        <th class = "t2">Your Item</th>
+        <th class = "t2">Partner's Item</th>
+        <th class = "t2">Partner's Group</th>
+        
+        <th class = "t2">Trade Possible</th>
+        <th class = "t2">Trade Attempted</th>
+        <th class = "t2">Trade Succeeded</th>
+        
+        <th class = "t2">Round Payoff</th>
+        <th class = "t2">Foreign Transactions</th>
+    </tr>
+    
+    {% for p in player.in_previous_rounds reversed %}
+    <tr class = "t2">
+        <td class = "t2">{{ p.round_number }}</td>
+        <td class = "t2">{{ p.token_color }}</td>
+        <td class = "t2">{{ p.other_token_color }}</td>
+        <td class = "t2">{{ p.other_group_color}}</td>
+        
+        {% if role_pre == other_role_pre %}
+        <td class = "t2">No</td>
+        {% else %}
+        <td class = "t2">Yes</td>
+        {% endif %}
+        
+        {% if p.trade_attempted == True %}
+        <td class = "t2">Yes</td>
+        {% else %}
+        <td class = "t2">No</td>
+        {% endif %}
+        
+        {% if p.trade_succeeded == True %}
+        <td class = "t2">Yes</td>
+        {% else %}
+        <td class = "t2">No</td>
+        {% endif %}
+        
+        <td class = "t2">{{ p.payoff }}</td>
+        <td class = "t2">{{ p.subsession.fc_transactions }}</td>
+    </tr>
+    {% endfor %}
                       
-    </table>
-    <br>
-
+</table>
+{% endif %}
+<br>
     {% next_button %}
 {% endblock %}
