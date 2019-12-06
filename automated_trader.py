@@ -29,11 +29,23 @@ class Round():
         if all(vars(self).values()):
             return True
         return False
-    
+
+    def __str__(self):
+        return f'role pre:          {self.role_pre}\n' + \
+            f'other role pre:    {self.other_role_pre}\n' + \
+            f'token color:       {self.token_color}\n' + \
+            f'other token color: {self.other_token_color}\n' + \
+            f'group color:       {self.group_color}\n' + \
+            f'other group_color: {self.other_group_color}\n' + \
+            f'trade attempted:   {self.trade_attempted}\n' + \
+            f'trade succeeded:   {self.trade_succeeded}\n' + \
+            f'payoff:            {self.payoff}\n' + \
+            f'cumulative payoff: {self.cumulative_payoff}'
+
 class AutomatedTrader():
     def __init__(self, session, id_in_group):
         self.participant = Participant()
-        self.__round_data = [Round()]
+        self.__round_data = []
         self.session = session
         self.id_in_group = id_in_group
 
@@ -80,6 +92,7 @@ class AutomatedTrader():
         df.to_csv(f'producer_consumer_{date}_session_{self.session.code}_automated_trader_{id_in_session}.csv')
 
     def trade(self, subsession):
+        self.__round_data.append(Round())
         # self.session.vars['pairs'] is a list of rounds.
         # each round is a dict of (group,id):(group,id) pairs.
         group_id = self.participant.vars['group']
@@ -106,6 +119,13 @@ class AutomatedTrader():
         # defining group color as in models.py
         self.group_color = self.participant.vars['group_color']
         self.other_group_color = other_player.participant.vars['group_color']
+
+        assert (self.token_color != None)
+        assert (self.other_token_color != None)
+        assert (self.role_pre != None)
+        assert (self.other_role_pre != None)
+        assert (self.group_color != None)
+        assert (self.other_group_color != None)
 
         # logic for whether you trade or not. 
         if self.role_pre == self.other_role_pre:
@@ -197,6 +217,7 @@ class AutomatedTrader():
 
         # set payoffs
         self.set_payoffs(round_payoff)
+        #print(self.__round_data[-1])
     
     def set_payoffs(self, round_payoff):
         self.payoff = round_payoff
@@ -208,7 +229,7 @@ class AutomatedTrader():
 
     @payoff.setter
     def payoff(self, v):
-        self.__check_round_over()
+        #self.__check_round_over()
         self.__round_data[-1].payoff = v
         self.participant.payoff += v
         self.__round_data[-1].cumulative_payoff = self.participant.payoff
@@ -232,7 +253,7 @@ class AutomatedTrader():
 
     @role_pre.setter
     def role_pre(self, v):
-        self.__check_round_over()
+        #self.__check_round_over()
         self.__round_data[-1].role_pre = v
 
     @property
@@ -242,7 +263,7 @@ class AutomatedTrader():
 
     @other_role_pre.setter
     def other_role_pre(self, v):
-        self.__check_round_over()
+        #self.__check_round_over()
         self.__round_data[-1].other_role_pre = v
     
     @property
@@ -252,7 +273,7 @@ class AutomatedTrader():
 
     @token_color.setter
     def token_color(self, v):
-        self.__check_round_over()
+        #self.__check_round_over()
         self.__round_data[-1].token_color = v
 
     @property
@@ -262,7 +283,7 @@ class AutomatedTrader():
 
     @other_token_color.setter
     def other_token_color(self, v):
-        self.__check_round_over()
+        #self.__check_round_over()
         self.__round_data[-1].other_token_color = v
 
     @property
@@ -272,7 +293,7 @@ class AutomatedTrader():
 
     @group_color.setter
     def group_color(self, v):
-        self.__check_round_over()
+        #self.__check_round_over()
         self.__round_data[-1].group_color = v
 
     @property
@@ -282,7 +303,7 @@ class AutomatedTrader():
 
     @other_group_color.setter
     def other_group_color(self, v):
-        self.__check_round_over()
+        #self.__check_round_over()
         self.__round_data[-1].other_group_color = v
 
     @property
@@ -292,7 +313,7 @@ class AutomatedTrader():
 
     @trade_attempted.setter
     def trade_attempted(self, v):
-        self.__check_round_over()
+        #self.__check_round_over()
         self.__round_data[-1].trade_attempted = v
 
     @property
@@ -302,6 +323,6 @@ class AutomatedTrader():
 
     @trade_succeeded.setter
     def trade_succeeded(self, v):
-        self.__check_round_over()
+        #self.__check_round_over()
         self.__round_data[-1].trade_succeeded = v
 

@@ -27,19 +27,33 @@ class PlayerBot(Bot):
         self.session.config['percent_foreign_tax_producer'] = tax_prod
 
     @staticmethod
-    def check_bot_results(bot, config):
-        # get trading partner
-        other_group, other_id = bot.session.vars['pairs'][bot.round_number - 1][
-            (group_id, bot.player.id_in_group - 1)]
-        other_player = bot_groups[(other_group, other_id)]
+    def assert_reflective(a1, a2):
+        assert(a1.role_pre == a2.other_role_pre)
+        assert(a1.other_role_pre == a2.role_pre)
+        assert(a1.group_color == a2.other_group_color)
+        assert(a1.other_group_color == a2.group_color)
+        assert(a1.token_color == a2.other_token_color)
+        assert(a1.other_token_color == a2.token_color)
+
+    @staticmethod
+    def check_bot_results(bot, config, subsession):
+        group_id = bot.participant.vars['group']
+        player_groups = subsession.get_groups()
+        bot_groups = bot.session.vars['automated_traders']
         
+        # get trading partner
+        other_group, other_id = bot.session.vars['pairs'][subsession.round_number - 1][
+            (group_id, bot.id_in_group - 1)]
+        other_player = bot_groups[(other_group, other_id)]
+
+        PlayerBot.assert_reflective(bot, other_player)        
         trade_attempted = bot.trade_attempted
         other_trade_attempted = other_player.trade_attempted
         
         # Assertion tests
 
         # if bots trade same color is on, ensure bot follows the rule
-        if bot.token_color != bot.other_token_color \
+        if bot.role_pre != bot.other_role_pre \
         and bot.role_pre == 'Producer':
             assert(other_trade_attempted)
             if other_player.token_color != bot.group_color:
@@ -50,7 +64,7 @@ class PlayerBot(Bot):
             else:
                 assert(trade_attempted)
 
-        if bot.token_color == bot.other_token_color:
+        if bot.role_pre == bot.other_role_pre:
             assert(not trade_attempted)
             assert(not other_trade_attempted)
         
@@ -88,13 +102,21 @@ class PlayerBot(Bot):
             assert(other_player.participant.vars['token'] == bot.token_color)
         
         
-        store_homo = c(config['token_store_cost_homogeneous'])
-        store_hetero = c(config['token_store_cost_hetero'])
-        tax_prod = c(int(config['foreign_tax'] \
-            * config['percent_foreign_tax_producer']))
-        tax_cons = c(int(config['foreign_tax'] \
-            * config['percent_foreign_tax_consumer']))
+        if bot.group_color == bot.other_group_color and bot.role_pre == 'Producer' \
+        and bot.other_token_color != bot.group_color:
+            tax_prod = c(int(config['foreign_tax'] \
+                * config['percent_foreign_tax_producer']))
+        else:
+            tax_prod = c(0)
 
+        if bot.group_color == bot.other_group_color and bot.role_pre == 'Consumer' \
+        and bot.token_color != bot.group_color:
+            tax_cons = c(int(config['foreign_tax'] \
+                * config['percent_foreign_tax_consumer']))
+        else:
+            tax_cons = c(0)
+        store_homo = c(config['token_store_cost_homogeneous'])
+        store_hetero = c(config['token_store_cost_heterogeneous'])
 
         if bot.trade_succeeded:
             if bot.role_pre == 'Consumer':
@@ -104,33 +126,63 @@ class PlayerBot(Bot):
             if bot.role_pre == 'Producer':
                 assert(bot.participant.vars['token'] == Constants.red \
                     or bot.participant.vars['token'] == Constants.blue)
-                assert(bot.payoff == -tax_prod)
+                #assert(bot.payoff == -tax_prod)
        
         if not bot.trade_succeeded:
-            if bot.participant.vars['token'] == group_color:
+            if bot.participant.vars['token'] == bot.group_color:
                 assert(bot.payoff == -store_homo)
             
-            if bot.participant.vars['token'] != group_color \
+            if bot.participant.vars['token'] != bot.group_color \
                 and bot.participant.vars['token'] != Constants.trade_good:
                 assert(bot.payoff == -store_hetero)
         
         if bot.participant.vars['token'] == Constants.trade_good:
             assert(bot.payoff >= -tax_cons)
-        
-        # assert payoffs get updated as they should
-        if other_group >= len(player_groups):
-            assert(other_player.participant.payoff == other_money + other_payoff)
-        assert(bot.participant.payoff == money + bot.payoff)
-        
 
     def play_round(self):
-        case = self.subsession.round_number % 3
-        if case == 0:
-            self.set_configs(.5, 0, 0, True, False, 0, 0.5, 0.5)
-        elif case == 1:
-            self.set_configs(.75, 0, 0, True, False, 0, 0.5, 0.5)
-        else:
-            self.set_configs(.75, 1, 2, True, False, 0, 0.5, 0.5)
+        aa = [.25, .5, .75]
+        bb = [0, 2]
+        cc = [0, 2]
+        dd = [True, False]
+        ee = [True, False]
+        ff = [0, 1, 3]
+        gg = [[0, 1], [0.5, 0.5], [1, 0]]
+
+        aaa = len(aa)
+        bbb = len(bb)
+        ccc = len(cc)
+        ddd = len(dd)
+        eee = len(ee)
+        fff = len(ff)
+        ggg = len(gg)
+        size = aaa*bbb*ccc*ddd*eee*fff*ggg
+
+        for a in range(aaa):
+            for b in range(bbb):
+                for c_ in range(ccc):
+                    for d in range(ddd):
+                        for e in range(eee):
+                            for f in range(fff):
+                                for g in range(ggg):
+                                    index = a*bbb*ccc*ddd*eee*fff*ggg \
+                                        + b*ccc*ddd*eee*fff*ggg \
+                                        + c_*ddd*eee*fff*ggg \
+                                        + d*eee*fff*ggg \
+                                        + e*fff*ggg \
+                                        + f*ggg \
+                                        + g
+                                    if self.subsession.round_number % size == index:
+                                        self.set_configs(aa[a], bb[b], cc[c_],
+                                            dd[d], ee[e], ff[f], *(gg[g]))
+
+
+       # case = self.subsession.round_number % 3
+       # if case == 0:
+       #     self.set_configs(.5, 0, 0, True, False, 0, 0.5, 0.5)
+       # elif case == 1:
+       #     self.set_configs(.75, 0, 0, True, False, 0, 0.5, 0.5)
+       # else:
+       #     self.set_configs(.75, 1, 2, True, False, 0, 0.5, 0.5)
 
         if self.subsession.round_number == 1:
             yield (pages.Introduction)
@@ -194,7 +246,7 @@ class PlayerBot(Bot):
                     # if both members of the pair are bots
                     if t1_group >= len(player_groups) and t2_group >= len(player_groups):
                         a1 = bot_groups[(t1_group, t1_id)]
-                        self.check_bot_results(a1, self.session.config)
+                        self.check_bot_results(a1, self.session.config, self.subsession)
         
         # get trading partner
         other_group, other_id = self.session.vars['pairs'][self.round_number - 1][
@@ -203,6 +255,7 @@ class PlayerBot(Bot):
             other_player = player_groups[other_group].get_player_by_id(other_id + 1)
         else:
             other_player = bot_groups[(other_group, other_id)]
+        self.assert_reflective(self.player, other_player)
         other_trade_attempted = other_player.trade_attempted
         
         # Assertion tests
@@ -260,11 +313,20 @@ class PlayerBot(Bot):
         
         store_homo = c(self.session.config['token_store_cost_homogeneous'])
         store_hetero = c(self.session.config['token_store_cost_heterogeneous'])
-        tax_prod = c(int(self.session.config['foreign_tax'] \
-            * self.session.config['percent_foreign_tax_producer']))
-        tax_cons = c(int(self.session.config['foreign_tax'] \
-            * self.session.config['percent_foreign_tax_consumer']))
+        
+        if group_color == other_group_color and role_pre == 'Producer' \
+        and other_token_color != group_color:
+            tax_prod = c(int(self.session.config['foreign_tax'] \
+                * self.session.config['percent_foreign_tax_producer']))
+        else:
+            tax_prod = c(0)
 
+        if group_color == other_group_color and role_pre == 'Consumer' \
+        and token_color != group_color:
+            tax_cons = c(int(self.session.config['foreign_tax'] \
+                * self.session.config['percent_foreign_tax_consumer']))
+        else:
+            tax_cons = c(0)
 
         if self.player.trade_succeeded:
             if self.player.role_pre == 'Consumer':
@@ -275,7 +337,7 @@ class PlayerBot(Bot):
             if self.player.role_pre == 'Producer':
                 assert(self.player.participant.vars['token'] == Constants.red \
                     or self.player.participant.vars['token'] == Constants.blue)
-                assert(self.player.payoff == -tax_prod)
+                #assert(self.player.payoff == -tax_prod)
        
         if not self.player.trade_succeeded:
             if self.player.participant.vars['token'] == group_color:
@@ -290,7 +352,7 @@ class PlayerBot(Bot):
         
         # assert payoffs get updated as they should
         if other_group >= len(player_groups):
-            assert(other_player.participant.payoff == other_money + other_payoff)
+            assert(other_player.participant.payoff == other_money + other_player.payoff)
         assert(self.player.participant.payoff == money + self.player.payoff)
 
         # submit the results page
