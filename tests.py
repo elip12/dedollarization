@@ -126,7 +126,7 @@ class PlayerBot(Bot):
             if bot.role_pre == 'Producer':
                 assert(bot.participant.vars['token'] == Constants.red \
                     or bot.participant.vars['token'] == Constants.blue)
-                #assert(bot.payoff == -tax_prod)
+                assert(bot.payoff == -tax_prod)
        
         if not bot.trade_succeeded:
             if bot.participant.vars['token'] == bot.group_color:
@@ -337,7 +337,7 @@ class PlayerBot(Bot):
             if self.player.role_pre == 'Producer':
                 assert(self.player.participant.vars['token'] == Constants.red \
                     or self.player.participant.vars['token'] == Constants.blue)
-                #assert(self.player.payoff == -tax_prod)
+                assert(self.player.payoff == -tax_prod)
        
         if not self.player.trade_succeeded:
             if self.player.participant.vars['token'] == group_color:
