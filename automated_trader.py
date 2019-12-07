@@ -188,9 +188,13 @@ class AutomatedTrader():
 
             # if the player is the consumer, apply consumer tax to them
             # and apply producer tax to other player
+
+            # FOREIGN TRANSACTION:
+            # both parties the same group color
             if self.role_pre == 'Consumer':
                 tax_consumer = c(0)
-                if self.token_color != self.other_group_color:
+                if self.token_color != self.other_group_color and \
+                        self.group_color == self.other_group_color:
                     tax_consumer += self.session.config['foreign_tax'] \
                         * self.session.config['percent_foreign_tax_consumer']
                 round_payoff += reward - tax_consumer
@@ -198,7 +202,8 @@ class AutomatedTrader():
             # else if the player is the consumer, opposite
             else:
                 tax_producer = c(0)
-                if self.group_color != self.other_token_color:
+                if self.group_color != self.other_token_color and \
+                        self.group_color == self.other_group_color:
                     tax_producer += self.session.config['foreign_tax'] \
                         * self.session.config['percent_foreign_tax_producer']
                 round_payoff -= tax_producer
@@ -208,12 +213,18 @@ class AutomatedTrader():
 
         # penalties for self
         # if your token matches your group color
-        if self.participant.vars['token'] == self.participant.vars['group_color']:
-            round_payoff -= c(self.session.config['token_store_cost_homogeneous'])
 
-        # if your token matches the opposite group color
-        elif self.participant.vars['token'] != Constants.trade_good:
-            round_payoff -= c(self.session.config['token_store_cost_heterogeneous'])
+        # TOKEN STORE COST:
+        # if token held for a round = if trade did not succeed
+        # homo: token is your color
+        # hetero: token is different color
+        if not self.trade_succeeded:
+            if self.participant.vars['token'] == self.participant.vars['group_color']:
+                round_payoff -= c(self.session.config['token_store_cost_homogeneous'])
+
+            # if your token matches the opposite group color
+            elif self.participant.vars['token'] != Constants.trade_good:
+                round_payoff -= c(self.session.config['token_store_cost_heterogeneous'])
 
         # set payoffs
         self.set_payoffs(round_payoff)

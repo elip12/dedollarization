@@ -7,7 +7,7 @@ import copy
 from .automated_trader import AutomatedTrader
 
 class Constants(BaseConstants):
-    name_in_url = 'producer_consumer'
+    name_in_url = 'dedollarization'
     players_per_group = 4
     num_rounds = 42
     endowment = c(50)
