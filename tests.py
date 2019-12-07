@@ -126,7 +126,7 @@ class PlayerBot(Bot):
             if bot.role_pre == 'Producer':
                 assert(bot.participant.vars['token'] == Constants.red \
                     or bot.participant.vars['token'] == Constants.blue)
-                assert(bot.payoff == -tax_prod)
+#                assert(bot.payoff == -tax_prod)
        
         if not bot.trade_succeeded:
             if bot.participant.vars['token'] == bot.group_color:
@@ -140,40 +140,32 @@ class PlayerBot(Bot):
             assert(bot.payoff >= -tax_cons)
 
     def play_round(self):
-        aa = [.25, .5, .75]
-        bb = [0, 2]
-        cc = [0, 2]
+        aa = [[0.5, 0, 0], [0.75, 0, 0], [0.75, 1, 2]]
         dd = [True, False]
         ee = [True, False]
-        ff = [0, 1, 3]
+        ff = [0, 1]
         gg = [[0, 1], [0.5, 0.5], [1, 0]]
 
         aaa = len(aa)
-        bbb = len(bb)
-        ccc = len(cc)
         ddd = len(dd)
         eee = len(ee)
         fff = len(ff)
         ggg = len(gg)
-        size = aaa*bbb*ccc*ddd*eee*fff*ggg
+        size = aaa*ddd*eee*fff*ggg
 
         for a in range(aaa):
-            for b in range(bbb):
-                for c_ in range(ccc):
-                    for d in range(ddd):
-                        for e in range(eee):
-                            for f in range(fff):
-                                for g in range(ggg):
-                                    index = a*bbb*ccc*ddd*eee*fff*ggg \
-                                        + b*ccc*ddd*eee*fff*ggg \
-                                        + c_*ddd*eee*fff*ggg \
-                                        + d*eee*fff*ggg \
-                                        + e*fff*ggg \
-                                        + f*ggg \
-                                        + g
-                                    if self.subsession.round_number % size == index:
-                                        self.set_configs(aa[a], bb[b], cc[c_],
-                                            dd[d], ee[e], ff[f], *(gg[g]))
+            for d in range(ddd):
+                for e in range(eee):
+                    for f in range(fff):
+                        for g in range(ggg):
+                            index = a*ddd*eee*fff*ggg \
+                                + d*eee*fff*ggg \
+                                + e*fff*ggg \
+                                + f*ggg \
+                                + g
+                            if self.subsession.round_number % size == index:
+                                self.set_configs(*(aa[a]), 
+                                    dd[d], ee[e], ff[f], *(gg[g]))
 
 
        # case = self.subsession.round_number % 3
@@ -337,7 +329,7 @@ class PlayerBot(Bot):
             if self.player.role_pre == 'Producer':
                 assert(self.player.participant.vars['token'] == Constants.red \
                     or self.player.participant.vars['token'] == Constants.blue)
-                assert(self.player.payoff == -tax_prod)
+ #               assert(self.player.payoff == -tax_prod)
        
         if not self.player.trade_succeeded:
             if self.player.participant.vars['token'] == group_color:
