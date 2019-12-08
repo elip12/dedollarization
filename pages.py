@@ -128,7 +128,6 @@ class Results(Page):
                 other_player.trade_succeeded = True
 
             ### TREATMENT: TAX ON FOREIGN (OPPOSITE) CURRENCY
-
             # if the player is the consumer, apply consumer tax to them
             # and apply producer tax to other player
             if self.player.role_pre == 'Consumer':
@@ -136,7 +135,9 @@ class Results(Page):
                 if self.player.token_color != self.player.other_group_color:
                     tax_consumer += self.session.config['foreign_tax'] \
                         * self.session.config['percent_foreign_tax_consumer']
+                    self.player.tax_paid = tax_consumer
                 round_payoff += Constants.reward - tax_consumer
+                
 
             # else if the player is the consumer, opposite
             else:
@@ -144,6 +145,7 @@ class Results(Page):
                 if self.player.group_color != self.player.other_token_color:
                     tax_producer += self.session.config['foreign_tax'] \
                         * self.session.config['percent_foreign_tax_producer']
+                    self.player.tax_paid = tax_producer
                 round_payoff -= tax_producer
 
         else:
@@ -152,9 +154,11 @@ class Results(Page):
         # if your token matches your group color
         if self.player.participant.vars['token'] == self.participant.vars['group_color']:
             round_payoff -= c(self.session.config['token_store_cost_homogeneous'])
+            self.player.storage_cost_paid = self.session.config['token_store_cost_homogeneous']
 
         elif self.player.participant.vars['token'] != Constants.trade_good:
             round_payoff -= c(self.session.config['token_store_cost_heterogeneous'])
+            self.player.storage_cost_paid = self.session.config['token_store_cost_heterogeneous']
         # set payoffs
         self.player.set_payoffs(round_payoff)
         if self.player.trade_succeeded:
