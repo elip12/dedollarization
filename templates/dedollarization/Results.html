@@ -59,6 +59,7 @@ th, td {
 
 {% if subsession.round_number > 1 %}
 <p>Your Previous Trades</p>
+
 <table class = "t2">
     <tr class = "t2">
         <th class = "t2">Round</th>
@@ -72,6 +73,13 @@ th, td {
         {% if session.config.show_foreign_transactions %}
         <th class = "t2">Foreign Transactions</th>
         {% endif %}
+        {% if session.config.show_tax_paid %}
+        <th class = "t2">Tax Paid</th>
+        {% endif %}
+        {% if session.config.show_storage_cost_paid %}
+        <th class = "t2">Storage Cost Paid</th>
+        {% endif %}
+ 
     </tr>
     {% for p in player.in_previous_rounds reversed %}
     <tr class = "t2">
@@ -97,6 +105,12 @@ th, td {
         <td class = "t2">{{ p.payoff }}</td>
         {% if session.config.show_foreign_transactions %}
         <td class = "t2">{{ p.subsession.fc_transactions }}</td>
+        {% endif %}
+        {% if session.config.show_tax_paid %}
+        <td class = "t2">{{p.tax_paid}}</td>
+        {% endif %}
+        {% if session.config.show_storage_cost_paid %}
+        <td class = "t2">{{p.storage_cost_paid}}</td>
         {% endif %}
     </tr>
     {% endfor %}
