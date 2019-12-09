@@ -7,22 +7,23 @@ really matter.
 1. Clone this repo: `git clone https://github.com/elip12/producer_consumer.git`
 1. Edit SESSION_CONFIGS in the settings.py file to look like this:
 ```
-dict(
-        name='dedollarization',
-        num_demo_participants=4,
-        app_sequence=['dedollarization'],
-        probability_of_same_group= 0.5,
-        token_store_cost_homogeneous= 1,
-        token_store_cost_heterogeneous=2,
-        automated_traders=True,
-        bots_trade_same_color=True,
-        foreign_tax=2,
-        percent_foreign_tax_consumer=0.5,
-        percent_foreign_tax_producer=0.5,
-        show_foreign_transactions=True,
-        show_tax_paid=True,
-        show_storage_cost_paid=True,
-        soles_per_ecu=0.1, 
+{
+        'name': 'dedollarization',
+        'num_demo_participants': 4,
+        'app_sequence': ['dedollarization'],
+        'probability_of_same_group': 0.5,
+        'token_store_cost_homogeneous': 1,
+        'token_store_cost_heterogeneous': 2,
+        'automated_traders': True,
+        'bots_trade_same_color': True,
+        'foreign_tax': 2,
+        'percent_foreign_tax_consumer': 0.5,
+        'percent_foreign_tax_producer': 0.5,
+        'show_foreign_transactions': True,
+        'show_tax_paid': True,
+        'show_storage_cost_paid': True,
+        'soles_per_ecu': 0.1,
+    },
 ```
  1. Start the server: `otree devserver`
  1. Navigate to `localhost:8000` in your browser.
