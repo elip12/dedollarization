@@ -7,7 +7,7 @@ really matter.
 1. Clone this repo: `git clone https://github.com/elip12/producer_consumer.git`
 1. Edit SESSION_CONFIGS in the settings.py file to look like this:
 ```
-{
+    {
         'name': 'dedollarization',
         'num_demo_participants': 4,
         'app_sequence': ['dedollarization'],
