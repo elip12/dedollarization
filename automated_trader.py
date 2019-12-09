@@ -72,7 +72,8 @@ class AutomatedTrader():
         n = len(self.__round_data)
         id_in_session = (self.id_in_group + 1) + (players_per_group * self.participant.vars['group'])
         df[cols[0]] = np.full(n, id_in_session)
-        df[cols[1]] = np.array([r.cumulative_payoff for r in self.__round_data])
+        df[cols[1]] = np.array([r.cumulative_payoff if r.cumulative_payoff != None\
+                else 0* self.session.config['soles_per_ecu'] for r in self.__round_data])
         df[cols[2]] = np.full(n, 1)
         df[cols[3]] = np.full(n, self.id_in_group + 1)
         df[cols[4]] = np.array([r.role_pre for r in self.__round_data])
@@ -120,12 +121,12 @@ class AutomatedTrader():
         self.group_color = self.participant.vars['group_color']
         self.other_group_color = other_player.participant.vars['group_color']
 
-        assert (self.token_color != None)
-        assert (self.other_token_color != None)
-        assert (self.role_pre != None)
-        assert (self.other_role_pre != None)
-        assert (self.group_color != None)
-        assert (self.other_group_color != None)
+        #assert (self.token_color != None)
+        #assert (self.other_token_color != None)
+        #assert (self.role_pre != None)
+        #assert (self.other_role_pre != None)
+        #assert (self.group_color != None)
+        #assert (self.other_group_color != None)
 
         # logic for whether you trade or not. 
         if self.role_pre == self.other_role_pre:

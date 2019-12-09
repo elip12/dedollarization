@@ -219,6 +219,8 @@ class PostResultsWaitPage(WaitPage):
         if self.subsession.round_number == Constants.num_rounds:
             for bot in bot_groups.values():
                 bot.export_data(Constants.players_per_group)
+            for p in self.subsession.get_players():                             
+                p.participant.payoff *= self.session.config['soles_per_ecu']    
 
 page_sequence = [
     Introduction,

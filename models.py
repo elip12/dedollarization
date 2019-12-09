@@ -9,7 +9,7 @@ from .automated_trader import AutomatedTrader
 class Constants(BaseConstants):
     name_in_url = 'dedollarization'
     players_per_group = 4
-    num_rounds = 42
+    num_rounds = 1
     endowment = c(50)
     reward = c(20)
     red = 'Red'
