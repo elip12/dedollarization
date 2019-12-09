@@ -18,8 +18,10 @@ class Constants(BaseConstants):
 
 class Subsession(BaseSubsession):
     
-    #tried making transaction count belong to Subsession
+    #foreign transaction count for subsession
     fc_transactions = models.IntegerField()
+    possible_fc_transactions = models.IntegerField()
+    fc_transaction_percent = models.IntegerField()
     
     def creating_session(self):
         if self.round_number == 1:
@@ -190,9 +192,12 @@ class Player(BasePlayer):
         choices=[
             [False, 'No'],
             [True, 'Yes'],
-        ]
+        ],
+        widget = widgets.RadioSelect
     )
     trade_succeeded = models.BooleanField()
+    tax_paid = models.CurrencyField(initial=0)
+    storage_cost_paid = models.CurrencyField(initial=0)
                 
     def set_payoffs(self, round_payoff):
         self.payoff = round_payoff
