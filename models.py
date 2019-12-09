@@ -8,7 +8,7 @@ from .automated_trader import AutomatedTrader
 class Constants(BaseConstants):
     name_in_url = 'producer_consumer'
     players_per_group = 4
-    num_rounds = 4 #originally 2
+    num_rounds = 2
     endowment = c(50)
     reward = c(20)
     red = 'Red'
@@ -19,6 +19,8 @@ class Subsession(BaseSubsession):
     
     #foreign transaction count for subsession
     fc_transactions = models.IntegerField()
+    possible_fc_transactions = models.IntegerField()
+    fc_transaction_percent = models.IntegerField()
     
     def creating_session(self):
         if self.round_number == 1:

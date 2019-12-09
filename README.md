@@ -54,21 +54,21 @@ Update the bot and tax behavior accordingly. only encounters in which the first 
 ### frontend: branch `frontend-updates`
 - smaller token graphics *DONE*
 - look into otree support for multiple languages 
-    Looks doable: https://otree.readthedocs.io/en/latest/misc/internationalization.html
+Looks doable: https://otree.readthedocs.io/en/latest/misc/internationalization.html
 - change trade dropdown to radio buttons *DONE*
 - make UI conform to google doc Kristian shared: table on right side, text on left side
-    right now table is below text.
-    make text take up 30% of width and table take up 70% of width
+right now table is below text. make text take up 30% of width and table take up 70% of width
 - make a parameter in the settings file for toggling the visibility of the foreign transactions
-column, and make the column only display if the toggle is on. see session.config
-- ensure table has most recent rounds on top and most distant on bottom DONE
+column, and make the column only display if the toggle is on. see session.config *DONE* 
+- ensure table has most recent rounds on top and most distant on bottom *DONE*
 - remove the "your group" col from the table *DONE*
 - add a "partner's group" col to the table *DONE*
 - add trade possible, trade attempted columns to table *DONE*
 - change "traded" col to "trade succeeded" col *DONE*
 - change True, False to Yes, No in all relevant table cols *DONE*
 - change column "Payoff" to "Round Payoff" *DONE*
-- see the thing in the backend about foreign transactions. change that table col
-to make each col row value a decimal representation of the fraction [foreign transaction "occur"ences / foreign transaction possibilities]
-- add optional "Tax Paid" and "Storage Cost Paid" cols to the table, and add settings.py toggles for them
+- see the thing in the backend about foreign transactions. 
+change that table col to make each col row value a decimal representation of the fraction 
+[foreign transaction "occurrences / foreign transaction possibilities] *DONE*
+- add optional "Tax Paid" and "Storage Cost Paid" cols to the table, and add settings.py toggles for them *DONE*
 

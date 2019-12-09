@@ -104,13 +104,13 @@ th, td {
         {% endif %}
         <td class = "t2">{{ p.payoff }}</td>
         {% if session.config.show_foreign_transactions %}
-        <td class = "t2">{{ p.subsession.fc_transactions }}</td>
+        <td class = "t2">{{ p.subsession.fc_transaction_percent }}%</td>
         {% endif %}
         {% if session.config.show_tax_paid %}
-        <td class = "t2">{{p.tax_paid}}</td>
+        <td class = "t2">{{ p.tax_paid }}</td>
         {% endif %}
         {% if session.config.show_storage_cost_paid %}
-        <td class = "t2">{{p.storage_cost_paid}}</td>
+        <td class = "t2">{{ p.storage_cost_paid }}</td>
         {% endif %}
     </tr>
     {% endfor %}

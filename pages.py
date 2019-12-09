@@ -192,22 +192,40 @@ class PostResultsWaitPage(WaitPage):
         bot_groups = self.session.vars['automated_traders']
         
         #count foreign currency transactions this round
-        count = 0
+        fc_count = 0
+        fc_possible_count = 0
+        
         for p in self.subsession.get_players():
-            if p.role_pre == 'Producer' and \
+            if p.group_color == p.other_group_color and \
             p.group_color != p.other_token_color and \
-            p.trade_succeeded:
-                count += 1
-        for b in bot_groups.values():
-            if b.role_pre == 'Producer' and \
-            b.group_color != b.other_token_color and \
-            b.trade_succeeded:
-                count += 1
+            p.role_pre == 'Producer':
+                if p.trade_attempted:
+                    fc_count += 1
+                    fc_possible_count += 1
+                else:
+                    fc_possible_count += 1      
                 
-        self.subsession.fc_transactions = count
+        for b in bot_groups.values():
+            if b.group_color == b.other_group_color and \
+            b.group_color != b.other_token_color and \
+            b.role_pre == 'Producer':
+                if b.trade_attempted:
+                    fc_count += 1
+                    fc_possible_count += 1
+                else:
+                    fc_possible_count += 1
+             
+        self.subsession.fc_transactions = fc_count
+        self.subsession.possible_fc_transactions = fc_possible_count
+        fc_percent = 0 
+        if fc_count > 0 and fc_possible_count > 0:
+            fc_percent = fc_count/fc_possible_count
+        self.subsession.fc_transaction_percent = fc_percent*100
+        
         if self.subsession.round_number == Constants.num_rounds:
             for bot in bot_groups.values():
                 bot.export_data(Constants.players_per_group)
+                
 
 page_sequence = [
     Introduction,
