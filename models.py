@@ -3,12 +3,13 @@ from otree.api import (
     Currency as c, currency_range
 )
 import random
+import copy
 from .automated_trader import AutomatedTrader
 
 class Constants(BaseConstants):
-    name_in_url = 'producer_consumer'
+    name_in_url = 'dedollarization'
     players_per_group = 4
-    num_rounds = 2
+    num_rounds = 1
     endowment = c(50)
     reward = c(20)
     red = 'Red'
@@ -84,7 +85,7 @@ class Subsession(BaseSubsession):
                     random.shuffle(groups[i])
 
                 g = []
-                groups_ = groups.copy()
+                groups_ = copy.deepcopy(groups)
                 # randomly select 2 different groups. then select 1 random traders
                 # from each group. remove those traders from their respective group
                 # lists and put them in the pairs list as a pair.
@@ -96,7 +97,7 @@ class Subsession(BaseSubsession):
                     indices = [i for i, gl in enumerate(groups) if len(gl) > 0] # indices of non-empty groups
                     if len(indices) < 2:
                         g = []
-                        groups = groups_.copy()
+                        groups = copy.deepcopy(groups_)
                         continue
                     i0, i1 = random.sample(indices, 2)
                     p0 = (i0, groups[i0].pop())
@@ -134,7 +135,6 @@ class Subsession(BaseSubsession):
 
             # only create bots if the bot treatment is on
             if self.session.config['automated_traders']:
-
                 for gi in range(n_groups // 2, n_groups):
                     group_color = Constants.blue
                     roles = [Constants.trade_good for n in range(Constants.players_per_group // 2)]
@@ -176,7 +176,6 @@ class Subsession(BaseSubsession):
             
         # set number of transactions back to 0 each round
         self.fc_transactions = 0
-        
             
 class Group(BaseGroup):
     pass
