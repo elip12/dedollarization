@@ -7,14 +7,14 @@
 table, th, td {
   border: 0px solid black;
   border-collapse: collapse;
+  padding: 15px;
 }
 table.t2, th.t2, td.t2 {
   border: 1px solid black;
   border-collapse: collapse;
-}
-th, td {
-  padding: 15px;  
-  
+  padding: 3px;
+  width: 40px;
+  text-align: center;
 }
 </style>
 {% endblock %}
@@ -33,149 +33,154 @@ th, td {
 {% endblock %}
 
 {% block content %}
-<p>
-These are some instructions.
-</p>
-<table>
-    <tr>
-    <td>
-    <p>
-        Your group color is {{ group_color }}.
-        <br>
-        {% if token_color != Constants.trade_good %}
-        You have a {{ token_color }} token.
-        <br>
-        Your role is Consumer.
-        <br>
-        {% if token_color == Constants.red %}
-        <img src="{% static "redCoin.png" %}"/>
-        <br>
-        {% endif %}
-        {% if token_color == Constants.blue %}
-        <img src="{% static "blueCoin.png"%}"/>
-        <br> 
-        {% endif %}
-        {% else %}
-        You do not have a token.
-        <br>
-        Your role is Producer.
-        <br>
-        <img src="{% static "object.png"%}"/>
-        <br>
-        {% endif %}
-    </p>
-    </td>
-    <td>
-    <p>  
-        Your trading partner's group color is {{ other_group_color }}.
-        <br>
-        {% if other_token_color != Constants.trade_good %}
-        Your trading partner has a {{ other_token_color }} token.
-        <br>
-        Their role is Consumer.
-        <br>
-        {% if other_token_color == Constants.red %}
-        <img src="{% static "redCoin.png"%}"/>
-        <br>
-        {% endif %}
-        {% if other_token_color == Constants.blue %}
-        <img src="{% static "blueCoin.png"%}"/>
-        <br> 
-        {% endif %}
-        {% else %}
-        Your trading partner does not have a token.
-        <br>
-        Their role is Producer.
-        <br>
-        <img src="{% static "object.png"%}"/>
-        <br>
-        {% endif %}
-    </p>
-    </td>
-    </tr>
-</table>
-
-    {% if role_pre == other_role_pre %}
-    <p>
-        You cannot trade with your trading partner, since you are both
-        {{ role_pre }}s.
-    </p>
-    <input type="hidden" name="trade_attempted" id="trade_attempted_"/>
-    {% else %}
-    <p>
-        Would you like to offer to trade your
-        {% if token_color != Constants.trade_good %}
-        token for your partner's trading good?
-        {% else %}
-        trading good for your partner's token?
-        {% endif %}
-    </p>
-    {% formfield player.trade_attempted %}
-    {% endif %}
-    {% next_button %}
-
-{% if subsession.round_number > 1 %}
-<p>Your Previous Trades</p>
-
-<table class = "t2">
-    <tr class = "t2">
-        <th class = "t2">Round</th>
-        <th class = "t2">Your Item</th>
-        <th class = "t2">Partner's Item</th>
-        <th class = "t2">Partner's Group</th>
-        <th class = "t2">Trade Possible</th>
-        <th class = "t2">Trade Attempted</th>
-        <th class = "t2">Trade Succeeded</th>
-        <th class = "t2">Round Payoff</th>
-        {% if session.config.show_foreign_transactions %}
-        <th class = "t2">Foreign Transactions</th>
-        {% endif %}
-        {% if session.config.show_tax_paid %}
-        <th class = "t2">Tax Paid</th>
-        {% endif %}
-        {% if session.config.show_storage_cost_paid %}
-        <th class = "t2">Storage Cost Paid</th>
-        {% endif %}
- 
-    </tr>
-    {% for p in player.in_previous_rounds reversed %}
-    <tr class = "t2">
-        <td class = "t2">{{ p.round_number }}</td>
-        <td class = "t2">{{ p.token_color }}</td>
-        <td class = "t2">{{ p.other_token_color }}</td>
-        <td class = "t2">{{ p.other_group_color}}</td>
+<div class="row">
+    <div class="col-3">
+        <p>
+        These are some instructions.
+        </p>
+        <table>
+            <tr>
+            <td>
+            <p>
+                Your group color is {{ group_color }}.
+                <br>
+                {% if token_color != Constants.trade_good %}
+                You have a {{ token_color }} token.
+                <br>
+                Your role is Consumer.
+                <br>
+                {% if token_color == Constants.red %}
+                <img src="{% static "redCoin.png" %}"/>
+                <br>
+                {% endif %}
+                {% if token_color == Constants.blue %}
+                <img src="{% static "blueCoin.png"%}"/>
+                <br> 
+                {% endif %}
+                {% else %}
+                You do not have a token.
+                <br>
+                Your role is Producer.
+                <br>
+                <img src="{% static "object.png"%}"/>
+                <br>
+                {% endif %}
+            </p>
+            </td>
+            </tr>
+            <tr>
+            <td>
+            <p>  
+                Your trading partner's group color is {{ other_group_color }}.
+                <br>
+                {% if other_token_color != Constants.trade_good %}
+                Your trading partner has a {{ other_token_color }} token.
+                <br>
+                Their role is Consumer.
+                <br>
+                {% if other_token_color == Constants.red %}
+                <img src="{% static "redCoin.png"%}"/>
+                <br>
+                {% endif %}
+                {% if other_token_color == Constants.blue %}
+                <img src="{% static "blueCoin.png"%}"/>
+                <br> 
+                {% endif %}
+                {% else %}
+                Your trading partner does not have a token.
+                <br>
+                Their role is Producer.
+                <br>
+                <img src="{% static "object.png"%}"/>
+                <br>
+                {% endif %}
+            </p>
+            </td>
+            </tr>
+        </table>
         {% if role_pre == other_role_pre %}
-        <td class = "t2">No</td>
+        <p>
+            You cannot trade with your trading partner, since you are both
+            {{ role_pre }}s.
+        </p>
+        <input type="hidden" name="trade_attempted" id="trade_attempted_"/>
         {% else %}
-        <td class = "t2">Yes</td>
+        <p>
+            Would you like to offer to trade your
+            {% if token_color != Constants.trade_good %}
+            token for your partner's trading good?
+            {% else %}
+            trading good for your partner's token?
+            {% endif %}
+        </p>
+        {% formfield player.trade_attempted %}
         {% endif %}
-        {% if p.trade_attempted == True %}
-        <td class = "t2">Yes</td>
-        {% else %}
-        <td class = "t2">No</td>
-        {% endif %}
-        {% if p.trade_succeeded == True %}
-        <td class = "t2">Yes</td>
-        {% else %}
-        <td class = "t2">No</td>
-        {% endif %}
-        <td class = "t2">{{ p.payoff }}</td>
-        {% if session.config.show_foreign_transactions %}
-        <td class = "t2">{{ p.subsession.fc_transaction_percent }}%</td>
-        {% endif %}
-        {% if session.config.show_tax_paid %}
-        <td class = "t2">{{ p.tax_paid }}</td>
-        {% endif %}
-        {% if session.config.show_storage_cost_paid %}
-        <td class = "t2">{{ p.storage_cost_paid }}</td>
-        {% endif %}
-    </tr>
-    {% endfor %}
-                      
-</table>
-{% endif %}
+        {% next_button %}
+    </div>
+    <div class="col-9">
+        {% if subsession.round_number >= 1 %}
+        <p><b>Previous Trades</b></p>
 
     <input type="hidden" name="trading"/>
     {{ form.trading.errors }}
 
+        <table class = "t2">
+            <tr class = "t2">
+                <th class = "t2">Round</th>
+                <th class = "t2">Your Item</th>
+                <th class = "t2">Partner's Item</th>
+                <th class = "t2">Partner's Group</th>
+                <th class = "t2">Trade Possible</th>
+                <th class = "t2">Trade Attempted</th>
+                <th class = "t2">Trade Succeeded</th>
+                <th class = "t2">Round Payoff</th>
+                {% if session.config.show_foreign_transactions %}
+                <th class = "t2">Foreign Transactions</th>
+                {% endif %}
+                {% if session.config.show_tax_paid %}
+                <th class = "t2">Tax Paid</th>
+                {% endif %}
+                {% if session.config.show_storage_cost_paid %}
+                <th class = "t2">Storage Cost Paid</th>
+                {% endif %}
+         
+            </tr>
+            {% for p in player.in_previous_rounds reversed %}
+            <tr class = "t2">
+                <td class = "t2">{{ p.round_number }}</td>
+                <td class = "t2">{{ p.token_color }}</td>
+                <td class = "t2">{{ p.other_token_color }}</td>
+                <td class = "t2">{{ p.other_group_color}}</td>
+                {% if role_pre == other_role_pre %}
+                <td class = "t2">No</td>
+                {% else %}
+                <td class = "t2">Yes</td>
+                {% endif %}
+                {% if p.trade_attempted == True %}
+                <td class = "t2">Yes</td>
+                {% else %}
+                <td class = "t2">No</td>
+                {% endif %}
+                {% if p.trade_succeeded == True %}
+                <td class = "t2">Yes</td>
+                {% else %}
+                <td class = "t2">No</td>
+                {% endif %}
+                <td class = "t2">{{ p.payoff }}</td>
+                {% if session.config.show_foreign_transactions %}
+                <td class = "t2">{{ p.subsession.fc_transaction_percent }}%</td>
+                {% endif %}
+                {% if session.config.show_tax_paid %}
+                <td class = "t2">{{ p.tax_paid }}</td>
+                {% endif %}
+                {% if session.config.show_storage_cost_paid %}
+                <td class = "t2">{{ p.storage_cost_paid }}</td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+                              
+        </table>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}
