@@ -121,6 +121,9 @@ table.t2, th.t2, td.t2 {
         {% if subsession.round_number >= 1 %}
         <p><b>Previous Trades</b></p>
 
+    <input type="hidden" name="trading"/>
+    {{ form.trading.errors }}
+
         <table class = "t2">
             <tr class = "t2">
                 <th class = "t2">Round</th>

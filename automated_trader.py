@@ -4,13 +4,16 @@ import numpy as np
 import datetime
 import random
 
+
 class Participant():
     def __init__(self):
         self.vars = {'group': None}
         self.payoff = c(0)
 
+
 class Constants():
     trade_good = 'Trade Good'
+
 
 class Round():
     def __init__(self):

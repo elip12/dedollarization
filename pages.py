@@ -2,15 +2,17 @@ from otree.api import Currency as c, currency_range
 from ._builtin import Page, WaitPage
 from .models import Constants
 
+
 # Description of the game: How to play and returns expected
 class Introduction(Page):
     def is_displayed(self):
         return self.round_number == 1
 
+
 class Trade(Page):
     timeout_seconds = 60
     form_model = 'player'
-    form_fields = ['trade_attempted']
+    form_fields = ['trade_attempted', 'trading']
 
     def vars_for_template(self):
         # self.session.vars['pairs'] is a list of rounds.
@@ -69,14 +71,17 @@ class Trade(Page):
 
     def before_next_page(self):
         if self.timeout_happened:
+            self.player.player_timed_out += 1
             self.player.trade_attempted = False
              
 
 class ResultsWaitPage(WaitPage):
     body_text = 'Waiting for other participants to decide.'
     wait_for_all_groups = True
+
     def after_all_players_arrive(self):
         pass
+
 
 class Results(Page):
     timeout_seconds = 30
@@ -201,10 +206,11 @@ class Results(Page):
 class PostResultsWaitPage(WaitPage):
     body_text = 'Waiting for other participants to finish viewing results.'
     wait_for_all_groups = True
-    def after_all_players_arrive(self): 
+
+    def after_all_players_arrive(self):
         bot_groups = self.session.vars['automated_traders']
         
-        #count foreign currency transactions this round
+        # count foreign currency transactions this round
         fc_count = 0
         fc_possible_count = 0
         
@@ -240,6 +246,7 @@ class PostResultsWaitPage(WaitPage):
                 bot.export_data(Constants.players_per_group)
             for p in self.subsession.get_players():                             
                 p.participant.payoff *= self.session.config['soles_per_ecu']    
+
 
 page_sequence = [
     Introduction,
