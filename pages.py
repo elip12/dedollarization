@@ -76,12 +76,14 @@ class Trade(Page):
 
     def before_next_page(self):
         if self.timeout_happened:
+            self.player.player_timed_out += 1
             self.player.trade_attempted = False
              
 
 class ResultsWaitPage(WaitPage):
     body_text = 'Waiting for other participants to decide.'
     wait_for_all_groups = True
+
     def after_all_players_arrive(self):
         pass
 
@@ -209,10 +211,11 @@ class Results(Page):
 class PostResultsWaitPage(WaitPage):
     body_text = 'Waiting for other participants to finish viewing results.'
     wait_for_all_groups = True
-    def after_all_players_arrive(self): 
+
+    def after_all_players_arrive(self):
         bot_groups = self.session.vars['automated_traders']
         
-        #count foreign currency transactions this round
+        # count foreign currency transactions this round
         fc_count = 0
         fc_possible_count = 0
         
@@ -248,6 +251,7 @@ class PostResultsWaitPage(WaitPage):
                 bot.export_data(Constants.players_per_group)
             for p in self.subsession.get_players():                             
                 p.participant.payoff *= self.session.config['soles_per_ecu']    
+
 
 page_sequence = [
     NotMobilePlayers,

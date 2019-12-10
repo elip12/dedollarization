@@ -178,7 +178,8 @@ class Subsession(BaseSubsession):
             
         # set number of transactions back to 0 each round
         self.fc_transactions = 0
-            
+
+
 class Group(BaseGroup):
     pass
     
@@ -186,6 +187,9 @@ class Group(BaseGroup):
 class Player(BasePlayer):
     # For detecting bots in this section of the game
     trading = models.LongStringField(blank=True)
+
+    # Player Timed out
+    player_timed_out = models.IntegerField(initial=0)
 
     role_pre = models.StringField() # 'Producer', 'Consumer'
     other_role_pre = models.StringField()
