@@ -3,11 +3,6 @@ from ._builtin import Page, WaitPage
 from .models import Constants
 
 
-class NotMobilePlayers(WaitPage):
-    # Only the players who weren't using their phones for this can be grouped with the rest
-    group_by_arrival_time = True
-
-
 # Description of the game: How to play and returns expected
 class Introduction(Page):
     def is_displayed(self):
@@ -254,7 +249,6 @@ class PostResultsWaitPage(WaitPage):
 
 
 page_sequence = [
-    NotMobilePlayers,
     Introduction,
     Trade,
     ResultsWaitPage,
