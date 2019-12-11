@@ -203,6 +203,7 @@ class Player(BasePlayer):
             [False, 'No'],
             [True, 'Sí'],
         ],
+        verbose_name = "",
         widget = widgets.RadioSelect
     )
     trade_succeeded = models.BooleanField()

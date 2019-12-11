@@ -40,7 +40,7 @@ class Introduction(Page):
 
 
 class Trade(Page):
-    timeout_seconds = 60
+    # timeout_seconds = 60
     form_model = 'player'
     form_fields = ['trade_attempted', 'trading']
 

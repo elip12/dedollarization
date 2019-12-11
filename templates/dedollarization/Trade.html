@@ -29,7 +29,7 @@ table.t2, th.t2, td.t2 {
 {% endblock %}
 
 {% block title %}
-    Ronda{{ subsession.round_number }}
+    Ronda {{ subsession.round_number }}
 {% endblock %}
 
 {% block content %}
@@ -38,25 +38,25 @@ table.t2, th.t2, td.t2 {
         <table>
             <tr>
             <td>
-            <p> Tú
-                <br><br>
-                Grupo: {{ group_color }}.
+            <h5> Tú: </h5>
+                <p>
+                Grupo {{ group_color }}
                 <br>
                 {% if token_color != Constants.trade_good %}
-                Posee objeto: Ficha {{ token_color }}.
+                Posees objeto: <br> Ficha color {{ token_color }}
                 <br>
                 {% if token_color == Constants.red %}
-                <img src="{% static "redCoin.png" %}"/>
+                <img height="40%" width="40%" src="{% static "redCoin.png"%}"/>
                 <br>
                 {% endif %}
                 {% if token_color == Constants.blue %}
-                <img src="{% static "blueCoin.png"%}"/>
+                <img height="40%" width="40%" src="{% static "blueCoin.png"%}"/>
                 <br> 
                 {% endif %}
                 {% else %}
-                Posee: Bien de consumo.
+                Posees objeto: <br> Bien de consumo
                 <br>
-                <img src="{% static "object.png"%}"/>
+                <img height="40%" width="40%" src="{% static "object.png"%}"/>
                 <br>
                 {% endif %}
             </p>
@@ -64,13 +64,12 @@ table.t2, th.t2, td.t2 {
             </tr>
             <tr>
             <td>
-            <p>  
-                Socio
-                <br>
-                Grupo {{ other_group_color }}.
+            <h5> Socio: </h5>
+            <p>
+                Grupo {{ other_group_color }}
                 <br>
                 {% if other_token_color != Constants.trade_good %}
-                Posee objeto: Ficha {{ other_token_color }}.
+                Posee objeto: <br> Ficha {{ other_token_color }}
                 <br>
                 {% if other_token_color == Constants.red %}
                 <img height="40%" width="40%" src="{% static "redCoin.png"%}"/>
@@ -81,7 +80,7 @@ table.t2, th.t2, td.t2 {
                 <br> 
                 {% endif %}
                 {% else %}
-                Posee: Bien de consumo.
+                Posee objeto: <br> Bien de consumo
                 <br>
                 <img height="40%" width="40%" src="{% static "object.png"%}"/>
                 <br>
@@ -92,17 +91,28 @@ table.t2, th.t2, td.t2 {
         </table>
         {% if role_pre == other_role_pre %}
         <p>
-            No puedes intercambiar con tu socio, ya que los dos son del grupo
-            {{ role_pre }}.
+            No puedes intercambiar con tu socio, ya que los dos tienen el mismo objeto.
+            <!--{{ role_pre }}.-->
         </p>
         <input type="hidden" name="trade_attempted" id="trade_attempted_"/>
         {% else %}
         <p>
-            ¿Te gustaría ofrecer tu
+            ¿Quieres intercambiar tu
             {% if token_color != Constants.trade_good %}
-            ficha a cambio del bien de consumo de tu compañero?
+                {% if token_color == Constants.red %}
+                    ficha roja
+                {% elif token_color == Constants.blue %}
+                    ficha azul
+                {% endif %}
+                a cambio del bien de consumo de tu compañero?
             {% else %}
-            bien de consumo a cambio de la ficha de tu compañero?
+            bien de consumo a cambio de la
+                {% if other_token_color == Constants.red %}
+                    ficha roja
+                {% elif other_token_color == Constants.blue %}
+                    ficha azul
+                {% endif %}
+            de tu socio?
             {% endif %}
         </p>
         {% formfield player.trade_attempted %}
@@ -122,18 +132,18 @@ table.t2, th.t2, td.t2 {
                 <th class = "t2">Tu Objeto</th>
                 <th class = "t2">Objeto del Socio</th>
                 <th class = "t2">Grupo del Socio</th>
-                <th class = "t2">Trade Possible</th>
-                <th class = "t2">Trade Attempted</th>
-                <th class = "t2">Trade Succeeded</th>
-                <th class = "t2">Round Payoff</th>
+                <th class = "t2">Intercambio Posible</th>
+                <th class = "t2">Intento de Intercambio</th>
+                <th class = "t2">Intercambio Exitoso</th>
+                <th class = "t2">Pagos de la Ronda</th>
                 {% if session.config.show_foreign_transactions %}
-                <th class = "t2">Foreign Transactions</th>
+                <th class = "t2">Aceptacion de F. Azul en tu Grupo</th>
                 {% endif %}
                 {% if session.config.show_tax_paid %}
-                <th class = "t2">Tax Paid</th>
+                <th class = "t2">Impuesto Pagado</th>
                 {% endif %}
                 {% if session.config.show_storage_cost_paid %}
-                <th class = "t2">Storage Cost Paid</th>
+                <th class = "t2">Costo Almacenar Ficha</th>
                 {% endif %}
          
             </tr>
