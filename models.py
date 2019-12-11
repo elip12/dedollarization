@@ -13,7 +13,7 @@ class Constants(BaseConstants):
     instructions_template = 'dedollarization/Instructions.html'
     num_rounds = 50
     endowment = c(50)
-    reward = c(20)
+    reward = c(10)
     red = 'Rojo'
     blue = 'Azul'
     trade_good = 'Trade Good'
