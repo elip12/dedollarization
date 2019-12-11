@@ -73,17 +73,17 @@ table.t2, th.t2, td.t2 {
                 Posee objeto: Ficha {{ other_token_color }}.
                 <br>
                 {% if other_token_color == Constants.red %}
-                <img src="{% static "redCoin.png"%}"/>
+                <img height="40%" width="40%" src="{% static "redCoin.png"%}"/>
                 <br>
                 {% endif %}
                 {% if other_token_color == Constants.blue %}
-                <img src="{% static "blueCoin.png"%}"/>
+                <img height="40%" width="40%" src="{% static "blueCoin.png"%}"/>
                 <br> 
                 {% endif %}
                 {% else %}
                 Posee: Bien de consumo.
                 <br>
-                <img width="" src="{% static "object.png"%}"/>
+                <img height="40%" width="40%" src="{% static "object.png"%}"/>
                 <br>
                 {% endif %}
             </p>
@@ -118,10 +118,10 @@ table.t2, th.t2, td.t2 {
 
         <table class = "t2">
             <tr class = "t2">
-                <th class = "t2">Round</th>
-                <th class = "t2">Your Item</th>
-                <th class = "t2">Partner's Item</th>
-                <th class = "t2">Partner's Group</th>
+                <th class = "t2">Ronda</th>
+                <th class = "t2">Tu Objeto</th>
+                <th class = "t2">Objeto del Socio</th>
+                <th class = "t2">Grupo del Socio</th>
                 <th class = "t2">Trade Possible</th>
                 <th class = "t2">Trade Attempted</th>
                 <th class = "t2">Trade Succeeded</th>
