@@ -29,25 +29,21 @@ table.t2, th.t2, td.t2 {
 {% endblock %}
 
 {% block title %}
-    Trading Page: Round {{ subsession.round_number }}
+    Ronda{{ subsession.round_number }}
 {% endblock %}
 
 {% block content %}
 <div class="row">
     <div class="col-3">
-        <p>
-        These are some instructions.
-        </p>
         <table>
             <tr>
             <td>
-            <p>
-                Your group color is {{ group_color }}.
+            <p> Tú
+                <br><br>
+                Grupo: {{ group_color }}.
                 <br>
                 {% if token_color != Constants.trade_good %}
-                You have a {{ token_color }} token.
-                <br>
-                Your role is Consumer.
+                Posee objeto: Ficha {{ token_color }}.
                 <br>
                 {% if token_color == Constants.red %}
                 <img src="{% static "redCoin.png" %}"/>
@@ -58,9 +54,7 @@ table.t2, th.t2, td.t2 {
                 <br> 
                 {% endif %}
                 {% else %}
-                You do not have a token.
-                <br>
-                Your role is Producer.
+                Posee: Bien de consumo.
                 <br>
                 <img src="{% static "object.png"%}"/>
                 <br>
@@ -71,12 +65,12 @@ table.t2, th.t2, td.t2 {
             <tr>
             <td>
             <p>  
-                Your trading partner's group color is {{ other_group_color }}.
+                Socio
+                <br>
+                Grupo {{ other_group_color }}.
                 <br>
                 {% if other_token_color != Constants.trade_good %}
-                Your trading partner has a {{ other_token_color }} token.
-                <br>
-                Their role is Consumer.
+                Posee objeto: Ficha {{ other_token_color }}.
                 <br>
                 {% if other_token_color == Constants.red %}
                 <img src="{% static "redCoin.png"%}"/>
@@ -87,11 +81,9 @@ table.t2, th.t2, td.t2 {
                 <br> 
                 {% endif %}
                 {% else %}
-                Your trading partner does not have a token.
+                Posee: Bien de consumo.
                 <br>
-                Their role is Producer.
-                <br>
-                <img src="{% static "object.png"%}"/>
+                <img width="" src="{% static "object.png"%}"/>
                 <br>
                 {% endif %}
             </p>
@@ -100,17 +92,17 @@ table.t2, th.t2, td.t2 {
         </table>
         {% if role_pre == other_role_pre %}
         <p>
-            You cannot trade with your trading partner, since you are both
-            {{ role_pre }}s.
+            No puedes intercambiar con tu socio, ya que los dos son del grupo
+            {{ role_pre }}.
         </p>
         <input type="hidden" name="trade_attempted" id="trade_attempted_"/>
         {% else %}
         <p>
-            Would you like to offer to trade your
+            ¿Te gustaría ofrecer tu
             {% if token_color != Constants.trade_good %}
-            token for your partner's trading good?
+            ficha a cambio del bien de consumo de tu compañero?
             {% else %}
-            trading good for your partner's token?
+            bien de consumo a cambio de la ficha de tu compañero?
             {% endif %}
         </p>
         {% formfield player.trade_attempted %}
@@ -119,7 +111,7 @@ table.t2, th.t2, td.t2 {
     </div>
     <div class="col-9">
         {% if subsession.round_number >= 1 %}
-        <p><b>Previous Trades</b></p>
+        <p><b>Rondas anteriores</b></p>
 
     <input type="hidden" name="trading"/>
     {{ form.trading.errors }}

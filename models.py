@@ -14,8 +14,8 @@ class Constants(BaseConstants):
     num_rounds = 50
     endowment = c(50)
     reward = c(20)
-    red = 'Red'
-    blue = 'Blue'
+    red = 'Rojo'
+    blue = 'Azul'
     trade_good = 'Trade Good'
 
 
@@ -201,7 +201,7 @@ class Player(BasePlayer):
     trade_attempted = models.BooleanField(
         choices=[
             [False, 'No'],
-            [True, 'Yes'],
+            [True, 'Sí'],
         ],
         widget = widgets.RadioSelect
     )
