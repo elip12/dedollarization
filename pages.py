@@ -8,6 +8,36 @@ class Introduction(Page):
     def is_displayed(self):
         return self.round_number == 1
 
+    def vars_for_template(self):
+        exchange_rate = self.session.config['real_world_currency_per_point']
+        players_per_group = self.session.config['players_per_group']
+        half_players_per_group = players_per_group / 2
+        foreign_tax = self.session.config['foreign_tax']
+        perc_f_tax_consumer = self.session.config['percent_foreign_tax_consumer']
+        perc_f_tax_producer = self.session.config['percent_foreign_tax_producer']
+        store_cost_hom = self.session.config['token_store_cost_homogeneous']
+        store_cost_het = self.session.config['token_store_cost_heterogeneous']
+        show_foreign_transactions = self.session.config['show_foreign_transactions']
+
+        # Treatment variable: 0 if baseline, 1 if tax treatment, 2 if cost treatment, 3 show foreign trans treatment
+        # Baseline Treatment
+        treatment = 0
+        # Tax Treatment
+        if perc_f_tax_consumer != 0 and perc_f_tax_producer != 0 and foreign_tax != 0:
+            treatment = 1
+        # 2 Cost Treatment
+        elif store_cost_hom != 0 and store_cost_het != 0:
+            treatment = 2
+        # 3 Show Foreign Trans Treatment
+        elif show_foreign_transactions is False:
+            treatment = 3
+
+        return dict(exchange_rate=exchange_rate, players_per_group=players_per_group,
+                    half_players_per_group=half_players_per_group, perc_f_tax_consumer=perc_f_tax_consumer,
+                    perc_f_tax_producer=perc_f_tax_producer, foreign_tax=foreign_tax, store_cost_hom=store_cost_hom,
+                    store_cost_het=store_cost_het, show_foreign_transactions=show_foreign_transactions,
+                    treatment=treatment)
+
 
 class Trade(Page):
     timeout_seconds = 60

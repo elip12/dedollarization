@@ -9,7 +9,8 @@ from .automated_trader import AutomatedTrader
 
 class Constants(BaseConstants):
     name_in_url = 'dedollarization'
-    players_per_group = 4
+    players_per_group = 8
+    instructions_template = 'dedollarization/Instructions.html'
     num_rounds = 50
     endowment = c(50)
     reward = c(20)
@@ -19,8 +20,8 @@ class Constants(BaseConstants):
 
 
 class Subsession(BaseSubsession):
-    
-    #foreign transaction count for subsession
+    # foreign transaction count for subsession
+
     fc_transactions = models.IntegerField()
     possible_fc_transactions = models.IntegerField()
     fc_transaction_percent = models.IntegerField()
