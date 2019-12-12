@@ -32,6 +32,7 @@ class Trade(Page):
                     t2_group, _ = t2
                     # if both members of the pair are bots
                     if t1_group >= len(player_groups) and t2_group >= len(player_groups):
+                        #print(t1_group, t1_id)
                         a1 = bot_groups[(t1_group, t1_id)]
                         a1.trade(self.subsession)
 
@@ -59,6 +60,7 @@ class Trade(Page):
 
         if self.session.config['automated_traders'] == True \
                 and other_group >= len(player_groups):
+            #print(other_group, other_id)
             other_player.trade(self.subsession)
         return {
             'role_pre': self.player.role_pre,

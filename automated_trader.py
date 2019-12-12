@@ -96,7 +96,9 @@ class AutomatedTrader():
         df.to_csv(f'producer_consumer_{date}_session_{self.session.code}_automated_trader_{id_in_session}.csv')
 
     def trade(self, subsession):
-        self.__round_data.append(Round())
+        if self.round_number == subsession.round_number - 1:
+            self.__round_data.append(Round())
+        #print(self.round_number)
         # self.session.vars['pairs'] is a list of rounds.
         # each round is a dict of (group,id):(group,id) pairs.
         group_id = self.participant.vars['group']
@@ -142,6 +144,7 @@ class AutomatedTrader():
             if self.session.config['bots_trade_same_color']:
 
                 # BOT is "self": if the other token is blue, then trade
+                #print('about to trade, ', self.other_token_color, self.group_color)
                 if self.other_token_color == self.group_color \
                         or self.role_pre == 'Consumer':
                     self.trade_attempted = True
