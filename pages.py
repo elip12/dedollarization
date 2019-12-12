@@ -40,7 +40,7 @@ class Introduction(Page):
 
 
 class Trade(Page):
-    # timeout_seconds = 60
+    timeout_seconds = 60
     form_model = 'player'
     form_fields = ['trade_attempted', 'trading']
 
@@ -116,7 +116,7 @@ class ResultsWaitPage(WaitPage):
 
 
 class Results(Page):
-    timeout_seconds = 5
+    timeout_seconds = 1
 
     def vars_for_template(self):
         group_id = self.player.participant.vars['group'] 
