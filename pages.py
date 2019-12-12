@@ -10,7 +10,7 @@ class Introduction(Page):
 
     def vars_for_template(self):
         exchange_rate = self.session.config['real_world_currency_per_point']
-        players_per_group = self.session.config['players_per_group']
+        players_per_group = Constants.players_per_group
         half_players_per_group = players_per_group / 2
         foreign_tax = self.session.config['foreign_tax']
         perc_f_tax_consumer = self.session.config['percent_foreign_tax_consumer']
@@ -62,6 +62,7 @@ class Trade(Page):
                     t2_group, _ = t2
                     # if both members of the pair are bots
                     if t1_group >= len(player_groups) and t2_group >= len(player_groups):
+                        #print(t1_group, t1_id)
                         a1 = bot_groups[(t1_group, t1_id)]
                         a1.trade(self.subsession)
 
@@ -89,6 +90,7 @@ class Trade(Page):
 
         if self.session.config['automated_traders'] == True \
                 and other_group >= len(player_groups):
+            #print(other_group, other_id)
             other_player.trade(self.subsession)
         return {
             'role_pre': self.player.role_pre,
@@ -107,14 +109,14 @@ class Trade(Page):
 
 class ResultsWaitPage(WaitPage):
     body_text = 'Waiting for other participants to decide.'
-    wait_for_all_groups = True
+ #   wait_for_all_group s = True
 
     def after_all_players_arrive(self):
         pass
 
 
 class Results(Page):
-    timeout_seconds = 30
+    timeout_seconds = 5
 
     def vars_for_template(self):
         group_id = self.player.participant.vars['group'] 
@@ -235,7 +237,7 @@ class Results(Page):
 
 class PostResultsWaitPage(WaitPage):
     body_text = 'Waiting for other participants to finish viewing results.'
-    wait_for_all_groups = True
+#    wait_for_all_groups = True
 
     def after_all_players_arrive(self):
         bot_groups = self.session.vars['automated_traders']
@@ -269,7 +271,7 @@ class PostResultsWaitPage(WaitPage):
         fc_percent = 0 
         if fc_count > 0 and fc_possible_count > 0:
             fc_percent = fc_count/fc_possible_count
-        self.subsession.fc_transaction_percent = fc_percent*100
+        self.subsession.fc_transaction_percent = int(fc_percent*100)
         
         if self.subsession.round_number == Constants.num_rounds:
             for bot in bot_groups.values():
@@ -282,7 +284,7 @@ page_sequence = [
     Introduction,
     Trade,
     ResultsWaitPage,
+    Results,
     PostResultsWaitPage,
 ]
-
 

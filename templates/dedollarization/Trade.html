@@ -121,10 +121,21 @@ table.t2, th.t2, td.t2 {
     </div>
     <div class="col-9">
         {% if subsession.round_number >= 1 %}
+
         <h5>Rondas anteriores</h5>
 
-    <input type="hidden" name="trading"/>
-    {{ form.trading.errors }}
+        <div class="row">
+            <div class="col-8">
+                <p><b>Rondas Anteriores</b></p>
+            </div>
+            <div class="col-4">
+                <p><b>Cumulative Payoff: {{ player.participant.payoff }}</b></p>
+            </div>
+        </div>
+>>>>>>> 496594a7726b4c8bf01b0b978dc34eb3f31f5b62
+
+        <input type="hidden" name="trading"/>
+        {{ form.trading.errors }}
 
         <table class = "t2">
             <tr class = "t2">
@@ -153,7 +164,7 @@ table.t2, th.t2, td.t2 {
                 <td class = "t2">{{ p.token_color }}</td>
                 <td class = "t2">{{ p.other_token_color }}</td>
                 <td class = "t2">{{ p.other_group_color}}</td>
-                {% if role_pre == other_role_pre %}
+                {% if p.role_pre == p.other_role_pre %}
                 <td class = "t2">No</td>
                 {% else %}
                 <td class = "t2">Yes</td>
