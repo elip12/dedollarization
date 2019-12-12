@@ -120,11 +120,19 @@ table.t2, th.t2, td.t2 {
         {% next_button %}
     </div>
     <div class="col-9">
-        {% if subsession.round_number >= 1 %}
         <p><b>Rondas anteriores</b></p>
+        {% if subsession.round_number >= 1 %}
+        <div class="row">
+            <div class="col-8">
+                <p><b>Previous Trades</b></p>
+            </div>
+            <div class="col-4">
+                <p><b>Cumulative Payoff: {{ player.participant.payoff }}</b></p>
+            </div>
+        </div>
 
-    <input type="hidden" name="trading"/>
-    {{ form.trading.errors }}
+        <input type="hidden" name="trading"/>
+        {{ form.trading.errors }}
 
         <table class = "t2">
             <tr class = "t2">
