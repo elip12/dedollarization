@@ -327,7 +327,7 @@ class AutomatedTrader():
 
     @property
     def trade_attempted(self):
-        if len(self.__round_data > 0)
+        if len(self.__round_data > 0):
             r = self.__round_data[-1]
             return r.trade_attempted
         else:
