@@ -10,7 +10,7 @@ class Introduction(Page):
 
     def vars_for_template(self):
         exchange_rate = self.session.config['real_world_currency_per_point']
-        players_per_group = self.session.config['players_per_group']
+        players_per_group = Constants.players_per_group
         half_players_per_group = players_per_group / 2
         foreign_tax = self.session.config['foreign_tax']
         perc_f_tax_consumer = self.session.config['percent_foreign_tax_consumer']
@@ -116,7 +116,7 @@ class ResultsWaitPage(WaitPage):
 
 
 class Results(Page):
-    timeout_seconds = 30
+    timeout_seconds = 5
 
     def vars_for_template(self):
         group_id = self.player.participant.vars['group'] 
@@ -284,6 +284,7 @@ page_sequence = [
     Introduction,
     Trade,
     ResultsWaitPage,
+    Results,
     PostResultsWaitPage,
 ]
 
