@@ -125,14 +125,15 @@ class Results(Page):
         
         # special case: one special player gets to tell all the bots paired
         # with other bots, to compute results
-        if group_id == 0 and self.player.id_in_group == 1: 
-            for t1, t2 in self.session.vars['pairs'][self.round_number - 1].items():
-                t1_group, t1_id = t1
-                t2_group, _ = t2
-                # if both members of the pair are bots
-                if t1_group >= len(player_groups) and t2_group >= len(player_groups):
-                    a1 = bot_groups[(t1_group, t1_id)]
-                    a1.compute_results(self.subsession, Constants.reward)
+        if self.session.config['automated_traders']:
+            if group_id == 0 and self.player.id_in_group == 1: 
+                for t1, t2 in self.session.vars['pairs'][self.round_number - 1].items():
+                    t1_group, t1_id = t1
+                    t2_group, _ = t2
+                    # if both members of the pair are bots
+                    if t1_group >= len(player_groups) and t2_group >= len(player_groups):
+                        a1 = bot_groups[(t1_group, t1_id)]
+                        a1.compute_results(self.subsession, Constants.reward)
         
         # identify trading partner
         # similar to above in Trade()
