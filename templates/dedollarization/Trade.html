@@ -121,7 +121,7 @@ table.t2, th.t2, td.t2 {
     </div>
     <div class="col-9">
         {% if subsession.round_number >= 1 %}
-        <p><b>Rondas anteriores</b></p>
+        <h5>Rondas anteriores</h5>
 
     <input type="hidden" name="trading"/>
     {{ form.trading.errors }}
@@ -137,7 +137,7 @@ table.t2, th.t2, td.t2 {
                 <th class = "t2">Intercambio Exitoso</th>
                 <th class = "t2">Pagos de la Ronda</th>
                 {% if session.config.show_foreign_transactions %}
-                <th class = "t2">Aceptacion de F. Azul en tu Grupo</th>
+                <th class = "t2">Aceptación de la Ficha Azul en tu Grupo</th>
                 {% endif %}
                 {% if session.config.show_tax_paid %}
                 <th class = "t2">Impuesto Pagado</th>
