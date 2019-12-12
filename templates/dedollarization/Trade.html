@@ -160,7 +160,7 @@ table.t2, th.t2, td.t2 {
                 <td class = "t2">{{ p.token_color }}</td>
                 <td class = "t2">{{ p.other_token_color }}</td>
                 <td class = "t2">{{ p.other_group_color}}</td>
-                {% if role_pre == other_role_pre %}
+                {% if p.role_pre == p.other_role_pre %}
                 <td class = "t2">No</td>
                 {% else %}
                 <td class = "t2">Yes</td>
