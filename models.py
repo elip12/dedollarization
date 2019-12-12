@@ -10,7 +10,7 @@ from .automated_trader import AutomatedTrader
 class Constants(BaseConstants):
     name_in_url = 'dedollarization'
     players_per_group = 4
-    num_rounds = 50
+    num_rounds = 10
     endowment = c(50)
     reward = c(20)
     red = 'Red'
@@ -78,44 +78,55 @@ class Subsession(BaseSubsession):
                     for i in range(0, index, 2):
                         pairs[(gi, g_sample_homogeneous[i])] = (gi, g_sample_homogeneous[i + 1])
                         pairs[(gi, g_sample_homogeneous[i + 1])] = (gi, g_sample_homogeneous[i])
+                    
+
+                    
                     # store the heterogeneous players so they can be paired later
                     groups.append(g_sample_heterogeneous)
    
                 # pair traders between groups
                 # randomize trader order within each group
-                for i, _ in enumerate(groups):
-                    random.shuffle(groups[i])
-
-                g = []
-                groups_ = copy.deepcopy(groups)
-                # randomly select 2 different groups. then select 1 random traders
-                # from each group. remove those traders from their respective group
-                # lists and put them in the pairs list as a pair.
-                # It is possible to get left with 2 traders from the same group
-                # at the end. If this happens, scrap it and start over.
-                # Repeat until you get a working heterogeneous pairing for each
-                # trader.
-                while any(groups):
-                    indices = [i for i, gl in enumerate(groups) if len(gl) > 0] # indices of non-empty groups
-                    if len(indices) < 2:
-                        g = []
-                        groups = copy.deepcopy(groups_)
-                        continue
-                    i0, i1 = random.sample(indices, 2)
-                    p0 = (i0, groups[i0].pop())
-                    p1 = (i1, groups[i1].pop())
-                    g.append((p0, p1))
-
-                #g = [(i, p) for i in range(n_groups) for p in groups[i]]
-                # num groups needs to be even (b/c one bot group per player group)
-                # therefore len(g) is even
-
-                # ex: (0,4) <=> (1,8)
-                #     (1,8) <=> (0,4)
-                for gg in g:
-                    pairs[gg[0]] = gg[1]
-                    pairs[gg[1]] = gg[0]
-
+#                print(groups) 
+                for gi in range(n_groups // 2):
+                    oi = gi + n_groups // 2 # other index
+                    random.shuffle(groups[gi])
+                    random.shuffle(groups[oi])
+                    for i in range(len(groups[gi])):
+                        pairs[(gi, groups[gi][i])] = (oi, groups[oi][i])
+                        pairs[(oi, groups[oi][i])] = (gi, groups[gi][i])
+#               #     g = []
+#                
+#                
+#                
+#                groups_ = copy.deepcopy(groups)
+#                # randomly select 2 different groups. then select 1 random traders
+#                # from each group. remove those traders from their respective group
+#                # lists and put them in the pairs list as a pair.
+#                # It is possible to get left with 2 traders from the same group
+#                # at the end. If this happens, scrap it and start over.
+#                # Repeat until you get a working heterogeneous pairing for each
+#                # trader.
+#                while any(groups):
+#                    indices = [i for i, gl in enumerate(groups) if len(gl) > 0] # indices of non-empty groups
+#                    if len(indices) < 2:
+#                        g = []
+#                        groups = copy.deepcopy(groups_)
+#                        continue
+#                    i0, i1 = random.sample(indices, 2)
+#                    p0 = (i0, groups[i0].pop())
+#                    p1 = (i1, groups[i1].pop())
+#                    g.append((p0, p1))
+#
+#                #g = [(i, p) for i in range(n_groups) for p in groups[i]]
+#                # num groups needs to be even (b/c one bot group per player group)
+#                # therefore len(g) is even
+#
+#                # ex: (0,4) <=> (1,8)
+#                #     (1,8) <=> (0,4)
+#                for gg in g:
+#                    pairs[gg[0]] = gg[1]
+#                    pairs[gg[1]] = gg[0]
+#
                 self.session.vars['pairs'].append(pairs)
 
             # if there is only 1 group, then we can do another loop after this
@@ -178,7 +189,7 @@ class Subsession(BaseSubsession):
             
         # set number of transactions back to 0 each round
         self.fc_transactions = 0
-
+        #print(self.session.vars['pairs'])
 
 class Group(BaseGroup):
     pass

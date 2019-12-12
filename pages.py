@@ -77,7 +77,7 @@ class Trade(Page):
 
 class ResultsWaitPage(WaitPage):
     body_text = 'Waiting for other participants to decide.'
-    wait_for_all_groups = True
+ #   wait_for_all_groups = True
 
     def after_all_players_arrive(self):
         pass
@@ -205,7 +205,7 @@ class Results(Page):
 
 class PostResultsWaitPage(WaitPage):
     body_text = 'Waiting for other participants to finish viewing results.'
-    wait_for_all_groups = True
+#    wait_for_all_groups = True
 
     def after_all_players_arrive(self):
         bot_groups = self.session.vars['automated_traders']
@@ -239,7 +239,7 @@ class PostResultsWaitPage(WaitPage):
         fc_percent = 0 
         if fc_count > 0 and fc_possible_count > 0:
             fc_percent = fc_count/fc_possible_count
-        self.subsession.fc_transaction_percent = fc_percent*100
+        self.subsession.fc_transaction_percent = int(fc_percent*100)
         
         if self.subsession.round_number == Constants.num_rounds:
             for bot in bot_groups.values():
@@ -255,5 +255,4 @@ page_sequence = [
     Results,
     PostResultsWaitPage,
 ]
-
 
