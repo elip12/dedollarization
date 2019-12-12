@@ -45,6 +45,7 @@ class Round():
             f'payoff:            {self.payoff}\n' + \
             f'cumulative payoff: {self.cumulative_payoff}'
 
+
 class AutomatedTrader():
     def __init__(self, session, id_in_group):
         self.participant = Participant()
@@ -187,7 +188,7 @@ class AutomatedTrader():
                 # set players' trade_succeeded field
                 self.trade_succeeded = True
                 other_player.trade_succeeded = True
-            
+
             ### TREATMENT: TAX ON FOREIGN (OPPOSITE) CURRENCY
 
             # if the player is the consumer, apply consumer tax to them

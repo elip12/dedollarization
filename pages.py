@@ -107,7 +107,7 @@ class Trade(Page):
 
 class ResultsWaitPage(WaitPage):
     body_text = 'Waiting for other participants to decide.'
- #   wait_for_all_groups = True
+ #   wait_for_all_group s = True
 
     def after_all_players_arrive(self):
         pass

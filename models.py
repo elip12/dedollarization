@@ -9,6 +9,7 @@ from .automated_trader import AutomatedTrader
 
 class Constants(BaseConstants):
     name_in_url = 'dedollarization'
+    instructions_template = 'dedollarization/Instructions.html'
     players_per_group = 4
     num_rounds = 10
     endowment = c(50)
@@ -196,7 +197,7 @@ class Group(BaseGroup):
     
 
 class Player(BasePlayer):
-    # For detecting bots in this section of the game
+    # For detecting mturk/online bots in this section of the game
     trading = models.LongStringField(blank=True)
 
     # Player Timed out
