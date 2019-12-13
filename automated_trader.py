@@ -43,7 +43,7 @@ class Round():
             f'trade attempted:   {self.trade_attempted}\n' + \
             f'trade succeeded:   {self.trade_succeeded}\n' + \
             f'payoff:            {self.payoff}\n' + \
-            f'cumulative payoff: {self.cumulative_payoff}'
+            f'cumulative payoff: {self.cumulative_payoff}\n'
 
 
 class AutomatedTrader():
@@ -74,6 +74,7 @@ class AutomatedTrader():
         ]
 
         df = {}
+        print(r for r in self.__round_data)
         n = len(self.__round_data)
         id_in_session = (self.id_in_group + 1) + (players_per_group * self.participant.vars['group'])
         df[cols[0]] = np.full(n, id_in_session)
@@ -97,9 +98,9 @@ class AutomatedTrader():
         date = datetime.datetime.now().strftime('%Y-%m-%d')
         df.to_csv(f'producer_consumer_{date}_session_{self.session.code}_automated_trader_{id_in_session}.csv')
 
-    def trade(self, subsession):
-        self.round_number = subsession.round_number - 1
-        #print(self.round_number)
+    def trade(self, subsession, rn):
+        self.round_number = rn - 1
+        print('bot', self.id_in_group, 'trading, round:', self.round_number)
         # self.session.vars['pairs'] is a list of rounds.
         # each round is a dict of (group,id):(group,id) pairs.
         group_id = self.participant.vars['group']
@@ -149,8 +150,8 @@ class AutomatedTrader():
                 if self.other_token_color == self.group_color \
                         or self.role_pre == 'Consumer':
                     self.trade_attempted = True
-                    print('bot', self.id_in_group, 'attempting trade...',
-                        self.role_pre, self.group_color, self.other_token_color)
+ #                   print('bot', self.id_in_group, 'attempting trade...',
+                        #self.role_pre, self.group_color, self.other_token_color)
 
                 # if not, then don't
                 else:
@@ -160,11 +161,14 @@ class AutomatedTrader():
             # then just always trade
             else:
                 self.trade_attempted = True
-        print('end of trade', self.round_number, self.id_in_group)
+#        print('end of trade', self.round_number, self.id_in_group)
+        print('group', group_id, 'id', self.id_in_group - 1, 'other_group', other_group, 'other_id', other_id,
+                'round', self.round_number, 'other round', other_player.round_number)
+        print(self.__round_data[self.round_number])
 
-    def compute_results(self, subsession, reward):
-        self.round_number = subsession.round_number - 1
-        print('start of results', self.round_number, self.id_in_group)
+    def compute_results(self, subsession, reward, rn):
+        self.round_number = rn - 1
+        print('bot', self.id_in_group, 'results, round:', self.round_number)
         group_id = self.participant.vars['group'] 
         player_groups = subsession.get_groups()
         bot_groups = self.session.vars['automated_traders']
@@ -179,7 +183,7 @@ class AutomatedTrader():
             other_player = player_groups[other_group].get_player_by_id(other_id + 1)
         else:
             other_player = bot_groups[(other_group, other_id)]
-        print('r num', self.round_number, other_player.round_number)
+   #     print('r num', self.round_number, other_player.round_number)
         # define initial round payoffs
         round_payoff = c(0)
 
@@ -197,8 +201,8 @@ class AutomatedTrader():
                 self.trade_succeeded = True
                 other_player.trade_succeeded = True
 
-            print('bot registers trade should have occurred. old token:',
-                self.token_color, 'new token:', self.participant.vars['token'])
+    #        print('bot registers trade should have occurred. old token:',
+     #           self.token_color, 'new token:', self.participant.vars['token'])
 
             ### TREATMENT: TAX ON FOREIGN (OPPOSITE) CURRENCY
 
@@ -243,10 +247,14 @@ class AutomatedTrader():
                 round_payoff -= c(self.session.config['token_store_cost_heterogeneous'])
 
         # set payoffs
-        print('setting payoffs')
+     #   print('setting payoffs')
         self.set_payoffs(round_payoff)
-        print(self.round_number, self.payoff, self.trade_succeeded)
-    
+    #    print(self.round_number, self.payoff, self.trade_succeeded)
+        #if not self.__round_data[self.round_number].over():
+        print('group', group_id, 'id', self.id_in_group - 1, 'other_group', other_group, 'other_id', other_id,
+                'round', self.round_number, 'other round', other_player.round_number)
+        print(self.__round_data[self.round_number])
+
     def set_payoffs(self, round_payoff):
         self.payoff = round_payoff
 

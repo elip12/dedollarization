@@ -63,7 +63,7 @@ class Trade(Page):
                     if t1_group >= len(player_groups) and t2_group >= len(player_groups):
                         #print(t1_group, t1_id)
                         a1 = bot_groups[(t1_group, t1_id)]
-                        a1.trade(self.subsession)
+                        a1.trade(self.subsession, self.round_number)
 
         # gets a another pair
         # the other pair is the pair that is paired with the current player
@@ -90,7 +90,7 @@ class Trade(Page):
         if self.session.config['automated_traders'] == True \
                 and other_group >= len(player_groups):
             #print(other_group, other_id)
-            other_player.trade(self.subsession)
+            other_player.trade(self.subsession, self.round_number)
         return {
             'role_pre': self.player.role_pre,
             'other_role_pre': self.player.other_role_pre,
@@ -133,7 +133,7 @@ class Results(Page):
                     if t1_group >= len(player_groups) and t2_group >= len(player_groups):
                         #print(t1_group, t1_id)
                         a1 = bot_groups[(t1_group, t1_id)]
-                        a1.compute_results(self.subsession, Constants.reward)
+                        a1.compute_results(self.subsession, Constants.reward, self.round_number)
         
         # identify trading partner
         # similar to above in Trade()
@@ -221,7 +221,7 @@ class Results(Page):
         # tell bot to compute its own trade
         if self.session.config['automated_traders'] == True \
                 and other_group >= len(player_groups):
-            other_player.compute_results(self.subsession, Constants.reward)
+            other_player.compute_results(self.subsession, Constants.reward, self.round_number)
         return {
             'token_color': self.player.token_color,
             'other_token_color': self.player.other_token_color,
