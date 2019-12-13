@@ -10,8 +10,8 @@ from .automated_trader import AutomatedTrader
 class Constants(BaseConstants):
     name_in_url = 'dedollarization'
     instructions_template = 'dedollarization/Instructions.html'
-    players_per_group = 8
-    num_rounds = 10
+    players_per_group = 4
+    num_rounds = 5
     endowment = c(50)
     reward = c(10)
     red = 'Rojo'
@@ -30,7 +30,7 @@ class Subsession(BaseSubsession):
         # SEED =4321
         # random.seed(SEED)
         if self.round_number == 1:
-
+            print('starting create subsession')
             # puts players into groups of size players_per_group
             self.group_randomly()
 
@@ -47,6 +47,7 @@ class Subsession(BaseSubsession):
             # getting paired within your group or within the other group
             self.session.vars['pairs'] = []
             for r in range(Constants.num_rounds):
+                print('starting round', r)
                 # maps traders to their trading partners
                 # (group_id, player_id) <=> (group_id, player_id)
                 # so that a player can look up who their trading partner is
@@ -131,7 +132,6 @@ class Subsession(BaseSubsession):
 #                    pairs[gg[1]] = gg[0]
 #
                 self.session.vars['pairs'].append(pairs)
-
             # if there is only 1 group, then we can do another loop after this
             # one and do the exact same shit, except instantiating bots
             # instead of getting players with p.
@@ -151,22 +151,25 @@ class Subsession(BaseSubsession):
 
             # only create bots if the bot treatment is on
             if self.session.config['automated_traders']:
+                print('starting create bots')    
                 for gi in range(n_groups // 2, n_groups):
                     group_color = Constants.blue
                     roles = [Constants.trade_good for n in range(Constants.players_per_group // 2)]
                     roles += [group_color for n in range(Constants.players_per_group // 2)]
                     random.shuffle(roles)
 
-                    # within the pair, find group number and position in group
                     for pi in range(Constants.players_per_group):
-                        trader = AutomatedTrader(self.session, pi + 1)
+                        trader = AutomatedTrader(self.session, pi + 1,
+                            Constants.num_rounds)
                         trader.participant.vars['group_color'] = group_color
                         trader.participant.vars['group'] = gi
                         trader.participant.payoff += Constants.endowment
                         trader.participant.vars['token'] = roles[pi]
                         self.session.vars['automated_traders'][(gi, pi)] = trader
+                        
 
             # player groups
+            print('start create players')
             for g_index, g in enumerate(self.get_groups()):
                 group_color = Constants.red
 
