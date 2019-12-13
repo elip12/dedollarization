@@ -11,7 +11,6 @@ class Introduction(Page):
     def vars_for_template(self):
         exchange_rate = self.session.config['real_world_currency_per_point']
         players_per_group = Constants.players_per_group
-        half_players_per_group = players_per_group / 2
         foreign_tax = self.session.config['foreign_tax']
         perc_f_tax_consumer = self.session.config['percent_foreign_tax_consumer']
         perc_f_tax_producer = self.session.config['percent_foreign_tax_producer']
@@ -33,7 +32,7 @@ class Introduction(Page):
             treatment = 3
 
         return dict(exchange_rate=exchange_rate, players_per_group=players_per_group,
-                    half_players_per_group=half_players_per_group, perc_f_tax_consumer=perc_f_tax_consumer,
+                    perc_f_tax_consumer=perc_f_tax_consumer,
                     perc_f_tax_producer=perc_f_tax_producer, foreign_tax=foreign_tax, store_cost_hom=store_cost_hom,
                     store_cost_het=store_cost_het, show_foreign_transactions=show_foreign_transactions,
                     treatment=treatment)
