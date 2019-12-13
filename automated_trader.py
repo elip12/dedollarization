@@ -12,7 +12,7 @@ class Participant():
 
 
 class Constants():
-    trade_good = 'Trade Good'
+    trade_good = 'Bien de Consumo'
 
 
 class Round():

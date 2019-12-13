@@ -11,12 +11,12 @@ class Constants(BaseConstants):
     name_in_url = 'dedollarization'
     instructions_template = 'dedollarization/Instructions.html'
     players_per_group = 8
-    num_rounds = 2
+    num_rounds = 10
     endowment = c(50)
     reward = c(10)
     red = 'Rojo'
     blue = 'Azul'
-    trade_good = 'Trade Good'
+    trade_good = 'Bien de Consumo'
 
 
 class Subsession(BaseSubsession):
@@ -27,6 +27,8 @@ class Subsession(BaseSubsession):
     fc_transaction_percent = models.IntegerField()
     
     def creating_session(self):
+        # SEED =4321
+        # random.seed(SEED)
         if self.round_number == 1:
 
             # puts players into groups of size players_per_group
