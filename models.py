@@ -11,7 +11,7 @@ class Constants(BaseConstants):
     name_in_url = 'dedollarization'
     instructions_template = 'dedollarization/Instructions.html'
     players_per_group = 8
-    num_rounds = 10
+    num_rounds = 2
     endowment = c(50)
     reward = c(10)
     red = 'Rojo'
