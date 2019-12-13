@@ -47,11 +47,12 @@ class Round():
 
 
 class AutomatedTrader():
-    def __init__(self, session, id_in_group):
+    def __init__(self, session, id_in_group, num_rounds):
         self.participant = Participant()
-        self.__round_data = []
+        self.__round_data = [Round() for i in range(num_rounds)]
         self.session = session
         self.id_in_group = id_in_group
+        self.round_number = 0
 
     def export_data(self, players_per_group):
         cols = ['participant.id_in_session',
@@ -90,15 +91,14 @@ class AutomatedTrader():
         df[cols[11]] = np.array([r.trade_succeeded for r in self.__round_data])
         df[cols[12]] = np.array([r.payoff for r in self.__round_data])
         df[cols[13]] = np.full(n, self.participant.vars['group'] + 1)
-        df[cols[14]] = np.array([i for i in range(n)])
+        df[cols[14]] = np.array([i for i in range(1, n + 1)])
         df[cols[15]] = np.full(n, self.session.code)
         df = pd.DataFrame(df)
         date = datetime.datetime.now().strftime('%Y-%m-%d')
         df.to_csv(f'producer_consumer_{date}_session_{self.session.code}_automated_trader_{id_in_session}.csv')
 
     def trade(self, subsession):
-        if self.round_number == subsession.round_number - 1:
-            self.__round_data.append(Round())
+        self.round_number = subsession.round_number - 1
         #print(self.round_number)
         # self.session.vars['pairs'] is a list of rounds.
         # each round is a dict of (group,id):(group,id) pairs.
@@ -107,7 +107,7 @@ class AutomatedTrader():
         bot_groups = self.session.vars['automated_traders']
         # gets a another pair
         # the other pair is the pair that is paired with the current player
-        other_group, other_id = self.session.vars['pairs'][subsession.round_number - 1][
+        other_group, other_id = self.session.vars['pairs'][self.round_number][
             (group_id, self.id_in_group - 1)]
         if other_group < len(player_groups):
             other_player = player_groups[other_group].get_player_by_id(other_id + 1)
@@ -149,6 +149,8 @@ class AutomatedTrader():
                 if self.other_token_color == self.group_color \
                         or self.role_pre == 'Consumer':
                     self.trade_attempted = True
+                    print('bot', self.id_in_group, 'attempting trade...',
+                        self.role_pre, self.group_color, self.other_token_color)
 
                 # if not, then don't
                 else:
@@ -158,15 +160,18 @@ class AutomatedTrader():
             # then just always trade
             else:
                 self.trade_attempted = True
+        print('end of trade', self.round_number, self.id_in_group)
 
     def compute_results(self, subsession, reward):
+        self.round_number = subsession.round_number - 1
+        print('start of results', self.round_number, self.id_in_group)
         group_id = self.participant.vars['group'] 
         player_groups = subsession.get_groups()
         bot_groups = self.session.vars['automated_traders']
         
         # identify trading partner
         # similar to above in Trade()
-        other_group, other_id = self.session.vars['pairs'][subsession.round_number - 1][
+        other_group, other_id = self.session.vars['pairs'][self.round_number][
             (group_id, self.id_in_group - 1)]
         
         # get other player object
@@ -174,7 +179,7 @@ class AutomatedTrader():
             other_player = player_groups[other_group].get_player_by_id(other_id + 1)
         else:
             other_player = bot_groups[(other_group, other_id)]
-
+        print('r num', self.round_number, other_player.round_number)
         # define initial round payoffs
         round_payoff = c(0)
 
@@ -182,15 +187,18 @@ class AutomatedTrader():
         # if both players attempted a trade, it must be true
         # that one is a producer and one is a consumer.
         # Only 1 player performs the switch
-        if self.trade_attempted and other_player.trade_attempted: 
+        if self.trade_attempted and other_player.trade_attempted:
             # only 1 player actually switches the goods
-            if not self.trade_succeeded:
+            if self.trade_succeeded is None:
                 # switch tokens
                 self.participant.vars['token'] = self.other_token_color
                 other_player.participant.vars['token'] = self.token_color
                 # set players' trade_succeeded field
                 self.trade_succeeded = True
                 other_player.trade_succeeded = True
+
+            print('bot registers trade should have occurred. old token:',
+                self.token_color, 'new token:', self.participant.vars['token'])
 
             ### TREATMENT: TAX ON FOREIGN (OPPOSITE) CURRENCY
 
@@ -235,116 +243,106 @@ class AutomatedTrader():
                 round_payoff -= c(self.session.config['token_store_cost_heterogeneous'])
 
         # set payoffs
+        print('setting payoffs')
         self.set_payoffs(round_payoff)
-        #print(self.__round_data[-1])
+        print(self.round_number, self.payoff, self.trade_succeeded)
     
     def set_payoffs(self, round_payoff):
         self.payoff = round_payoff
 
     @property
     def payoff(self):
-        r = self.__round_data[-1]
+        r = self.__round_data[self.round_number]
         return r.payoff
 
     @payoff.setter
     def payoff(self, v):
-        #self.__check_round_over()
-        self.__round_data[-1].payoff = v
+        r = self.__round_data[self.round_number]
+        r.payoff = v
         self.participant.payoff += v
-        self.__round_data[-1].cumulative_payoff = self.participant.payoff
+        r.cumulative_payoff = self.participant.payoff
     
-    def __check_round_over(self):
-        r = self.__round_data[-1]
-        if r.over():
-            self.__round_data.append(Round())
     
     def in_round(self, n):
         return self.__round_data[n - 1]
 
     @property
-    def round_number(self):
-        return len(self.__round_data)
-    
-    @property
     def role_pre(self):
-        r = self.__round_data[-1]
+        r = self.__round_data[self.round_number]
         return r.role_pre
 
     @role_pre.setter
     def role_pre(self, v):
-        #self.__check_round_over()
-        self.__round_data[-1].role_pre = v
+        r = self.__round_data[self.round_number]
+        r.role_pre = v
 
     @property
     def other_role_pre(self):
-        r = self.__round_data[-1]
+        r = self.__round_data[self.round_number]
         return r.other_role_pre
 
     @other_role_pre.setter
     def other_role_pre(self, v):
-        #self.__check_round_over()
-        self.__round_data[-1].other_role_pre = v
+        r = self.__round_data[self.round_number]
+        r.other_role_pre = v
     
     @property
     def token_color(self):
-        r = self.__round_data[-1]
+        r = self.__round_data[self.round_number]
         return r.token_color
 
     @token_color.setter
     def token_color(self, v):
-        #self.__check_round_over()
-        self.__round_data[-1].token_color = v
+        r = self.__round_data[self.round_number]
+        r.token_color = v
 
     @property
     def other_token_color(self):
-        r = self.__round_data[-1]
+        r = self.__round_data[self.round_number]
         return r.other_token_color
 
     @other_token_color.setter
     def other_token_color(self, v):
-        #self.__check_round_over()
-        self.__round_data[-1].other_token_color = v
+        r = self.__round_data[self.round_number]
+        r.other_token_color = v
 
     @property
     def group_color(self):
-        r = self.__round_data[-1]
+        r = self.__round_data[self.round_number]
         return r.group_color
 
     @group_color.setter
     def group_color(self, v):
-        #self.__check_round_over()
-        self.__round_data[-1].group_color = v
+        r = self.__round_data[self.round_number]
+        r.group_color = v
 
     @property
     def other_group_color(self):
-        r = self.__round_data[-1]
+        r = self.__round_data[self.round_number]
         return r.other_group_color
 
     @other_group_color.setter
     def other_group_color(self, v):
-        #self.__check_round_over()
-        self.__round_data[-1].other_group_color = v
+        r = self.__round_data[self.round_number]
+        r.other_group_color = v
 
     @property
     def trade_attempted(self):
-#        if len(self.__round_data) > 0:
-        r = self.__round_data[-1]
+        r = self.__round_data[self.round_number]
         return r.trade_attempted
- #       else:
-  #          return False
 
     @trade_attempted.setter
     def trade_attempted(self, v):
-        #self.__check_round_over()
-        self.__round_data[-1].trade_attempted = v
+        r = self.__round_data[self.round_number]
+        r.trade_attempted = v
 
     @property
     def trade_succeeded(self):
-        r = self.__round_data[-1]
+        r = self.__round_data[self.round_number]
         return r.trade_succeeded
 
     @trade_succeeded.setter
     def trade_succeeded(self, v):
-        #self.__check_round_over()
-        self.__round_data[-1].trade_succeeded = v
+        r = self.__round_data[self.round_number]
+        r.trade_succeeded = v
 

@@ -62,7 +62,7 @@ class Trade(Page):
                     t2_group, _ = t2
                     # if both members of the pair are bots
                     if t1_group >= len(player_groups) and t2_group >= len(player_groups):
-                        print(t1_group, t1_id)
+                        #print(t1_group, t1_id)
                         a1 = bot_groups[(t1_group, t1_id)]
                         a1.trade(self.subsession)
 
@@ -132,7 +132,7 @@ class Results(Page):
                     t2_group, _ = t2
                     # if both members of the pair are bots
                     if t1_group >= len(player_groups) and t2_group >= len(player_groups):
-                        print(t1_group, t1_id)
+                        #print(t1_group, t1_id)
                         a1 = bot_groups[(t1_group, t1_id)]
                         a1.compute_results(self.subsession, Constants.reward)
         
@@ -156,7 +156,7 @@ class Results(Page):
         # Only 1 player performs the switch
         if self.player.trade_attempted and other_player.trade_attempted: 
             # only 1 player actually switches the goods
-            if not self.player.trade_succeeded:
+            if self.player.trade_succeeded is None:
 
                 # switch tokens
                 self.player.participant.vars['token'] = self.player.other_token_color
