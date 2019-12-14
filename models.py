@@ -6,6 +6,8 @@ import random
 import copy
 from .automated_trader import AutomatedTrader
 
+# random.seed(123)
+
 
 class Constants(BaseConstants):
     name_in_url = 'dedollarization'
@@ -58,7 +60,7 @@ class Subsession(BaseSubsession):
                     # create player ids in group
                     # ex: 1,2,3,4
                     g = [i for i in range(Constants.players_per_group)]
-                    
+
                     # shuffle player numbers
                     # ex: 1,3,2,4
                     random.shuffle(g)
@@ -72,7 +74,7 @@ class Subsession(BaseSubsession):
                     # sampling probability_of_same_group % of players from g
                     # ex: 1,3
                     g_sample_homogeneous = g[:index]
-                    
+
                     # sampling other 1 - probability_of_same_group % of players from g
                     # ex: 2,4
                     g_sample_heterogeneous = g[index:]
@@ -82,15 +84,15 @@ class Subsession(BaseSubsession):
                     for i in range(0, index, 2):
                         pairs[(gi, g_sample_homogeneous[i])] = (gi, g_sample_homogeneous[i + 1])
                         pairs[(gi, g_sample_homogeneous[i + 1])] = (gi, g_sample_homogeneous[i])
-                    
 
-                    
+
+
                     # store the heterogeneous players so they can be paired later
                     groups.append(g_sample_heterogeneous)
-   
+
                 # pair traders between groups
                 # randomize trader order within each group
-#                print(groups) 
+#                print(groups)
                 for gi in range(n_groups // 2):
                     oi = gi + n_groups // 2 # other index
                     random.shuffle(groups[gi])
@@ -99,9 +101,9 @@ class Subsession(BaseSubsession):
                         pairs[(gi, groups[gi][i])] = (oi, groups[oi][i])
                         pairs[(oi, groups[oi][i])] = (gi, groups[gi][i])
 #               #     g = []
-#                
-#                
-#                
+#
+#
+#
 #                groups_ = copy.deepcopy(groups)
 #                # randomly select 2 different groups. then select 1 random traders
 #                # from each group. remove those traders from their respective group
@@ -151,7 +153,7 @@ class Subsession(BaseSubsession):
 
             # only create bots if the bot treatment is on
             if self.session.config['automated_traders']:
-                print('starting create bots')    
+                print('starting create bots')
                 for gi in range(n_groups // 2, n_groups):
                     group_color = Constants.blue
                     roles = [Constants.trade_good for n in range(Constants.players_per_group // 2)]
@@ -166,7 +168,7 @@ class Subsession(BaseSubsession):
                         trader.participant.payoff += Constants.endowment
                         trader.participant.vars['token'] = roles[pi]
                         self.session.vars['automated_traders'][(gi, pi)] = trader
-                        
+
 
             # player groups
             print('start create players')
