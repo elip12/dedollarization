@@ -282,10 +282,8 @@ class PostResultsWaitPage(WaitPage):
 
 
 page_sequence = [
-    Introduction,
     Trade,
     ResultsWaitPage,
     Results,
     PostResultsWaitPage,
 ]
-
