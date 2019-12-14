@@ -7,7 +7,6 @@
     tasa de conversión 1 punto = S/ {{ exchange_rate }}. Adicionalmente, se te pagará S/ 4.00 por participar.
     <br><br>
     <h3>Rondas y Grupos</h3>
-    <br><br>
     El bloque central de esta sesión consiste en 50 rondas del mismo tipo de interacción. Al inicio de la primera ronda,
     se formarán grupos al azar. Cada grupo tendrá 8 personas. Los grupos son fijos. Es decir,
     durante toda la sesión te mantendrás en el mismo grupo. Tu grupo se llamará grupo rojo. Las personas de tu grupo
@@ -15,7 +14,6 @@
     hay 20 agentes.
     <br><br>
     <h3>Dotaciones iniciales</h3>
-    <br><br>
     Cada participante de tu grupo empieza la primera ronda con una dotación de 50 puntos y con uno de dos objetos: una
     ficha roja o un bien de consumo. La mitad de los integrantes del grupo Rojo reciben una ficha
     roja, y la otra mitad restante recibirá un bien de consumo. Quiénes reciben
@@ -24,12 +22,10 @@
     rondas.
     <br><br>
     <h3>Parejas al azar en cada ronda</h3>
-    <br><br>
     Al inicio de la ronda, cada miembro del grupo rojo es emparejado al azar con alguien de su grupo o del grupo azul.
     La probabilidad de emparejarse con alguien del grupo rojo es 75 y con alguien del grupo azul es 25%.
     <br><br>
     <h3>Decisión de Intercambio</h3>
-    <br><br>
     En cada ronda, el participante es informado del objeto que posee, el grupo de su socio y el objeto que este tiene.
     Algunos encuentros tienen posibilidad de intercambio y otros no. Solo hay posibilidad de intercambio si uno tiene
     una ficha y el otro tiene un bien de consumo. Por el contrario, si las dos personas tienen bienes de consumo, no
@@ -40,63 +36,30 @@
     inicias la siguiente.
     <br><br>
 
-{% if treatment == 1 %}
-
-<h3>Pagos</h3>
-<br><br>
-Todos los participantes comienzan con 50 puntos. En cada ronda, recibir una ficha roja otorga 0 puntos. Sin embargo, si
-recibes una ficha azul de otro participante del grupo rojo, pagarás un impuesto de 1 punto. Similarmente, si
-intercambias una ficha azul por un bien de consumo con otro participante del grupo rojo, pagarás un impuesto de 1 punto.
-En contraste, recibir un bien de consumo de otro participante otorga 20 puntos al momento de recibirlo. Es decir, el
-bien de consumo genera ganancia de puntos solo si se obtiene como resultado de un intercambio, sin importar de qué grupo
-provenga. Si mantienes el mismo bien de consumo más de un periodo, no recibes puntos adicionales. Durante todas las
-rondas de interacción, tendrás en tu pantalla la información referida a las rondas anteriores. El pago de la sesión es
-el acumulado de puntos de las 50 rondas de interacción.
-
-{% else %}
-
-    {% if treatment == 2 %}
-
     <h3>Pagos</h3>
-    <br><br>
-    Todos los participantes comienzan con 50 puntos. En cada ronda, recibir una ficha, ya sea roja o azul, otorga 0
-    puntos. En contraste, recibir un bien de consumo de otro participante otorga 20 puntos al momento de recibirlo. Es
-    decir, el bien de consumo genera ganancia de puntos solo si se obtiene como resultado de un intercambio, sin
-    importar de qué grupo provenga. Si mantienes el mismo bien de consumo más de un periodo, no recibes puntos
-    adicionales. Sin embargo, si mantienes la ficha por más de un periodo, pagarás un costo de almacenamiento. Si mantienes una
-    ficha roja, pagarás {{ store_cost_hom }} puntos. Si mantienes una ficha azul, pagarás {{ store_cost_het }} puntos. Durante todas las
-    rondas de interacción, tendrás en tu pantalla la información referida a las rondas anteriores. El pago de la sesión
-    es el acumulado de puntos de las 50 rondas de interacción.
-
-    {% else %}
-
-        {% if treatment == 3 %}
-
-        <h3>Pagos</h3>
-        <br><br>
-        Todos los participantes comienzan con 50 puntos. En cada ronda, recibir una ficha, ya sea roja o azul, otorga 0
-        puntos. En contraste, recibir un bien de consumo de otro participante otorga 20 puntos al momento de recibirlo.
-        Es decir, el bien de consumo genera ganancia de puntos solo si se obtiene como resultado de un intercambio, sin
-        importar de qué grupo provenga. Sin embargo, si mantienes la ficha más de un periodo, no recibes puntos
-        adicionales. Durante todas las rondas de interacción, tendrás en tu pantalla la información referida a las
-        rondas anteriores. En particular, se mostrará la tasa de aceptación de la ficha azul entre personas del equipo
-        rojo. El pago de la sesión es el acumulado de puntos de las 50 rondas de interacción.
-
-        {% else %}
-
-        <h3>Pagos</h3>
-        <br><br>
-        Todos los participantes comienzan con 50 puntos. En cada ronda, recibir una ficha, ya sea roja o azul, otorga 0
-        puntos. En contraste, recibir un bien de consumo de otro participante otorga 20 puntos al momento de recibirlo. Es
-        decir, el bien de consumo genera ganancia de puntos solo si se obtiene como resultado de un intercambio, sin
-        importar de qué grupo provenga. Si mantienes el mismo bien de consumo más de un periodo, no recibes puntos
-        adicionales.  Durante todas las rondas de interacción, tendrás en tu pantalla la información referida a las rondas
-        anteriores. El pago de la sesión es el acumulado de puntos de las 50 rondas de interacción.
-
+        Todos los participantes comienzan con 50 puntos.
+        En cada ronda, recibir una ficha otorga 0 puntos, sin importar si es roja o azul.
+        En contraste, recibir un bien de consumo de otro participante otorga 10 puntos al momento de recibirlo.
+        Es decir, el bien de consumo genera ganancia de puntos solo si se obtiene como resultado de un intercambio, sin importar de qué grupo provenga.
+        Si mantienes el mismo bien de consumo más de un periodo, no recibes puntos adicionales. <br>
+        {% if treatment == 1 %}
+            <strong>Impuesto: </strong>
+            Si recibes una ficha azul de otro participante del grupo rojo, pagarás un impuesto de 1 punto.
+            Similarmente, si intercambias una ficha azul por un bien de consumo con otro participante del grupo rojo, pagarás un impuesto de 1 punto.
+        {% elif treatment == 2 %}
+            <strong>Costo de almacenar: </strong>
+            Si mantienes una ficha por más de un periodo, pagarás un costo de almacenamiento.
+            Si mantienes una ficha roja, pagarás {{ store_cost_hom }} puntos.
+            Si mantienes una ficha azul, pagarás {{ store_cost_het }} puntos.
         {% endif %}
+        <br>
+        Durante todas las rondas de interacción, tendrás en tu pantalla la información referida a las rondas anteriores.
+            {% if treatment == 3 %}
+                En particular, se mostrará <strong>la tasa de aceptación de la ficha azul entre personas del equipo rojo.</strong>
+            {% endif %}
+        El pago de la sesión es el acumulado de puntos de las 50 rondas de interacción.
 
-    {% endif %}
 
-{% endif %}
+
 
 </p>
