@@ -28,7 +28,7 @@ class Introduction(Page):
         elif store_cost_hom != 0 or store_cost_het != 0:
             treatment = 2
         # 3 Show Foreign Trans Treatment
-        elif show_foreign_transactions is False:
+        elif show_foreign_transactions is True:
             treatment = 3
 
         return dict(exchange_rate=exchange_rate, players_per_group=players_per_group,
