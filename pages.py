@@ -25,7 +25,7 @@ class Introduction(Page):
         if perc_f_tax_consumer != 0 and perc_f_tax_producer != 0 and foreign_tax != 0:
             treatment = 1
         # 2 Cost Treatment
-        elif store_cost_hom != 0 and store_cost_het != 0:
+        elif store_cost_hom != 0 or store_cost_het != 0:
             treatment = 2
         # 3 Show Foreign Trans Treatment
         elif show_foreign_transactions is False:
