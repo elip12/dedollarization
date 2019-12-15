@@ -188,8 +188,6 @@ table.t2, th.t2, td.t2 {
                 <td class = "t2">{{ p.payoff }}</td>
                 {% if session.config.show_foreign_transactions %}
                 <td class = "t2">{{ p.subsession.fc_transaction_percent }}%</td>
-                {% else %}
-                <td class = "t2">N.A.</td>
                 {% endif %}
                 {% if session.config.show_tax_paid %}
                 <td class = "t2">{{ p.tax_paid }}</td>
