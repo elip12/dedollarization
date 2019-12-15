@@ -187,7 +187,12 @@ table.t2, th.t2, td.t2 {
                 {% endif %}
                 <td class = "t2">{{ p.payoff }}</td>
                 {% if session.config.show_foreign_transactions %}
-                <td class = "t2">{{ p.subsession.fc_transaction_percent }}%</td>
+                    {% if p.role_pre != p.other_role_pre and p.group_color == p.other_group_color and
+                    p.group_color == Constants.red and one_has_blue_token %}
+                    <td class = "t2">{{ p.subsession.fc_transaction_percent }}%</td>
+                    {% else %}
+                    <td class = "t2">N.A.</td>
+                    {% endif %}
                 {% endif %}
                 {% if session.config.show_tax_paid %}
                 <td class = "t2">{{ p.tax_paid }}</td>
