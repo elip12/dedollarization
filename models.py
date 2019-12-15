@@ -60,7 +60,7 @@ class Subsession(BaseSubsession):
 
                     # shuffle player numbers
                     # ex: 1,3,2,4
-                    random.seed(4321)
+                    
                     random.shuffle(g)
 
                     # NOTE: self.session.config['probability_of_same_group'] times
@@ -93,7 +93,7 @@ class Subsession(BaseSubsession):
 #                print(groups)
                 for gi in range(n_groups // 2):
                     oi = gi + n_groups // 2 # other index
-                    random.seed(4321)
+                    
                     random.shuffle(groups[gi])
                     (groups[oi])
                     for i in range(len(groups[gi])):
@@ -158,7 +158,7 @@ class Subsession(BaseSubsession):
                     roles = [Constants.trade_good for n in range(Constants.players_per_group // 2)]
                     roles += [group_color for n in range(Constants.players_per_group // 2)]
 
-                    random.seed(4321)
+                    
                     random.shuffle(roles)
 
                     for pi in range(Constants.players_per_group):
@@ -182,7 +182,7 @@ class Subsession(BaseSubsession):
                 # denotes half with group color
                 roles = [Constants.trade_good for n in range(Constants.players_per_group // 2)]
                 roles += [group_color for n in range(Constants.players_per_group // 2)]
-                random.seed(4321)
+                
                 random.shuffle(roles)
 
                 # set each player's group color, and starting token (which
