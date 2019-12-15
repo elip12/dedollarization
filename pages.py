@@ -91,14 +91,15 @@ class Trade(Page):
                 and other_group >= len(player_groups):
             #print(other_group, other_id)
             other_player.trade(self.subsession)
+
         return {
             'role_pre': self.player.role_pre,
             'other_role_pre': self.player.other_role_pre,
             'token_color': self.player.participant.vars['token'],
             'group_color': self.player.participant.vars['group_color'],
             'other_token_color': self.player.other_token_color,
-            'other_group_color': self.player.other_group_color
-        }
+            'other_group_color': self.player.other_group_color,
+            }
 
     def before_next_page(self):
         if self.timeout_happened:
