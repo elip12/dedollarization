@@ -92,8 +92,12 @@ class Trade(Page):
             #print(other_group, other_id)
             other_player.trade(self.subsession)
 
-        one_has_blue_token = (self.player.token_color == Constants.blue) \
-                             or (self.player.other_token_color == Constants.blue)
+        one_has_blue_token = (self.player.token_color == Constants.blue) or \
+                             (self.player.other_token_color == Constants.blue)
+
+        show_fc_trans_perc = (self.player.role_pre != self.player.other_role_pre) and \
+                             (self.player.group_color == self.player.other_group_color) and \
+                             (self.player.group_color == Constants.red) and one_has_blue_token
 
         return {
             'role_pre': self.player.role_pre,
@@ -102,7 +106,7 @@ class Trade(Page):
             'group_color': self.player.participant.vars['group_color'],
             'other_token_color': self.player.other_token_color,
             'other_group_color': self.player.other_group_color,
-            'one_has_blue_token': one_has_blue_token
+            'show_fc_trans_perc': show_fc_trans_perc
         }
 
     def before_next_page(self):
