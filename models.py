@@ -6,14 +6,13 @@ import random
 import copy
 from .automated_trader import AutomatedTrader
 
-# random.seed(123)
 
 
 class Constants(BaseConstants):
     name_in_url = 'dedollarization'
     instructions_template = 'dedollarization/Instructions.html'
     players_per_group = 8
-    num_rounds = 2
+    num_rounds = 50
     endowment = c(50)
     reward = c(10)
     red = 'Rojo'
@@ -29,8 +28,6 @@ class Subsession(BaseSubsession):
     fc_transaction_percent = models.IntegerField()
     
     def creating_session(self):
-        # SEED =4321
-        # random.seed(SEED)
         if self.round_number == 1:
             print('starting create subsession')
             # puts players into groups of size players_per_group
@@ -63,6 +60,7 @@ class Subsession(BaseSubsession):
 
                     # shuffle player numbers
                     # ex: 1,3,2,4
+                    random.seed(4321)
                     random.shuffle(g)
 
                     # NOTE: self.session.config['probability_of_same_group'] times
@@ -95,8 +93,9 @@ class Subsession(BaseSubsession):
 #                print(groups)
                 for gi in range(n_groups // 2):
                     oi = gi + n_groups // 2 # other index
+                    random.seed(4321)
                     random.shuffle(groups[gi])
-                    random.shuffle(groups[oi])
+                    (groups[oi])
                     for i in range(len(groups[gi])):
                         pairs[(gi, groups[gi][i])] = (oi, groups[oi][i])
                         pairs[(oi, groups[oi][i])] = (gi, groups[gi][i])
@@ -158,6 +157,8 @@ class Subsession(BaseSubsession):
                     group_color = Constants.blue
                     roles = [Constants.trade_good for n in range(Constants.players_per_group // 2)]
                     roles += [group_color for n in range(Constants.players_per_group // 2)]
+
+                    random.seed(4321)
                     random.shuffle(roles)
 
                     for pi in range(Constants.players_per_group):
@@ -181,6 +182,7 @@ class Subsession(BaseSubsession):
                 # denotes half with group color
                 roles = [Constants.trade_good for n in range(Constants.players_per_group // 2)]
                 roles += [group_color for n in range(Constants.players_per_group // 2)]
+                random.seed(4321)
                 random.shuffle(roles)
 
                 # set each player's group color, and starting token (which
