@@ -31,7 +31,7 @@ class Introduction(Page):
         elif show_foreign_transactions is True:
             treatment = 3
 
-        return dict(exchange_rate=exchange_rate, players_per_group=players_per_group,
+        return dict(participant_id=self.participant.code, exchange_rate=exchange_rate, players_per_group=players_per_group,
                     perc_f_tax_consumer=perc_f_tax_consumer,
                     perc_f_tax_producer=perc_f_tax_producer, foreign_tax=foreign_tax, store_cost_hom=store_cost_hom,
                     store_cost_het=store_cost_het, show_foreign_transactions=show_foreign_transactions,
@@ -92,7 +92,7 @@ class Trade(Page):
             #print(other_group, other_id)
             other_player.trade(self.subsession)
 
-        return {
+        return {'participant_id': self.participant.code,
             'role_pre': self.player.role_pre,
             'other_role_pre': self.player.other_role_pre,
             'token_color': self.player.participant.vars['token'],
@@ -223,7 +223,7 @@ class Results(Page):
         if self.session.config['automated_traders'] == True \
                 and other_group >= len(player_groups):
             other_player.compute_results(self.subsession, Constants.reward)
-        return {
+        return {'participant_id': self.participant.code,
             'token_color': self.player.token_color,
             'other_token_color': self.player.other_token_color,
             'role_pre': self.player.role_pre,
