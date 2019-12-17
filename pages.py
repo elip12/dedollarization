@@ -92,7 +92,7 @@ class Trade(Page):
             #print(other_group, other_id)
             other_player.trade(self.subsession)
 
-        return {'participant_id': self.participant.code,
+        return {'participant_id': self.participant.label,
             'role_pre': self.player.role_pre,
             'other_role_pre': self.player.other_role_pre,
             'token_color': self.player.participant.vars['token'],
@@ -223,7 +223,7 @@ class Results(Page):
         if self.session.config['automated_traders'] == True \
                 and other_group >= len(player_groups):
             other_player.compute_results(self.subsession, Constants.reward)
-        return {'participant_id': self.participant.code,
+        return {'participant_id': self.participant.label,
             'token_color': self.player.token_color,
             'other_token_color': self.player.other_token_color,
             'role_pre': self.player.role_pre,
