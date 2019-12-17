@@ -7,12 +7,11 @@ import copy
 from .automated_trader import AutomatedTrader
 
 
-
 class Constants(BaseConstants):
     name_in_url = 'dedollarization'
     instructions_template = 'dedollarization/Instructions.html'
     contact_template = 'dedollarization/Contactenos.html'
-    players_per_group = 4
+    players_per_group = 8
     num_rounds = 50
     endowment = c(50)
     reward = c(10)
