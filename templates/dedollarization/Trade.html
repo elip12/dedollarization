@@ -189,7 +189,7 @@ table.t2, th.t2, td.t2 {
                 {% endif %}
                 <td class = "t2">{{ p.payoff }}</td>
                 {% if session.config.show_foreign_transactions %}
-                <td class = "t2">{{ p.subsession.fc_transaction_percent }}%</td>
+                <td class = "t2">{{ p.subsession.fc_transaction_percent }}</td>
                 {% endif %}
                 {% if session.config.show_tax_paid %}
                 <td class = "t2">{{ p.tax_paid }}</td>
