@@ -25,7 +25,8 @@ class Subsession(BaseSubsession):
 
     fc_transactions = models.IntegerField()
     possible_fc_transactions = models.IntegerField()
-    fc_transaction_percent = models.IntegerField()
+    fc_transaction_percent = models.StringField()
+    # fc_transaction_percent = models.IntegerField()
     
     def creating_session(self):
         if self.round_number == 1:

@@ -31,7 +31,7 @@ class Introduction(Page):
         elif show_foreign_transactions is True:
             treatment = 3
 
-        return dict(participant_id=self.participant.code, exchange_rate=exchange_rate, players_per_group=players_per_group,
+        return dict(participant_id=self.participant.label, exchange_rate=exchange_rate, players_per_group=players_per_group,
                     perc_f_tax_consumer=perc_f_tax_consumer,
                     perc_f_tax_producer=perc_f_tax_producer, foreign_tax=foreign_tax, store_cost_hom=store_cost_hom,
                     store_cost_het=store_cost_het, show_foreign_transactions=show_foreign_transactions,
@@ -109,7 +109,7 @@ class Trade(Page):
 
 class ResultsWaitPage(WaitPage):
     body_text = 'Waiting for other participants to decide.'
- #   wait_for_all_group s = True
+    # wait_for_all_groups = True
 
     def after_all_players_arrive(self):
         pass
@@ -247,34 +247,48 @@ class PostResultsWaitPage(WaitPage):
         # count foreign currency transactions this round
         fc_count = 0
         fc_possible_count = 0
-        
+
         for p in self.subsession.get_players():
             if p.group_color == p.other_group_color and \
-            p.group_color != p.other_token_color and \
-            p.role_pre == 'Producer':
+                    p.group_color != p.other_token_color and \
+                    p.role_pre == 'Producer':
                 if p.trade_attempted:
                     fc_count += 1
                     fc_possible_count += 1
                 else:
-                    fc_possible_count += 1      
-                
+                    fc_possible_count += 1
+
         for b in bot_groups.values():
             if b.group_color == b.other_group_color and \
-            b.group_color != b.other_token_color and \
-            b.role_pre == 'Producer':
+                    b.group_color != b.other_token_color and \
+                    b.role_pre == 'Producer':
                 if b.trade_attempted:
                     fc_count += 1
                     fc_possible_count += 1
                 else:
                     fc_possible_count += 1
-             
+
         self.subsession.fc_transactions = fc_count
         self.subsession.possible_fc_transactions = fc_possible_count
-        fc_percent = 0 
+
+        # Changes added to make the game show "N.A." in case the denominator for the fc_percent is 0
+        # In order to return quickly to the original version in case an error appears, the eli code is on comments
+        # To make this work, the fc_transaction_percent field was changed to String
+
+        # if fc_count > 0 and fc_possible_count > 0:
+        if fc_count > 0 and fc_possible_count > 0:
+            fc_percent = int((fc_count / fc_possible_count)*100)
+            self.subsession.fc_transaction_percent = str(fc_percent)
+        else:
+            self.subsession.fc_transaction_percent = 'N.A.'
+
+        """
+        fc_percent = 0
         if fc_count > 0 and fc_possible_count > 0:
             fc_percent = fc_count/fc_possible_count
         self.subsession.fc_transaction_percent = int(fc_percent*100)
-        
+        """
+
         if self.subsession.round_number == Constants.num_rounds:
             for bot in bot_groups.values():
                 bot.export_data(Constants.players_per_group)
