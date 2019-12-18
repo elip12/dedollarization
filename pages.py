@@ -258,15 +258,15 @@ class PostResultsWaitPage(WaitPage):
                 else:
                     fc_possible_count += 1
 
-        for b in bot_groups.values():
-            if b.group_color == b.other_group_color and \
-                    b.group_color != b.other_token_color and \
-                    b.role_pre == 'Producer':
-                if b.trade_attempted:
-                    fc_count += 1
-                    fc_possible_count += 1
-                else:
-                    fc_possible_count += 1
+        #for b in bot_groups.values():
+       #     if b.group_color == b.other_group_color and \
+       #             b.group_color != b.other_token_color and \
+       #             b.role_pre == 'Producer':
+       #         if b.trade_attempted:
+       #             fc_count += 1
+       #             fc_possible_count += 1
+       #         else:
+       #             fc_possible_count += 1
 
         self.subsession.fc_transactions = fc_count
         self.subsession.possible_fc_transactions = fc_possible_count
@@ -276,11 +276,11 @@ class PostResultsWaitPage(WaitPage):
         # To make this work, the fc_transaction_percent field was changed to String
 
         # if fc_count > 0 and fc_possible_count > 0:
-        if fc_count > 0 and fc_possible_count > 0:
+        if fc_possible_count > 0:
             fc_percent = int((fc_count / fc_possible_count)*100)
-            self.subsession.fc_transaction_percent = str(fc_percent)
+            self.subsession.fc_transaction_percent = f'{fc_percent}%'
         else:
-            self.subsession.fc_transaction_percent = 'N.A.'
+            self.subsession.fc_transaction_percent = ''#'N.A.'
 
         """
         fc_percent = 0
