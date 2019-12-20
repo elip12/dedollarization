@@ -25,13 +25,13 @@ class Introduction(Page):
         if perc_f_tax_consumer != 0 and perc_f_tax_producer != 0 and foreign_tax != 0:
             treatment = 1
         # 2 Cost Treatment
-        elif store_cost_hom != 0 and store_cost_het != 0:
+        elif store_cost_hom != 0 or store_cost_het != 0:
             treatment = 2
         # 3 Show Foreign Trans Treatment
-        elif show_foreign_transactions is False:
+        elif show_foreign_transactions is True:
             treatment = 3
 
-        return dict(exchange_rate=exchange_rate, players_per_group=players_per_group,
+        return dict(participant_id=self.participant.label, exchange_rate=exchange_rate, players_per_group=players_per_group,
                     perc_f_tax_consumer=perc_f_tax_consumer,
                     perc_f_tax_producer=perc_f_tax_producer, foreign_tax=foreign_tax, store_cost_hom=store_cost_hom,
                     store_cost_het=store_cost_het, show_foreign_transactions=show_foreign_transactions,
@@ -61,9 +61,8 @@ class Trade(Page):
                     t2_group, _ = t2
                     # if both members of the pair are bots
                     if t1_group >= len(player_groups) and t2_group >= len(player_groups):
-                        #print(t1_group, t1_id)
                         a1 = bot_groups[(t1_group, t1_id)]
-                        a1.trade(self.subsession, self.round_number)
+                        a1.trade(self.subsession)
 
         # gets a another pair
         # the other pair is the pair that is paired with the current player
@@ -73,6 +72,11 @@ class Trade(Page):
             other_player = player_groups[other_group].get_player_by_id(other_id + 1)
         else:
             other_player = bot_groups[(other_group, other_id)]
+
+        self.player.my_id_in_group = self.player.id_in_group
+        self.player.my_group_id = group_id
+        self.player.other_id_in_group = other_id + 1
+        self.player.other_group_id = other_group
 
         # whatever color token they were assigned in models.py
         self.player.token_color = self.player.participant.vars['token']
@@ -89,16 +93,16 @@ class Trade(Page):
 
         if self.session.config['automated_traders'] == True \
                 and other_group >= len(player_groups):
-            #print(other_group, other_id)
-            other_player.trade(self.subsession, self.round_number)
-        return {
+            other_player.trade(self.subsession)
+
+        return {'participant_id': self.participant.label,
             'role_pre': self.player.role_pre,
             'other_role_pre': self.player.other_role_pre,
             'token_color': self.player.participant.vars['token'],
             'group_color': self.player.participant.vars['group_color'],
             'other_token_color': self.player.other_token_color,
-            'other_group_color': self.player.other_group_color
-        }
+            'other_group_color': self.player.other_group_color,
+            }
 
     def before_next_page(self):
         if self.timeout_happened:
@@ -108,7 +112,7 @@ class Trade(Page):
 
 class ResultsWaitPage(WaitPage):
     body_text = 'Waiting for other participants to decide.'
- #   wait_for_all_group s = True
+    # wait_for_all_groups = True
 
     def after_all_players_arrive(self):
         pass
@@ -131,9 +135,8 @@ class Results(Page):
                     t2_group, _ = t2
                     # if both members of the pair are bots
                     if t1_group >= len(player_groups) and t2_group >= len(player_groups):
-                        #print(t1_group, t1_id)
                         a1 = bot_groups[(t1_group, t1_id)]
-                        a1.compute_results(self.subsession, Constants.reward, self.round_number)
+                        a1.compute_results(self.subsession, Constants.reward)
         
         # identify trading partner
         # similar to above in Trade()
@@ -221,8 +224,8 @@ class Results(Page):
         # tell bot to compute its own trade
         if self.session.config['automated_traders'] == True \
                 and other_group >= len(player_groups):
-            other_player.compute_results(self.subsession, Constants.reward, self.round_number)
-        return {
+            other_player.compute_results(self.subsession, Constants.reward)
+        return {'participant_id': self.participant.label,
             'token_color': self.player.token_color,
             'other_token_color': self.player.other_token_color,
             'role_pre': self.player.role_pre,
@@ -246,46 +249,58 @@ class PostResultsWaitPage(WaitPage):
         # count foreign currency transactions this round
         fc_count = 0
         fc_possible_count = 0
-        
+
         for p in self.subsession.get_players():
             if p.group_color == p.other_group_color and \
-            p.group_color != p.other_token_color and \
-            p.role_pre == 'Producer':
+                    p.group_color != p.other_token_color and \
+                    p.role_pre == 'Producer':
                 if p.trade_attempted:
                     fc_count += 1
                     fc_possible_count += 1
                 else:
-                    fc_possible_count += 1      
-                
-        for b in bot_groups.values():
-            if b.group_color == b.other_group_color and \
-            b.group_color != b.other_token_color and \
-            b.role_pre == 'Producer':
-                if b.trade_attempted:
-                    fc_count += 1
                     fc_possible_count += 1
-                else:
-                    fc_possible_count += 1
-             
+
+        #for b in bot_groups.values():
+       #     if b.group_color == b.other_group_color and \
+       #             b.group_color != b.other_token_color and \
+       #             b.role_pre == 'Producer':
+       #         if b.trade_attempted:
+       #             fc_count += 1
+       #             fc_possible_count += 1
+       #         else:
+       #             fc_possible_count += 1
+
         self.subsession.fc_transactions = fc_count
         self.subsession.possible_fc_transactions = fc_possible_count
-        fc_percent = 0 
+
+        # Changes added to make the game show "N.A." in case the denominator for the fc_percent is 0
+        # In order to return quickly to the original version in case an error appears, the eli code is on comments
+        # To make this work, the fc_transaction_percent field was changed to String
+
+        # if fc_count > 0 and fc_possible_count > 0:
+        if fc_possible_count > 0:
+            fc_percent = int((fc_count / fc_possible_count)*100)
+            self.subsession.fc_transaction_percent = f'{fc_percent}%'
+        else:
+            self.subsession.fc_transaction_percent = ''#'N.A.'
+
+        """
+        fc_percent = 0
         if fc_count > 0 and fc_possible_count > 0:
             fc_percent = fc_count/fc_possible_count
         self.subsession.fc_transaction_percent = int(fc_percent*100)
-        
+        """
+
         if self.subsession.round_number == Constants.num_rounds:
             for bot in bot_groups.values():
                 bot.export_data(Constants.players_per_group)
-            for p in self.subsession.get_players():                             
-                p.participant.payoff *= self.session.config['soles_per_ecu']    
+            # for p in self.subsession.get_players():
+            #    p.participant.payoff *= self.session.config['soles_per_ecu']
 
 
 page_sequence = [
-    Introduction,
     Trade,
     ResultsWaitPage,
     Results,
     PostResultsWaitPage,
 ]
-
