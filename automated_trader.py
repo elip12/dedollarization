@@ -187,6 +187,7 @@ class AutomatedTrader():
         # if both players attempted a trade, it must be true
         # that one is a producer and one is a consumer.
         # Only 1 player performs the switch
+        print('trade attempted:', self.trade_attempted, 'other trade attempted:', other_player.trade_attempted)
         if self.trade_attempted and other_player.trade_attempted:
             # only 1 player actually switches the goods
             if self.trade_succeeded is None:
@@ -329,12 +330,14 @@ class AutomatedTrader():
     @property
     def trade_attempted(self):
         r = self.__round_data[self.round_number]
+        print('bot', self.id_in_group, 'accessing round', self.round_number, 'trade attempted, returning', r.trade_attempted)
         return r.trade_attempted
 
     @trade_attempted.setter
     def trade_attempted(self, v):
         r = self.__round_data[self.round_number]
         r.trade_attempted = v
+        print('bot', self.id_in_group, 'setting round', self.round_number, 'trade attempted to true, verifying', r.trade_attempted)
 
     @property
     def trade_succeeded(self):

@@ -74,6 +74,11 @@ class Trade(Page):
         else:
             other_player = bot_groups[(other_group, other_id)]
 
+        self.player.my_id_in_group = self.player.id_in_group
+        self.player.my_group_id = group_id
+        self.player.other_id_in_group = other_id + 1
+        self.player.other_group_id = other_group
+
         # whatever color token they were assigned in models.py
         self.player.token_color = self.player.participant.vars['token']
         self.player.other_token_color = other_player.participant.vars['token']
