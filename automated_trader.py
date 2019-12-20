@@ -149,8 +149,8 @@ class AutomatedTrader():
                 if self.other_token_color == self.group_color \
                         or self.role_pre == 'Consumer':
                     self.trade_attempted = True
-                    print('bot', self.id_in_group, 'attempting trade...',
-                        self.role_pre, self.group_color, self.other_token_color)
+                    #print('bot', self.id_in_group, 'attempting trade...',
+                    #    self.role_pre, self.group_color, self.other_token_color)
 
                 # if not, then don't
                 else:
@@ -160,11 +160,13 @@ class AutomatedTrader():
             # then just always trade
             else:
                 self.trade_attempted = True
-        print('end of trade', self.round_number, self.id_in_group)
+        print(f'Round {self.round_number}, bot {self.id_in_group}, END OF TRADE\n{self.__round_data[self.round_number]}')
 
     def compute_results(self, subsession, reward):
         self.round_number = subsession.round_number - 1
-        print('start of results', self.round_number, self.id_in_group)
+        if self.trade_attempted == None:
+            self.trade(subsession)
+        #print('start of results', self.round_number, self.id_in_group)
         group_id = self.participant.vars['group'] 
         player_groups = subsession.get_groups()
         bot_groups = self.session.vars['automated_traders']
@@ -179,7 +181,7 @@ class AutomatedTrader():
             other_player = player_groups[other_group].get_player_by_id(other_id + 1)
         else:
             other_player = bot_groups[(other_group, other_id)]
-        print('r num', self.round_number, other_player.round_number)
+        #print('r num', self.round_number, other_player.round_number)
         # define initial round payoffs
         round_payoff = c(0)
 
@@ -187,7 +189,7 @@ class AutomatedTrader():
         # if both players attempted a trade, it must be true
         # that one is a producer and one is a consumer.
         # Only 1 player performs the switch
-        print('trade attempted:', self.trade_attempted, 'other trade attempted:', other_player.trade_attempted)
+        #print('trade attempted:', self.trade_attempted, 'other trade attempted:', other_player.trade_attempted)
         if self.trade_attempted and other_player.trade_attempted:
             # only 1 player actually switches the goods
             if self.trade_succeeded is None:
@@ -198,8 +200,8 @@ class AutomatedTrader():
                 self.trade_succeeded = True
                 other_player.trade_succeeded = True
 
-            print('bot registers trade should have occurred. old token:',
-                self.token_color, 'new token:', self.participant.vars['token'])
+        #    print('bot registers trade should have occurred. old token:',
+        #        self.token_color, 'new token:', self.participant.vars['token'])
 
             ### TREATMENT: TAX ON FOREIGN (OPPOSITE) CURRENCY
 
@@ -244,9 +246,10 @@ class AutomatedTrader():
                 round_payoff -= c(self.session.config['token_store_cost_heterogeneous'])
 
         # set payoffs
-        print('setting payoffs')
+        #print('setting payoffs')
         self.set_payoffs(round_payoff)
-        print(self.round_number, self.payoff, self.trade_succeeded)
+        #print(self.round_number, self.payoff, self.trade_succeeded)
+        print(f'Round {self.round_number}, bot {self.id_in_group}, END OF RESULTS\n{self.__round_data[self.round_number]}')
     
     def set_payoffs(self, round_payoff):
         self.payoff = round_payoff
@@ -330,14 +333,14 @@ class AutomatedTrader():
     @property
     def trade_attempted(self):
         r = self.__round_data[self.round_number]
-        print('bot', self.id_in_group, 'accessing round', self.round_number, 'trade attempted, returning', r.trade_attempted)
+        #print('bot', self.id_in_group, 'accessing round', self.round_number, 'trade attempted, returning', r.trade_attempted)
         return r.trade_attempted
 
     @trade_attempted.setter
     def trade_attempted(self, v):
         r = self.__round_data[self.round_number]
         r.trade_attempted = v
-        print('bot', self.id_in_group, 'setting round', self.round_number, 'trade attempted to true, verifying', r.trade_attempted)
+        #print('bot', self.id_in_group, 'setting round', self.round_number, 'trade attempted to true, verifying', r.trade_attempted)
 
     @property
     def trade_succeeded(self):
