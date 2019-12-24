@@ -186,7 +186,7 @@ class AutomatedTrader():
         # Only 1 player performs the switch
         if self.trade_attempted and other_player.trade_attempted:
             # only 1 player actually switches the goods
-            if self.trade_succeeded is None:
+            if self.trade_succeeded is None and other_player.trade_succeeded is None:
                 # switch tokens
                 self.participant.vars['token'] = self.other_token_color
                 other_player.participant.vars['token'] = self.token_color
