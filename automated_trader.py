@@ -55,7 +55,6 @@ class AutomatedTrader():
         self.id_in_group = id_in_group
         self.round_number = 0
         self.players_per_group = players_per_group
-        self.dump_round_data()
 
     def dump_round_data(self):
         id_in_session = (self.id_in_group - 1) + (self.players_per_group * self.participant.vars['group'])

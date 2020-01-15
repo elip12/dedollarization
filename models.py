@@ -183,6 +183,7 @@ class Subsession(BaseSubsession):
                             trader.participant.vars['group'] = gi
                             trader.participant.payoff += Constants.endowment
                             trader.participant.vars['token'] = roles[pi]
+                            trader.dump_round_data()
                             self.session.vars['automated_traders'][(gi, pi)] = trader
 
 
