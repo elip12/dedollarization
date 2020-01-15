@@ -39,7 +39,7 @@ class Introduction(Page):
 
 
 class Trade(Page):
-    timeout_seconds = 60
+    timeout_seconds = 1
     form_model = 'player'
     form_fields = ['trade_attempted', 'trading']
 
@@ -107,7 +107,14 @@ class Trade(Page):
     def before_next_page(self):
         if self.timeout_happened:
             self.player.player_timed_out += 1
-            self.player.trade_attempted = False
+            ########33## TESTING PURPOSES ONLY
+            if self.player.role_pre != self.player.other_role_pre:
+                self.player.trade_attempted = True
+            else:
+                self.player.trade_attempted = False
+
+            ###### END TESTING PURPOSES ONLY
+            # self.player.trade_attempted = False
              
 
 class ResultsWaitPage(WaitPage):
@@ -293,7 +300,7 @@ class PostResultsWaitPage(WaitPage):
 
         if self.subsession.round_number == Constants.num_rounds:
             for bot in bot_groups.values():
-                bot.export_data(Constants.players_per_group)
+                bot.export_data()
             # for p in self.subsession.get_players():
             #    p.participant.payoff *= self.session.config['soles_per_ecu']
 

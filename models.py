@@ -178,7 +178,7 @@ class Subsession(BaseSubsession):
 
                         for pi in range(Constants.players_per_group):
                             trader = AutomatedTrader(self.session, pi + 1,
-                                Constants.num_rounds)
+                                Constants.num_rounds, Constants.players_per_group)
                             trader.participant.vars['group_color'] = group_color
                             trader.participant.vars['group'] = gi
                             trader.participant.payoff += Constants.endowment

@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import datetime
 import random
+import pickle
 
 
 class Participant():
@@ -47,14 +48,28 @@ class Round():
 
 
 class AutomatedTrader():
-    def __init__(self, session, id_in_group, num_rounds):
+    def __init__(self, session, id_in_group, num_rounds, players_per_group):
         self.participant = Participant()
         self.__round_data = [Round() for i in range(num_rounds)]
         self.session = session
         self.id_in_group = id_in_group
         self.round_number = 0
+        self.players_per_group = players_per_group
+        self.dump_round_data()
 
-    def export_data(self, players_per_group):
+    def dump_round_data(self):
+        id_in_session = (self.id_in_group - 1) + (self.players_per_group * self.participant.vars['group'])
+        fname = f'{self.session.code}_{id_in_session}.pkl' 
+        with open(fname, 'wb') as f:
+            pickle.dump(self.__round_data, f)
+    
+    def load_round_data(self):
+        id_in_session = (self.id_in_group - 1) + (self.players_per_group * self.participant.vars['group'])
+        fname = f'{self.session.code}_{id_in_session}.pkl' 
+        with open(fname, 'wb') as f:
+            self.__round_data = pkl.load(f)
+
+    def export_data(self):
         cols = ['participant.id_in_session',
                 'participant.payoff',
                 'participant.is_automated',
@@ -74,9 +89,9 @@ class AutomatedTrader():
         ]
 
         df = {}
-        print(r for r in self.__round_data)
+        self.load_round_data()
         n = len(self.__round_data)
-        id_in_session = (self.id_in_group - 1) + (players_per_group * self.participant.vars['group'])
+        id_in_session = (self.id_in_group - 1) + (self.players_per_group * self.participant.vars['group'])
         df[cols[0]] = np.full(n, id_in_session)
         df[cols[1]] = np.array([r.cumulative_payoff if r.cumulative_payoff != None\
                 else 0* self.session.config['soles_per_ecu'] for r in self.__round_data])
@@ -96,9 +111,10 @@ class AutomatedTrader():
         df[cols[15]] = np.full(n, self.session.code)
         df = pd.DataFrame(df)
         date = datetime.datetime.now().strftime('%Y-%m-%d')
-        df.to_csv(f'producer_consumer_{date}_session_{self.session.code}_automated_trader_{id_in_session}.csv')
+        df.to_csv(f'dedollarization_{date}_session_{self.session.code}_automated_trader_{id_in_session}.csv')
 
     def trade(self, subsession):
+        self.load_round_data()
         self.round_number = subsession.round_number - 1
         # self.session.vars['pairs'] is a list of rounds.
         # each round is a dict of (group,id):(group,id) pairs.
@@ -157,9 +173,11 @@ class AutomatedTrader():
             # then just always trade
             else:
                 self.trade_attempted = True
+        self.dump_round_data()
         print(f'Round {self.round_number}, bot {self.id_in_group}, END OF TRADE\n{self.__round_data[self.round_number]}')
 
     def compute_results(self, subsession, reward):
+        self.load_round_data()
         self.round_number = subsession.round_number - 1
         if self.trade_attempted == None:
             self.trade(subsession)
@@ -238,6 +256,7 @@ class AutomatedTrader():
 
         # set payoffs
         self.set_payoffs(round_payoff)
+        self.dump_round_data()
         print(f'Round {self.round_number}, bot {self.id_in_group}, END OF RESULTS\n{self.__round_data[self.round_number]}')
     
     def set_payoffs(self, round_payoff):
