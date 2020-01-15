@@ -65,8 +65,8 @@ class AutomatedTrader():
     def load_round_data(self):
         id_in_session = (self.id_in_group - 1) + (self.players_per_group * self.participant.vars['group'])
         fname = f'{self.session.code}_{id_in_session}.pkl' 
-        with open(fname, 'wb') as f:
-            self.__round_data = pkl.load(f)
+        with open(fname, 'rb') as f:
+            self.__round_data = pickle.load(f)
 
     def export_data(self):
         cols = ['participant.id_in_session',
