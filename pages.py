@@ -155,6 +155,8 @@ class Results(Page):
             other_player = player_groups[other_group].get_player_by_id(other_id + 1)
         else:
             other_player = bot_groups[(other_group, other_id)]
+            other_player.load_round_data()
+            other_player.round_number = self.round_number - 1
 
         # define initial round payoffs
         round_payoff = c(0)
@@ -174,6 +176,8 @@ class Results(Page):
                 # set players' trade_succeeded field
                 self.player.trade_succeeded = True
                 other_player.trade_succeeded = True
+                if other_group > len(player_groups):
+                    other_player.store_round_data()
 
             ### TREATMENT: TAX ON FOREIGN (OPPOSITE) CURRENCY
             # if the player is the consumer, apply consumer tax to them

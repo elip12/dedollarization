@@ -194,6 +194,8 @@ class AutomatedTrader():
             other_player = player_groups[other_group].get_player_by_id(other_id + 1)
         else:
             other_player = bot_groups[(other_group, other_id)]
+            other_player.load_round_data()
+            other_player.round_number = self.round_number
         # define initial round payoffs
         round_payoff = c(0)
 
@@ -203,13 +205,15 @@ class AutomatedTrader():
         # Only 1 player performs the switch
         if self.trade_attempted and other_player.trade_attempted:
             # only 1 player actually switches the goods
-            if self.trade_succeeded is None and other_player.trade_succeeded is None:
+            if self.trade_succeeded is None:
                 # switch tokens
                 self.participant.vars['token'] = self.other_token_color
                 other_player.participant.vars['token'] = self.token_color
                 # set players' trade_succeeded field
                 self.trade_succeeded = True
                 other_player.trade_succeeded = True
+                if other_group > len(player_groups):
+                    other_player.store_round_data()
 
             ### TREATMENT: TAX ON FOREIGN (OPPOSITE) CURRENCY
 
@@ -237,7 +241,7 @@ class AutomatedTrader():
         
         else:
             self.trade_succeeded = False
-
+        assert(self.trade_succeeded is not None)
         # penalties for self
         # if your token matches your group color
 

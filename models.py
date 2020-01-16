@@ -12,13 +12,16 @@ class ContextSeed:
     shared among different agents
     """
     def __init__(self, seed):
-        self.seed = seed
+        pass
+        #self.seed = seed
     
     def __enter__(self):
-        random.seed(self.seed)
+        pass
+        #random.seed(self.seed)
     
     def __exit__(self, *_):
-        random.seed(random.randint(0, 100))
+        pass
+        #random.seed(random.randint(0, 100))
 
 class Constants(BaseConstants):
     name_in_url = 'dedollarization'
