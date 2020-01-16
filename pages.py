@@ -39,7 +39,7 @@ class Introduction(Page):
 
 
 class Trade(Page):
-    timeout_seconds = 1
+    timeout_seconds = 60
     form_model = 'player'
     form_fields = ['trade_attempted', 'trading']
 
@@ -108,13 +108,13 @@ class Trade(Page):
         if self.timeout_happened:
             self.player.player_timed_out += 1
             ########33## TESTING PURPOSES ONLY
-            if self.player.role_pre != self.player.other_role_pre:
-                self.player.trade_attempted = True
-            else:
-                self.player.trade_attempted = False
+            #if self.player.role_pre != self.player.other_role_pre:
+            #    self.player.trade_attempted = True
+            #else:
+            #    self.player.trade_attempted = False
 
             ###### END TESTING PURPOSES ONLY
-            # self.player.trade_attempted = False
+            self.player.trade_attempted = False
              
 
 class ResultsWaitPage(WaitPage):
